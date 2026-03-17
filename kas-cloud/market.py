@@ -3,6 +3,7 @@
 """
 import json
 import hashlib
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
@@ -18,8 +19,8 @@ from models import (
 
 router = APIRouter(prefix="/api/v1/market", tags=["market"])
 
-# 文件存储路径
-STORAGE_PATH = Path("/tmp/kas-cloud/packages")
+# 文件存储路径 - 使用用户主目录，避免 /tmp 重启丢失
+STORAGE_PATH = Path(os.getenv("KAS_STORAGE_PATH", Path.home() / ".kas" / "packages"))
 STORAGE_PATH.mkdir(parents=True, exist_ok=True)
 
 

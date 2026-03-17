@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Optional
 from contextlib import contextmanager
 
-# 数据库路径
-DB_DIR = Path(os.getenv("KAS_CLOUD_DB", "/tmp/kas-cloud"))
+# 数据库路径 - 使用用户主目录，避免 /tmp 重启丢失和 Windows 不兼容问题
+DB_DIR = Path(os.getenv("KAS_CLOUD_DB", Path.home() / ".kas" / "cloud"))
 DB_DIR.mkdir(parents=True, exist_ok=True)
 DB_PATH = DB_DIR / "kas_cloud.db"
 

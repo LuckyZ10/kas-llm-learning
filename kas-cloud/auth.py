@@ -2,6 +2,7 @@
 认证模块
 """
 import hashlib
+import os
 import secrets
 import jwt
 from datetime import datetime, timedelta
@@ -11,8 +12,9 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from database import get_db
 
-# JWT 配置
-JWT_SECRET = secrets.token_hex(32)  # 生产环境应使用环境变量
+# JWT 配置 - 从环境变量读取，避免重启后 token 失效
+# 生产环境必须设置 JWT_SECRET 环境变量
+JWT_SECRET = os.getenv("JWT_SECRET", "kas-cloud-dev-secret-key-change-in-production")
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRE_HOURS = 24
 
