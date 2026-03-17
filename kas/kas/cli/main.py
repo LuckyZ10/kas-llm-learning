@@ -1740,6 +1740,206 @@ def abtest_winner(test_id, version):
         console.print(f"❌ Error: {e}")
 
 
+@cli.group()
+def equip():
+    """🛠️ 装备管理 - 为 Agent 添加工具"""
+    pass
+
+
+@equip.command('list')
+def equip_list():
+    """列出所有可用装备"""
+    try:
+        from kas.core.equipment import get_equipment_pool
+        
+        pool = get_equipment_pool()
+        equipments = pool.list_all()
+        
+        if not equipments:
+            console.print("📭 暂无可用装备")
+            return
+        
+        table = Table(title="🛠️ 可用装备列表")
+        table.add_column("名称", style="bold cyan")
+        table.add_column("类型", style="dim")
+        table.add_column("描述")
+        table.add_column("状态")
+        
+        for eq in equipments:
+            status = "✅ 可用" if eq.get("status") != "error" else "❌ 错误"
+            table.add_row(
+                eq["name"],
+                eq["type"],
+                eq.get("description", "-"),
+                status
+            )
+        
+        console.print(table)
+        console.print("\n💡 使用 [bold]kas equip add <agent> <equipment>[/bold] 为 Agent 添加装备")
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@equip.command('add')
+@click.argument('agent')
+@click.argument('equipment')
+@click.option('--config', '-c', help='JSON 配置字符串')
+def equip_add(agent, equipment, config):
+    """为 Agent 添加装备"""
+    try:
+        from kas.core.equipment import get_equipment_pool
+        from kas.core.models import Agent
+        from kas.core.config import get_config
+        from pathlib import Path
+        import json
+        
+        # 检查装备是否存在
+        pool = get_equipment_pool()
+        eq = pool.get(equipment)
+        if not eq:
+            console.print(f"❌ 装备不存在: {equipment}")
+            console.print(f"💡 可用装备: {', '.join([e['name'] for e in pool.list_all()])}")
+            return
+        
+        # 加载 Agent
+        config_obj = get_config()
+        agent_path = Path(config_obj.agents_dir) / agent
+        
+        if not agent_path.exists():
+            console.print(f"❌ Agent 不存在: {agent}")
+            return
+        
+        agent_obj = Agent.load(agent_path)
+        
+        # 添加装备到 Agent 配置
+        if not hasattr(agent_obj, 'equipment'):
+            agent_obj.equipment = []
+        
+        # 检查是否已存在
+        if equipment in agent_obj.equipment:
+            console.print(f"⚠️ Agent {agent} 已有装备: {equipment}")
+            return
+        
+        agent_obj.equipment.append(equipment)
+        
+        # 保存
+        agent_obj.save(agent_path)
+        
+        console.print(f"✅ 已为 Agent [bold]{agent}[/bold] 添加装备: [cyan]{equipment}[/cyan]")
+        console.print(f"   当前装备: {', '.join(agent_obj.equipment)}")
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@equip.command('remove')
+@click.argument('agent')
+@click.argument('equipment')
+def equip_remove(agent, equipment):
+    """从 Agent 移除装备"""
+    try:
+        from kas.core.models import Agent
+        from kas.core.config import get_config
+        from pathlib import Path
+        
+        config = get_config()
+        agent_path = Path(config.agents_dir) / agent
+        
+        if not agent_path.exists():
+            console.print(f"❌ Agent 不存在: {agent}")
+            return
+        
+        agent_obj = Agent.load(agent_path)
+        
+        if not hasattr(agent_obj, 'equipment') or equipment not in agent_obj.equipment:
+            console.print(f"⚠️ Agent {agent} 没有装备: {equipment}")
+            return
+        
+        agent_obj.equipment.remove(equipment)
+        agent_obj.save(agent_path)
+        
+        console.print(f"🗑️ 已从 Agent [bold]{agent}[/bold] 移除装备: [cyan]{equipment}[/cyan]")
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@equip.command('show')
+@click.argument('agent')
+def equip_show(agent):
+    """查看 Agent 的装备"""
+    try:
+        from kas.core.models import Agent
+        from kas.core.equipment import get_equipment_pool
+        from kas.core.config import get_config
+        from pathlib import Path
+        
+        config = get_config()
+        agent_path = Path(config.agents_dir) / agent
+        
+        if not agent_path.exists():
+            console.print(f"❌ Agent 不存在: {agent}")
+            return
+        
+        agent_obj = Agent.load(agent_path)
+        equipments = getattr(agent_obj, 'equipment', [])
+        
+        if not equipments:
+            console.print(f"📭 Agent [bold]{agent}[/bold] 暂无装备")
+            console.print(f"💡 使用 [bold]kas equip add {agent} <equipment>[/bold] 添加")
+            return
+        
+        console.print(f"\n🛠️ Agent [bold]{agent}[/bold] 的装备:\n")
+        
+        pool = get_equipment_pool()
+        for eq_name in equipments:
+            eq = pool.get(eq_name)
+            if eq:
+                console.print(f"  ✅ [cyan]{eq_name}[/cyan] - {eq.config.description}")
+            else:
+                console.print(f"  ⚠️ [yellow]{eq_name}[/yellow] - 装备未找到")
+        
+        console.print()
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@equip.command('use')
+@click.argument('equipment')
+@click.option('--params', '-p', help='JSON 参数字符串')
+def equip_use(equipment, params):
+    """测试使用装备"""
+    try:
+        from kas.core.equipment import get_equipment_pool
+        import json
+        
+        pool = get_equipment_pool()
+        eq = pool.get(equipment)
+        
+        if not eq:
+            console.print(f"❌ 装备不存在: {equipment}")
+            return
+        
+        # 解析参数
+        param_dict = {}
+        if params:
+            param_dict = json.loads(params)
+        
+        console.print(f"🔧 使用装备: [cyan]{equipment}[/cyan]")
+        console.print(f"   参数: {param_dict}\n")
+        
+        with console.status("[bold green]执行中..."):
+            result = pool.use(equipment, param_dict)
+        
+        console.print("✅ [bold]执行结果:[/bold]\n")
+        console.print_json(data=result)
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
 @cli.command()
 @click.option('--host', default='0.0.0.0', help='绑定地址')
 @click.option('--port', '-p', default=3000, help='端口号')
