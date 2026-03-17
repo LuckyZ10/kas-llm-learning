@@ -3,6 +3,7 @@ KAS CLI - 命令行接口
 简单优先的CLI实现
 """
 import os
+from datetime import datetime
 import click
 from pathlib import Path
 from rich.console import Console
@@ -384,6 +385,23 @@ def evolve(agent, force, apply, output):
                 
                 # 增加代数
                 agent_data['generation'] = result.get('generation', agent_data.get('generation', 0) + 1)
+                
+                # 创建备份
+                backup_dir = agent_dir / 'backups'
+                backup_dir.mkdir(exist_ok=True)
+                backup_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                backup_file = backup_dir / f"agent.yaml.backup.{backup_timestamp}"
+                
+                # 复制当前配置到备份
+                import shutil
+                shutil.copy2(agent_dir / 'agent.yaml', backup_file)
+                console.print(f"  ✓ Created backup: {backup_file.name}")
+                
+                # 清理旧备份（只保留最近10个）
+                backups = sorted(backup_dir.glob('agent.yaml.backup.*'))
+                if len(backups) > 10:
+                    for old_backup in backups[:-10]:
+                        old_backup.unlink()
                 
                 # 保存到文件
                 with open(agent_dir / 'agent.yaml', 'w') as f:

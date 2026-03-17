@@ -265,23 +265,6 @@ class AnalyticsDatabase:
                 ))
         
         return result
-            
-            cursor.execute('''
-                SELECT COUNT(*), SUM(message_count), AVG(response_time_avg),
-                       SUM(token_input + token_output), COUNT(DISTINCT agent_name)
-                FROM conversations
-                WHERE timestamp >= ? AND timestamp <= ?
-            ''', (start, end))
-            
-            row = cursor.fetchone()
-            stats.append(DailyStats(
-                date=date,
-                total_conversations=row[0] or 0,
-                total_messages=row[1] or 0,
-                avg_response_time=round(row[2] or 0, 2),
-                total_tokens=row[3] or 0,
-                unique_users=row[4] or 0
-            ))
         
         return list(reversed(stats))
 
