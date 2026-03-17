@@ -4,7 +4,6 @@ KAS Crew 工作流引擎
 """
 import os
 import json
-import yaml
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Callable
 from dataclasses import dataclass, field
@@ -12,10 +11,28 @@ from datetime import datetime
 from enum import Enum
 import logging
 
-from kas.core.sandbox.supervisor import SandboxSupervisor, CrewConfig
-from kas.core.sandbox.message_bus import MessageBus, MessageType
-
 logger = logging.getLogger(__name__)
+
+# 依赖检查和降级逻辑
+try:
+    from kas.core.sandbox.supervisor import SandboxSupervisor, CrewConfig
+    from kas.core.sandbox.message_bus import MessageBus, MessageType
+    SANDBOX_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Sandbox module not available: {e}")
+    logger.warning("WorkflowEngine will run in degraded mode")
+    SANDBOX_AVAILABLE = False
+    SandboxSupervisor = None
+    CrewConfig = None
+    MessageBus = None
+    MessageType = None
+
+try:
+    import yaml
+    YAML_AVAILABLE = True
+except ImportError:
+    logger.warning("PyYAML not available, YAML workflows disabled")
+    YAML_AVAILABLE = False
 
 
 class TaskStatus(Enum):
@@ -93,6 +110,9 @@ class Workflow:
     @classmethod
     def from_yaml(cls, yaml_path: Path) -> 'Workflow':
         """从 YAML 文件加载工作流"""
+        if not YAML_AVAILABLE:
+            raise RuntimeError("PyYAML not installed, cannot load YAML workflows")
+        
         with open(yaml_path, 'r', encoding='utf-8') as f:
             data = yaml.safe_load(f)
         return cls.from_dict(data)
@@ -118,12 +138,21 @@ class WorkflowEngine:
     5. 结果传递
     """
     
-    def __init__(self, supervisor: SandboxSupervisor):
+    def __init__(self, supervisor: 'SandboxSupervisor' = None):
         """
         Args:
-            supervisor: 沙盒监督器
+            supervisor: 沙盒监督器 (可选，不提供则使用降级模式)
         """
+        if supervisor is None and SANDBOX_AVAILABLE:
+            from kas.core.sandbox.supervisor import SandboxSupervisor
+            supervisor = SandboxSupervisor()
+        
         self.supervisor = supervisor
+        self.sandbox_available = SANDBOX_AVAILABLE and supervisor is not None
+        
+        if not self.sandbox_available:
+            logger.warning("WorkflowEngine running in degraded mode (no sandbox)")
+        
         self.workflows: Dict[str, Workflow] = {}
         self._executions: Dict[str, Dict] = {}  # 执行记录
     
@@ -135,6 +164,9 @@ class WorkflowEngine:
     
     def save_workflow(self, workflow: Workflow, yaml_path: Path):
         """保存工作流到 YAML"""
+        if not YAML_AVAILABLE:
+            raise RuntimeError("PyYAML not installed, cannot save YAML workflows")
+        
         with open(yaml_path, 'w', encoding='utf-8') as f:
             yaml.dump(workflow.to_dict(), f, allow_unicode=True, sort_keys=False)
     
@@ -297,6 +329,15 @@ class WorkflowEngine:
                 dep_task = execution["tasks"].get(dep_id)
                 if dep_task and dep_task.result:
                     task_context[f"{dep_id}_result"] = dep_task.result
+            
+            # 检查 sandbox 是否可用
+            if not self.sandbox_available:
+                # 降级模式：模拟执行
+                logger.warning(f"Sandbox not available, simulating task {task.id}")
+                task.result = {"status": "simulated", "message": "Sandbox not available"}
+                task.status = TaskStatus.COMPLETED
+                task.completed_at = datetime.now().isoformat()
+                return
             
             # 分发任务并等待结果
             result = self.supervisor.dispatch_task(

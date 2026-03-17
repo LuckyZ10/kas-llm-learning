@@ -41,9 +41,14 @@ class ContractReviewCrew:
         )
     """
     
-    def __init__(self, supervisor: SandboxSupervisor = None):
+    def __init__(self, supervisor: SandboxSupervisor = None, crew_name: str = None):
+        """
+        Args:
+            supervisor: 沙盒监督器
+            crew_name: Crew 名称 (默认 ContractReviewCrew)
+        """
         self.supervisor = supervisor or SandboxSupervisor()
-        self.crew_name = "ContractReviewCrew"
+        self.crew_name = crew_name or "ContractReviewCrew"
         self.workflow_engine = WorkflowEngine(self.supervisor)
         
         # Agent 定义
