@@ -1,440 +1,358 @@
-# KAS (Klaw Agent Studio) 完整路线图
+# KAS (Klaw Agent Studio) ROADMAP v1.2
 
-> 版本: v1.1
+> 版本: v1.2
 > 最后更新: 2026-03-18
 > 作者: Yilin.zhang
+> 状态: Phase 4 重构 - Agent 特种部队
 
 ---
 
 ## 🎯 项目愿景
 
-**KAS = 代码吸血鬼 + Agent 孵化器 + Agent 特种部队指挥系统**
+**KAS = OpenClaw 特种部队指挥系统**
 
-终极目标: 从代码项目孵化 Agent，让多个 Agent 组成团队，装备各种工具，协作解决复杂问题。
+从"单个 Agent 工具"进化为"多个 Agent 协作团队"，每个 Agent 都是注入灵魂的 OpenClaw 实例，通过沙盒隔离实现真正的多 Agent 并行协作。
 
 ---
 
-## 📅 阶段规划
+## 📅 已完成阶段
 
-### Phase 1: 基础功能 ✅ (已完成)
-**时间**: 2026-03-17 完成
-**核心**: Agent 的创建、使用、进化
+### Phase 1-3: 基础功能 ✅ (2026-03-17 完成)
 
-| 功能 | 状态 | 文件 |
+| 阶段 | 功能 | 状态 |
 |------|------|------|
-| 代码吞食 | ✅ | `core/ingestion.py` |
-| Agent 合体 | ✅ | `core/fusion.py` |
-| 对话引擎 | ✅ | `core/chat.py` |
-| LLM 增强学习 | ✅ | `core/llm_learning.py` |
-| 配置管理 | ✅ | `core/config.py` |
-| 版本管理 | ✅ | `core/versioning.py` |
-| CLI 命令 | ✅ | `cli/main.py` |
+| Phase 1 | 代码吞食、Agent合体、对话、进化 | ✅ |
+| Phase 2 | Agent市场、能力验证、统计面板 | ✅ |
+| Phase 3 | 知识库/RAG、工作流、A/B测试 | ✅ |
+
+### Phase 4.1-4.2: 装备与界面 ✅ (2026-03-18 完成)
+
+| 阶段 | 功能 | 核心文件 |
+|------|------|----------|
+| 4.1 | Web界面MVP | `kas/web/app.py` |
+| 4.2 | 装备系统 | `kas/core/equipment.py` |
 
 ---
 
-### Phase 2: 生态建设 ✅ (已完成)
-**时间**: 2026-03-17 完成
-**核心**: Agent 市场和能力验证
+## 🚀 Phase 4: Agent 特种部队 (进行中)
 
-| 功能 | 状态 | 文件 |
-|------|------|------|
-| Agent 市场 | ✅ | `core/market.py`, `core/cloud_market.py` |
-| 能力验证 | ✅ | `core/validation.py` |
-| 统计面板 | ✅ | `core/stats.py`, `dashboard/` |
+**目标**: 实现真正的多 Agent 沙盒化协作
 
----
+### Phase 4.3: 多模态输入 📁 ⏳
+**时间**: 3天  
+**优先级**: 🔴 P0  
+**前置**: 4.2 装备系统 ✅
 
-### Phase 3: 智能化升级 ✅ (已完成)
-**时间**: 2026-03-18 完成
-**核心**: 知识库、工作流、A/B测试
-
-| 功能 | 状态 | 文件 |
-|------|------|------|
-| 知识库/RAG | ✅ | `core/knowledge.py`, `core/rag_chat.py` |
-| Agent 工作流 | ✅ | `core/workflow.py` |
-| A/B 测试 | ✅ | `core/abtest.py` |
-
----
-
-### Phase 4: Agent 特种部队 (进行中 - 重新设计)
-**目标**: 从单个 Agent 升级为协作团队
-
-#### 4.1 网页界面 MVP ✅
-**状态**: 已完成
-**文件**: `kas/web/app.py`, `kas/web/static/index.html`
+**为什么先做**: 装备系统(web_search, ocr, pdf_parser)需要处理文件，这是基础能力
 
 **功能**:
-- FastAPI 后端 + 原生 JS 前端
-- Agent 列表/详情/对话
-- 市场搜索/安装
-- 统计数据可视化
-
-**CLI**:
-```bash
-kas web [--host] [--port]  # 启动 Web 界面
-```
-
----
-
-#### 4.2 Agent 装备系统 🛠️ ⏳
-**优先级**: 🔴 P0
-**依赖**: Web 界面 ✅
-**工作量**: 1 周
-
-**核心概念**: 每个 Agent 可以装备各种"武器"
-
-```yaml
-# agent.yaml 扩展
-name: "ResearchAgent"
-equipment:
-  - type: mcp
-    name: "web_search"
-    config: { engine: "duckduckgo" }
-  - type: mcp
-    name: "ocr"
-    config: { language: "zh+en" }
-  - type: plugin
-    name: "pdf_parser"
-  - type: plugin
-    name: "code_executor"
-    config: { sandbox: "docker" }
-```
-
-**内置装备清单**:
-| 装备 | 功能 | 场景 |
-|------|------|------|
-| `web_search` | 联网搜索 | 获取最新信息 |
-| `ocr` | 图片文字识别 | 处理扫描件 |
-| `pdf_parser` | PDF 解析 | 文档分析 |
-| `code_executor` | 代码执行(沙箱) | 验证代码 |
-| `file_reader` | 文件读取 | 处理各种格式 |
-| `image_analysis` | 图片分析 | 理解图像内容 |
-
-**CLI**:
-```bash
-kas equip list                           # 列出可用装备
-kas equip add MyAgent web_search         # 给 Agent 添加装备
-kas equip remove MyAgent ocr             # 移除装备
-kas equip show MyAgent                   # 查看已装备
-```
-
-**技术方案**:
-```python
-# core/equipment.py
-class Equipment(ABC):
-    @abstractmethod
-    def use(self, params: dict) -> Any:
-        pass
-
-class MCPEquipment(Equipment):
-    """MCP 协议装备"""
-    def use(self, params):
-        # 调用 MCP Server
-        pass
-
-class PluginEquipment(Equipment):
-    """内置插件装备"""
-    def use(self, params):
-        # 调用本地插件
-        pass
-
-# Agent 使用装备
-class Agent:
-    def use_tool(self, name: str, params: dict):
-        equip = self.get_equipment(name)
-        return equip.use(params)
-```
-
----
-
-#### 4.3 多模态输入 📁 ⏳
-**优先级**: 🔴 P0
-**依赖**: Web 界面 ✅
-**工作量**: 3 天
-
-**功能**:
-- 文件上传 (PDF, 图片, 代码文件)
+- 文件上传 API (PDF, 图片, 代码文件)
 - 图片 OCR 预处理
 - PDF 文本提取
-- 附件传递给 Agent
+- 附件传递给 Agent/装备
 
 **CLI**:
 ```bash
 kas chat MyAgent "分析这份合同" --attach contract.pdf --attach photo.jpg
+kas crew run Team "任务" --attach file1.pdf --attach file2.png
 ```
 
-**Web**:
-```
-用户上传文件 → 预处理器 → Agent 获取内容
-              ↓
-         PDF → pdf_parser
-         JPG → ocr / image_analysis
-         PY  → file_reader
+**核心实现**:
+```python
+# core/multimodal.py
+class MultimodalProcessor:
+    def process(self, file: UploadFile) -> ProcessedContent:
+        # PDF → pdf_parser 装备
+        # Image → ocr / image_analysis 装备
+        # Code → file_reader 装备
+        pass
 ```
 
 ---
 
-#### 4.4 Agent 团队 (Crew) 👥 ⏳
-**优先级**: 🔴 P0
-**依赖**: 装备系统, 多模态
-**工作量**: 1 周
+### Phase 4.4: OpenClaw 沙盒化 🔮 ⏳
+**时间**: 2周  
+**优先级**: 🔴 P0  
+**前置**: 无 (独立基础设施)
 
-**核心概念**: 多个 Agent 组成团队，分工协作
+**核心目标**: 将 KAS Agent 转换为真正的 OpenClaw 沙盒实例
 
+**架构**:
+```
+~/.kas/sandboxes/
+└── ContractReviewCrew/
+    ├── alice/              # Alice 的 OpenClaw 沙盒
+    │   ├── SOUL.md         # 注入的灵魂 (system_prompt)
+    │   ├── AGENTS.md       # 工作指南 (Crew协作规则)
+    │   ├── TOOLS.md        # 装备配置
+    │   ├── USER.md         # 用户信息 (共享链接)
+    │   ├── MEMORY.md       # 个人长期记忆
+    │   └── memory/         # 每日记忆
+    │
+    ├── bob/                # Bob 的 OpenClaw 沙盒
+    ├── carol/              # Carol 的 OpenClaw 沙盒
+    │
+    ├── shared/             # 共享资源
+    │   ├── crew_memory.json    # Crew 共同记忆
+    │   └── message_bus/        # 消息总线
+    │       ├── inbox/
+    │       └── outbox/
+    │
+    └── supervisor.py       # 沙盒监督器
+```
+
+**子任务**:
+
+| 模块 | 功能 | 时间 | 文件 |
+|------|------|------|------|
+| SoulInjector | KAS Agent → OpenClaw 配置转换 | 2天 | `core/sandbox/soul_injector.py` |
+| MessageBus | 沙盒间文件队列通信 | 3天 | `core/sandbox/message_bus.py` |
+| OpenClawSandbox | 沙盒包装器 | 3天 | `core/sandbox/sandbox.py` |
+| SandboxSupervisor | 监督器+生命周期管理 | 4天 | `core/sandbox/supervisor.py` |
+| 集成测试 | 单沙盒+多沙盒测试 | 2天 | `tests/test_sandbox.py` |
+
+**灵魂注入示例**:
+```python
+# KAS Agent 定义
+agent = Agent(
+    name="Alice",
+    system_prompt="你是一位法律专家...",
+    equipment=["web_search", "pdf_parser"]
+)
+
+# 注入后生成 OpenClaw 配置
+sandboxes/alice/
+├── SOUL.md          # 身份+能力+系统提示词
+├── AGENTS.md        # "你是KAS Crew成员，队友是Bob/Carol..."
+├── TOOLS.md         # "可用装备: web_search, pdf_parser..."
+└── memory/          # 个人记忆存储
+```
+
+**MessageBus 通信**:
+```python
+# Alice 分配任务给 Bob
+message_bus.send(
+    from_agent="alice",
+    to_agent="bob",
+    type="task",
+    content={"task": "OCR识别", "image": "contract.jpg"}
+)
+
+# Bob 返回结果
+message_bus.send(
+    from_agent="bob",
+    to_agent="alice",
+    type="result",
+    content={"text": "识别完成..."}
+)
+
+# Carol 有问题 → 通过协调员询问用户
+message_bus.send(
+    from_agent="carol",
+    to_agent="alice",
+    type="question",
+    content={"question": "第5条模糊，能解释吗？"}
+)
+```
+
+---
+
+### Phase 4.5: Agent 特种部队 👥 ⏳
+**时间**: 1周  
+**优先级**: 🔴 P0  
+**前置**: 4.4 OpenClaw 沙盒化 ✅
+
+**核心目标**: 基于沙盒实现真正的多 Agent 协作团队
+
+**功能**:
+
+1. **Crew 定义**
 ```yaml
 # crew.yaml
 name: "ContractReviewCrew"
-description: "合同审查团队"
-
 members:
   - name: "Alice"
-    role: "coordinator"      # 协调员角色
-    description: "法律背景，协调沟通"
-    equipment: ["web_search", "file_reader"]
+    role: "coordinator"
+    description: "法律专家，协调沟通"
     
   - name: "Bob"
     role: "ocr_expert"
-    description: "OCR 专家，处理扫描件"
-    equipment: ["ocr", "image_analysis"]
+    description: "OCR专家"
     
   - name: "Carol"
     role: "legal_analyst"
-    description: "法律分析师，提取关键信息"
-    equipment: ["pdf_parser", "web_search"]
-    
-  - name: "David"
-    role: "writer"
-    description: "报告撰写员"
-    equipment: ["file_reader"]
+    description: "法律分析师"
 
 workflow:
   - step: 1
     agent: "Alice"
-    task: "理解用户需求，确认文档类型"
+    task: "确认需求"
     
   - step: 2
     agent: "Bob"
-    task: "对图片/扫描件进行 OCR"
+    task: "OCR识别"
     condition: "if input.has_image"
     
   - step: 3
     agent: "Carol"
-    task: "分析文档内容，提取关键信息"
+    task: "分析条款"
     depends_on: [2]
-    
-  - step: 4
-    agent: "David"
-    task: "撰写分析报告"
-    depends_on: [3]
-    
-  - step: 5
-    agent: "Alice"
-    task: "审核报告，向用户展示结果并确认"
-    depends_on: [4]
 ```
 
-**CLI**:
+2. **动态协调员**
+```
+用户: 分析合同
+       ↓
+Alice(确认需求) → "让Bob处理图片，Carol分析条款？"
+       ↓
+用户: 是的
+       ↓
+Bob(处理中) → "图片识别完成"
+       ↓
+Carol(发现问题) → "第5条模糊，能解释吗？" ← Carol临时协调
+       ↓
+用户解释
+       ↓
+Carol(继续分析) → 结果存入Crew记忆
+       ↓
+Alice(汇总展示) → "分析报告完成"
+```
+
+3. **CLI 命令**
 ```bash
+# Crew 管理
 kas crew create ReviewTeam                    # 创建团队
 kas crew add ReviewTeam MyAgent --role analyst # 添加成员
+kas crew remove ReviewTeam Alice               # 移除成员
+kas crew list                                  # 列出团队
+kas crew show ReviewTeam                       # 查看详情
+
+# 执行任务
 kas crew run ReviewTeam "分析合同" \
   --attach contract.pdf \
   --attach photo.jpg
 
-kas crew chat ReviewTeam                      # 交互式团队对话
+# 交互式团队对话
+kas crew chat ReviewTeam
+```
+
+4. **分层记忆**
+```
+Crew 共同记忆 (shared/crew_memory.json)
+├── 对话历史 (完整)
+├── 任务上下文
+├── 中间结果缓存
+└── 共享知识库 (RAG)
+         │
+    ┌────┴────┐
+    ▼         ▼
+Alice记忆   Bob记忆  (各沙盒 memory/)
+├── 提取的   ├── 提取的
+│   相关部分    相关部分
+├── 个人     ├── 个人
+│   偏好        专长
+└── 专业     └── 专业
+    背景          背景
 ```
 
 ---
 
-#### 4.5 协调员模式 (动态选举) 🎭 ⏳
-**优先级**: 🔴 P0
-**依赖**: Agent 团队
-**工作量**: 1 周
+## 🏗️ Phase 5: 企业级功能 (长期)
 
-**核心概念**: 协调员不是固定的，根据任务动态选举谁对外沟通
-
-**交互示例**:
-```
-用户: 分析这份合同的风险点
-附件: contract.pdf, photo1.jpg
-
-[团队内部讨论]
-
-Alice: "我来确认需求"
-       → 临时协调员
-       "我看到你上传了合同 PDF 和一张照片。
-        让 [Bob] 处理图片，[Carol] 分析条款。
-        需要我这样做吗？"
-
-用户: 是的
-
-[Bob 处理图片...]
-Bob: "图片识别完成，这是签署页"
-    → Bob 汇报进度
-
-[Carol 分析条款...]
-Carol: "第5条违约责任表述模糊，不确定具体含义"
-       → Carol 成为临时协调员，询问用户
-       "你能解释一下这条的意图吗？"
-
-用户: 这是想表达违约方需赔偿...
-
-Carol: [把解释同步给团队]
-
-[David 撰写报告...]
-David: "报告完成，关键风险点：1. XX 2. YY"
-       → David 成为临时协调员
-       "需要修改哪里吗？"
-
-用户: 没问题
-
-David: "最终报告已生成"
-```
-
-**选举逻辑**:
-| 阶段 | 谁出面 | 原因 |
-|------|--------|------|
-| 需求确认 | 最理解业务的 Agent | 快速理解意图 |
-| 执行阶段 | 当前负责的 Agent | 直接汇报进度 |
-| 有问题时 | 遇到问题的 Agent | 第一时间澄清 |
-| 结果汇总 | 负责交付的 Agent | 完整呈现结果 |
-
-**技术方案**:
-```python
-# core/crew.py
-class Crew:
-    def elect_coordinator(self, context: dict) -> Agent:
-        """根据上下文选举临时协调员"""
-        # 策略1: 谁最相关选谁
-        # 策略2: 轮流制
-        # 策略3: 指定优先级
-        pass
-    
-    def execute_with_coordination(self, task: str, attachments: list):
-        """带协调的团队执行"""
-        # 1. 选举初始协调员
-        coordinator = self.elect_coordinator({'stage': 'init'})
-        
-        # 2. 协调员确认需求
-        confirmed = coordinator.confirm_with_user(task)
-        
-        # 3. 分发任务给各成员
-        for member in self.members:
-            if member != coordinator:
-                result = member.execute(confirmed)
-                
-                # 4. 需要询问时，该成员成为临时协调员
-                if result.needs_clarification:
-                    temp_coord = member
-                    clarification = temp_coord.ask_user(result.question)
-                    result.update(clarification)
-        
-        # 5. 最终汇总
-        final_coord = self.elect_coordinator({'stage': 'final'})
-        return final_coord.summarize_results()
-```
-
----
-
-### Phase 5: 企业级功能 (长期 - 2-3 月) ⏳
 **目标**: 生产环境可用
 
-#### 5.1 安全沙箱 🔒
+### 5.1 安全沙箱强化 🔒
 - Docker 隔离代码执行
-- 网络访问限制
+- 网络访问限制 (代理模式)
 - 敏感信息过滤
-- 资源配额限制
+- 资源配额限制 (CPU/内存/执行时间)
 
-#### 5.2 性能监控 📈
+### 5.2 性能监控 📈
 - 响应时间监控
 - Token 消耗统计
 - 错误率追踪
-- 告警机制
+- 告警机制 (Slack/邮件)
 
-#### 5.3 团队协作 👥
+### 5.3 团队协作 👥
 - 多用户支持
-- 权限管理
-- Agent 共享
+- 权限管理 (RBAC)
+- Agent 共享机制
 - 团队知识库
 
+### 5.4 高级装备 🛠️
+- 自定义 MCP Server 接入
+- Plugin 市场
+- 装备版本管理
+- A/B 测试装备效果
+
 ---
 
-## 🗺️ 新架构图
+## 📊 实施时间线
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        KAS Core                             │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │   Agent      │  │   Agent      │  │   Agent      │     │
-│  │  (Alice)     │  │   (Bob)      │  │  (Carol)     │     │
-│  │              │  │              │  │              │     │
-│  │ Equipment:   │  │ Equipment:   │  │ Equipment:   │     │
-│  │ - web_search │  │ - ocr        │  │ - pdf_parser │     │
-│  │ - file_reader│  │ - image      │  │ - web_search │     │
-│  │              │  │              │  │              │     │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘     │
-│         │                 │                 │              │
-│         └─────────────────┼─────────────────┘              │
-│                           │                                │
-│                    ┌──────┴──────┐                        │
-│                    │   Crew      │                        │
-│                    │   团队      │                        │
-│                    │             │                        │
-│                    │ 动态选举    │                        │
-│                    │ 协调员      │                        │
-│                    └──────┬──────┘                        │
-│                           │                                │
-│         ┌─────────────────┼─────────────────┐             │
-│         │                 │                 │              │
-│    ┌────┴────┐      ┌────┴────┐      ┌────┴────┐         │
-│    │   MCP   │      │ Plugin  │      │ Multimodal│        │
-│    │ Server  │      │ System  │      │  Input    │        │
-│    │         │      │         │      │           │        │
-│    │ - web   │      │ - pdf   │      │ - PDF     │        │
-│    │ - search│      │ - parser│      │ - Image   │        │
-│    │ - ocr   │      │ - code  │      │ - File    │        │
-│    └─────────┘      └─────────┘      └───────────┘        │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-                    ┌─────────────────┐
-                    │      User       │
-                    │   (动态协调)    │
-                    └─────────────────┘
+2026-03-18  ├─ 4.3 多模态输入 (3天)
+            │   └─ 文件上传、预处理、装备集成
+            │
+2026-03-21  ├─ 4.4 OpenClaw 沙盒化 (2周)
+            │   ├─ Week 1: SoulInjector + MessageBus
+            │   └─ Week 2: SandboxSupervisor + 测试
+            │
+2026-04-04  ├─ 4.5 Agent 特种部队 (1周)
+            │   ├─ Crew 定义和管理
+            │   ├─ 动态协调员
+            │   └─ 完整流程测试
+            │
+2026-04-11  └─ Phase 4 完成！
+                总时间: 3.5 周
 ```
 
 ---
 
-## 📊 实施计划
+## 🎯 成功标准
 
-### 当前状态
-| 阶段 | 完成度 | 核心交付 |
-|------|--------|----------|
-| Phase 1-3 | ✅ 100% | 25个CLI命令，8868行代码 |
-| Phase 4.1 | ✅ 100% | Web界面MVP |
-| Phase 4.2-4.5 | ⏳ 0% | Agent特种部队 |
+### Phase 4.3
+- [ ] 支持上传 PDF、图片、代码文件
+- [ ] 文件自动路由到对应装备
+- [ ] CLI `--attach` 参数可用
 
-### 下一步 (Phase 4.2 开始)
-| 周 | 任务 | 产出 |
-|----|------|------|
-| W1 | 装备系统 | MCP适配器 + 6个内置装备 |
-| W2 | 多模态输入 | 文件上传 + 预处理 |
-| W3 | Agent团队 | Crew定义 + 工作流编排 |
-| W4 | 协调员模式 | 动态选举 + 用户确认流程 |
+### Phase 4.4
+- [ ] SoulInjector 成功转换 Agent 配置
+- [ ] MessageBus 支持 4 种消息类型
+- [ ] 单沙盒可独立运行
+- [ ] 多沙盒可相互通信
+
+### Phase 4.5
+- [ ] Crew YAML 定义和加载
+- [ ] 动态协调员选举可用
+- [ ] 任务自动分发和执行
+- [ ] 分层记忆系统工作正常
+- [ ] 完整合同审查流程可运行
 
 ---
 
 ## 💡 关键设计决策
 
-1. **轻量 Web**: 原生 JS 够用，不上 React
-2. **MCP 优先**: 装备系统基于 MCP 协议，兼容生态
-3. **动态协调**: 谁负责谁沟通，不固定协调员
-4. **多模态**: 文件上传 + 预处理器链
-5. **团队协作**: 声明式 Crew YAML + 运行时选举
+1. **沙盒化优先**: 没有沙盒的"Agent团队"只是工作流包装，必须先实现沙盒
+2. **文件队列通信**: MessageBus 使用文件队列，比内存队列更可靠、可持久化
+3. **OpenClaw 兼容**: 沙盒就是标准 OpenClaw 实例，可独立运行调试
+4. **向后兼容**: 单 Agent 自动退化为 OpenClaw 模式
 
 ---
 
-**已推送**: `e62d6f7` feat: Web Market API + Phase 4 设计更新
+## 📈 当前进度
+
+| 阶段 | 状态 | 完成度 |
+|------|------|--------|
+| Phase 1-3 | ✅ | 100% |
+| Phase 4.1 Web | ✅ | 100% |
+| Phase 4.2 装备 | ✅ | 100% |
+| Phase 4.3 多模态 | ⏳ | 0% |
+| Phase 4.4 沙盒化 | ⏳ | 0% (设计✅) |
+| Phase 4.5 特种部队 | ⏳ | 0% (设计✅) |
+| Phase 5 企业级 | ⏳ | 0% |
+
+**下一步**: 开始 Phase 4.3 多模态输入
+
+---
+
+Author: Yilin.zhang | Date: 2026-03-18
