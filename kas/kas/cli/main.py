@@ -164,30 +164,64 @@ def fuse(agents, strategy, name):
 @click.option('--interactive', '-i', is_flag=True, help='交互模式')
 @click.option('--message', '-m', help='单次消息')
 @click.option('--mock', is_flag=True, help='强制使用 Mock 模式')
-def chat(agent, interactive, message, mock):
+@click.option('--attach', '-a', multiple=True, help='附加文件 (可多次使用)')
+def chat(agent, interactive, message, mock, attach):
     """与 Agent 对话"""
     try:
+        # 处理附件
+        attachments = []
+        if attach:
+            from kas.core.multimodal import Attachment
+            
+            for file_path in attach:
+                path = Path(file_path)
+                if not path.exists():
+                    console.print(f"❌ 文件不存在: {file_path}")
+                    continue
+                
+                with open(path, 'rb') as f:
+                    content = f.read()
+                
+                attachments.append(Attachment(
+                    name=path.name,
+                    content=content,
+                    content_type="",
+                    size=len(content)
+                ))
+            
+            if attachments:
+                console.print(f"📎 已加载 {len(attachments)} 个附件")
+        
         # 创建LLM客户端
         llm_client = get_llm_client(force_mock=mock)
-        engine = ChatEngine(llm_client=llm_client)
-
-        # 加载Agent
-        loaded_agent = engine.load_agent(agent)
-
-        if llm_client:
-            console.print(f"\n[dim]🧠 Using LLM API for responses[/dim]")
+        
+        # 如果有附件，使用多模态对话
+        if attachments:
+            from kas.core.multimodal import MultimodalChat
+            engine = MultimodalChat(agent)
+            
+            if message:
+                response = engine.run(message, attachments=attachments, use_mock=mock)
+                console.print(f"\n[bold cyan]{agent}:[/bold cyan] {response}\n")
+            else:
+                console.print("❌ 使用附件时需要提供 --message")
         else:
-            console.print(f"\n[dim]🤖 Mock mode - Set OPENAI_API_KEY for real responses[/dim]")
-
-        if interactive:
-            # 交互模式
-            engine.interactive_chat(agent)
-        elif message:
-            # 单次对话
-            response = engine.chat(loaded_agent, message)
-            console.print(f"\n[bold cyan]{loaded_agent.name}:[/bold cyan] {response}\n")
-        else:
-            console.print("❌ Please provide --message or use --interactive mode")
+            # 普通对话
+            engine = ChatEngine(llm_client=llm_client)
+            loaded_agent = engine.load_agent(agent)
+            
+            if llm_client:
+                console.print(f"\n[dim]🧠 Using LLM API for responses[/dim]")
+            else:
+                console.print(f"\n[dim]🤖 Mock mode - Set OPENAI_API_KEY for real responses[/dim]")
+            
+            if interactive:
+                engine.interactive_chat(agent)
+            elif message:
+                response = engine.chat(loaded_agent, message)
+                console.print(f"\n[bold cyan]{loaded_agent.name}:[/bold cyan] {response}\n")
+            else:
+                console.print("❌ Please provide --message or use --interactive mode")
 
     except Exception as e:
         console.print(f"❌ [bold red]Error:[/bold red] {e}")

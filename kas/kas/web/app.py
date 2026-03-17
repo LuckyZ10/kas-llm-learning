@@ -5,11 +5,12 @@ KAS Web 服务 - FastAPI 后端
 import os
 import json
 import secrets
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query, Depends, status
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query, Depends, status, UploadFile, File, Form
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
@@ -27,6 +28,7 @@ from kas.core.cloud_market import get_cloud_client
 from kas.core.knowledge import get_knowledge_base
 from kas.core.workflow import get_workflow_engine
 from kas.core.abtest import get_abtest_engine
+from kas.core.multimodal import MultimodalProcessor, MultimodalChat, Attachment
 
 app = FastAPI(title="KAS Web API", version="0.2.0")
 
@@ -357,6 +359,111 @@ async def websocket_chat(websocket: WebSocket, agent_name: str):
             "content": str(e)
         })
         active_connections.remove(websocket)
+
+
+# ========== 多模态 API ==========
+
+@app.post("/api/agents/{agent_name}/chat-with-files")
+async def chat_with_files(
+    agent_name: str,
+    message: str = Form(...),
+    files: List[UploadFile] = File(default=[]),
+    use_mock: bool = Form(default=False),
+    authenticated: bool = Depends(verify_api_key)
+):
+    """支持文件上传的对话"""
+    try:
+        # 处理上传的文件
+        attachments = []
+        for file in files:
+            content = await file.read()
+            attachments.append(Attachment(
+                name=file.filename,
+                content=content,
+                content_type=file.content_type or "application/octet-stream",
+                size=len(content)
+            ))
+        
+        # 使用多模态对话
+        chat = MultimodalChat(agent_name)
+        response = chat.run(message, attachments=attachments, use_mock=use_mock)
+        
+        return {
+            "success": True,
+            "response": response,
+            "files_processed": len(attachments),
+            "timestamp": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/files/process")
+async def process_file(
+    file: UploadFile = File(...),
+    authenticated: bool = Depends(verify_api_key)
+):
+    """处理上传的文件，返回结构化内容"""
+    try:
+        content = await file.read()
+        
+        processor = MultimodalProcessor()
+        result = processor.process_upload(
+            filename=file.filename,
+            content=content,
+            content_type=file.content_type or ""
+        )
+        
+        return {
+            "success": True,
+            "filename": result.original_name,
+            "file_type": result.file_type.value,
+            "mime_type": result.mime_type,
+            "size": result.size,
+            "hash": result.hash,
+            "content_preview": result.content[:500] if isinstance(result.content, str) else str(result.content)[:500],
+            "metadata": result.metadata,
+            "processing_info": result.processing_info
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/files/supported-types")
+async def get_supported_types(authenticated: bool = Depends(verify_api_key)):
+    """获取支持的文件类型"""
+    from kas.core.multimodal import FileType
+    
+    types_info = {
+        "pdf": {
+            "extensions": [".pdf"],
+            "mime_types": ["application/pdf"],
+            "max_size": "50MB",
+            "processor": "pdf_parser"
+        },
+        "image": {
+            "extensions": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp"],
+            "mime_types": ["image/jpeg", "image/png", "image/gif", "image/webp"],
+            "max_size": "10MB",
+            "processor": "ocr"
+        },
+        "text": {
+            "extensions": [".txt", ".md", ".json", ".yaml", ".yml", ".csv"],
+            "mime_types": ["text/plain", "text/markdown", "application/json"],
+            "max_size": "5MB",
+            "processor": "file_reader"
+        },
+        "code": {
+            "extensions": [".py", ".js", ".ts", ".html", ".css", ".java", ".go", ".rs"],
+            "mime_types": ["text/x-python", "text/javascript", "text/html"],
+            "max_size": "5MB",
+            "processor": "file_reader"
+        }
+    }
+    
+    return {"supported_types": types_info}
 
 
 # ========== 静态文件 ==========
