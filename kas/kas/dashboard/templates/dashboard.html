@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAS Dashboard - 统计面板</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .stat-card .value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .chart-container h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 KAS Dashboard</h1>
+        <p>Klaw Agent Studio 统计面板</p>
+    </div>
+    
+    <div class="container">
+        <!-- 统计卡片 -->
+        <div class="stats-grid" id="stats-cards">
+            <div class="stat-card">
+                <h3>总对话数</h3>
+                <div class="value" id="total-conversations">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Agent 数量</h3>
+                <div class="value" id="total-agents">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>平均质量分</h3>
+                <div class="value" id="avg-quality">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>今日对话</h3>
+                <div class="value" id="today-conversations">-</div>
+            </div>
+        </div>
+        
+        <!-- 图表 -->
+        <div class="chart-container">
+            <h2>📈 每日对话趋势</h2>
+            <div class="chart-wrapper">
+                <canvas id="daily-chart"></canvas>
+            </div>
+        </div>
+        
+        <div class="grid-2">
+            <div class="chart-container">
+                <h2>🤖 Agent 使用排行</h2>
+                <div class="chart-wrapper">
+                    <canvas id="agent-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h2>⚡ 能力使用分布</h2>
+                <div class="chart-wrapper">
+                    <canvas id="capability-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 获取数据并渲染图表
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/stats');
+                const result = await response.json();
+                
+                if (!result.success) {
+                    showError(result.error);
+                    return;
+                }
+                
+                const data = result.data;
+                
+                // 更新统计卡片
+                document.getElementById('total-conversations').textContent = 
+                    data.summary.total_conversations.toLocaleString();
+                document.getElementById('total-agents').textContent = 
+                    data.summary.total_agents;
+                document.getElementById('avg-quality').textContent = 
+                    data.summary.avg_quality.toFixed(1);
+                
+                // 今日对话
+                const today = data.daily[data.daily.length - 1];
+                document.getElementById('today-conversations').textContent = 
+                    today ? today.conversations : 0;
+                
+                // 渲染图表
+                renderDailyChart(data.daily);
+                renderAgentChart(data.agents);
+                renderCapabilityChart(data.capabilities);
+                
+            } catch (error) {
+                showError('加载数据失败: ' + error.message);
+            }
+        }
+        
+        function renderDailyChart(dailyData) {
+            const ctx = document.getElementById('daily-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dailyData.map(d => d.date),
+                    datasets: [{
+                        label: '对话数',
+                        data: dailyData.map(d => d.conversations),
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: '平均质量',
+                        data: dailyData.map(d => d.quality_score),
+                        borderColor: '#764ba2',
+                        backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: '对话数' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 0,
+                            max: 100,
+                            title: { display: true, text: '质量分' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderAgentChart(agents) {
+            const ctx = document.getElementById('agent-chart').getContext('2d');
+            const sorted = agents.sort((a, b) => b.conversations - a.conversations).slice(0, 10);
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(a => a.name),
+                    datasets: [{
+                        label: '对话数',
+                        data: sorted.map(a => a.conversations),
+                        backgroundColor: '#667eea'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+        
+        function renderCapabilityChart(capabilities) {
+            const ctx = document.getElementById('capability-chart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: capabilities.map(c => c.name),
+                    datasets: [{
+                        data: capabilities.map(c => c.usage_count),
+                        backgroundColor: [
+                            '#667eea', '#764ba2', '#f093fb', '#f5576c',
+                            '#4facfe', '#00f2fe', '#43e97b', '#fa709a'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+        
+        function showError(message) {
+            document.querySelector('.container').innerHTML = 
+                `<div class="error">❌ ${message}</div>`;
+        }
+        
+        // 页面加载时获取数据
+        loadDashboard();
+    </script>
+</body>
+</html>

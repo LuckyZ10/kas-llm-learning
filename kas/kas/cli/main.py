@@ -1015,6 +1015,28 @@ def stats(agent, days):
         console.print(f"❌ [bold red]Error:[/bold red] {e}")
 
 
+@cli.command()
+@click.option('--host', default='127.0.0.1', help='绑定地址')
+@click.option('--port', '-p', default=8080, help='端口号')
+@click.option('--debug', is_flag=True, help='调试模式')
+def dashboard(host, port, debug):
+    """🌐 启动 Web 统计面板"""
+    try:
+        console.print(f"\n🚀 [bold blue]启动 KAS Dashboard...[/bold blue]")
+        console.print(f"   地址: http://{host}:{port}")
+        console.print(f"   按 Ctrl+C 停止\n")
+        
+        from kas.dashboard.app import run_dashboard
+        run_dashboard(host=host, port=port, debug=debug)
+        
+    except ImportError as e:
+        console.print(f"❌ [bold red]缺少依赖:[/bold red] {e}")
+        console.print("💡 请安装 dashboard 依赖:")
+        console.print("   pip install flask")
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
 def main():
     """入口点"""
     cli()

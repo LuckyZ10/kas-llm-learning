@@ -38,7 +38,10 @@ setup(
     extras_require={
         'llm': ['openai>=1.0.0'],
         'cloud': ['fastapi>=0.109.0', 'uvicorn>=0.27.0', 'pyjwt>=2.8.0'],
+        'dashboard': ['flask>=2.0.0'],
         'dev': ['pytest>=7.0.0', 'black>=23.0.0'],
+        'all': ['openai>=1.0.0', 'fastapi>=0.109.0', 'uvicorn>=0.27.0', 
+                'pyjwt>=2.8.0', 'flask>=2.0.0'],
     },
     entry_points={
         'console_scripts': [
