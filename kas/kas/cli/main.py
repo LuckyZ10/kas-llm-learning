@@ -2351,6 +2351,207 @@ def crew_delete(name):
         console.print(f"❌ [bold red]Error:[/bold red] {e}")
 
 
+@crew.group()
+def workflow():
+    """工作流管理"""
+    pass
+
+
+@workflow.command('run')
+@click.argument('crew_name')
+@click.argument('yaml_file')
+@click.option('--var', '-v', multiple=True, help='变量 (key=value)')
+def workflow_run(crew_name, yaml_file, var):
+    """运行 YAML 工作流"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        from kas.core.crew_workflow import WorkflowEngine
+        from pathlib import Path
+        
+        supervisor = SandboxSupervisor()
+        engine = WorkflowEngine(supervisor)
+        
+        # 加载工作流
+        yaml_path = Path(yaml_file)
+        if not yaml_path.exists():
+            console.print(f"❌ 工作流文件不存在: {yaml_file}")
+            return
+        
+        workflow = engine.load_workflow(yaml_path)
+        
+        # 解析变量
+        variables = {}
+        for v in var:
+            if '=' in v:
+                key, value = v.split('=', 1)
+                variables[key] = value
+        
+        console.print(f"🚀 运行工作流: [bold cyan]{workflow.name}[/bold cyan]")
+        console.print(f"   Crew: {crew_name}")
+        console.print(f"   任务数: {len(workflow.tasks)}\n")
+        
+        # 显示任务列表
+        table = Table(title="任务列表")
+        table.add_column("步骤", style="dim")
+        table.add_column("任务", style="cyan")
+        table.add_column("Agent", style="green")
+        table.add_column("依赖", style="dim")
+        
+        for i, task in enumerate(workflow.tasks, 1):
+            deps = ", ".join(task.depends_on) if task.depends_on else "-"
+            table.add_row(str(i), task.name, task.agent, deps)
+        
+        console.print(table)
+        console.print()
+        
+        # 执行
+        with console.status("[bold green]执行工作流..."):
+            result = engine.execute(crew_name, workflow, variables)
+        
+        # 显示结果
+        if result["status"] == "completed":
+            console.print("\n✅ [bold green]工作流完成![/bold green]\n")
+            
+            # 显示各任务结果
+            result_table = Table(title="执行结果")
+            result_table.add_column("任务", style="cyan")
+            result_table.add_column("状态", style="green")
+            result_table.add_column("结果预览", style="dim")
+            
+            for task_id, task_result in result["results"].items():
+                status = task_result["status"]
+                status_style = {
+                    "completed": "green",
+                    "failed": "red",
+                    "skipped": "yellow"
+                }.get(status, "white")
+                
+                result_preview = str(task_result.get("result", ""))[:50]
+                result_table.add_row(
+                    task_id,
+                    f"[{status_style}]{status}[/{status_style}]",
+                    result_preview + "..." if len(str(task_result.get("result", ""))) > 50 else result_preview
+                )
+            
+            console.print(result_table)
+            console.print(f"\n执行ID: [dim]{result['execution_id']}[/dim]")
+        else:
+            console.print(f"\n❌ [bold red]工作流失败:[/bold red] {result.get('error', 'Unknown')}")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@workflow.command('list')
+def workflow_list():
+    """列出执行记录"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        from kas.core.crew_workflow import WorkflowEngine
+        
+        supervisor = SandboxSupervisor()
+        engine = WorkflowEngine(supervisor)
+        
+        executions = engine.list_executions()
+        
+        if not executions:
+            console.print("📂 暂无执行记录")
+            return
+        
+        table = Table(title="执行记录")
+        table.add_column("执行ID", style="cyan")
+        table.add_column("工作流", style="green")
+        table.add_column("Crew", style="yellow")
+        table.add_column("开始时间", style="dim")
+        table.add_column("状态", style="blue")
+        
+        for exec_info in executions[-20:]:  # 最近20条
+            status = exec_info["status"]
+            status_style = {
+                "completed": "green",
+                "failed": "red",
+                "running": "yellow"
+            }.get(status, "white")
+            
+            table.add_row(
+                exec_info["execution_id"][:20] + "...",
+                exec_info["workflow_name"],
+                exec_info["crew_name"],
+                exec_info["started_at"][:19],
+                f"[{status_style}]{status}[/{status_style}]"
+            )
+        
+        console.print(table)
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+def demo():
+    """运行合同审查演示"""
+    try:
+        from kas.core.crew_demo import ContractReviewCrew
+        
+        console.print(Panel.fit(
+            "[bold cyan]KAS Agent 特种部队[/bold cyan]\n"
+            "合同审查流程演示",
+            title="🚀 Demo"
+        ))
+        
+        console.print("\n[dim]正在初始化 Crew...[/dim]\n")
+        
+        crew = ContractReviewCrew()
+        crew.setup()
+        
+        console.print("✅ [green]Crew 准备就绪[/green]\n")
+        console.print("团队成员:")
+        console.print("  👩‍💼 Alice - 协调员 (法律专家)")
+        console.print("  👨‍💻 Bob - OCR专家 (图片处理)")
+        console.print("  👩‍⚖️ Carol - 法律分析师\n")
+        
+        # 交互式输入
+        console.print("[bold]请输入合同审查要求:[/bold] (例如: 审查一份软件开发合同)")
+        requirements = console.input(" ")
+        
+        console.print("\n[bold]是否有图片附件?[/bold] (y/n): ", end="")
+        has_image = console.input("").lower() == 'y'
+        
+        image_path = None
+        if has_image:
+            console.print("[bold]图片路径:[/bold] ", end="")
+            image_path = console.input("")
+        
+        # 运行审查
+        with console.status("[bold green]正在协调团队进行审查..."):
+            result = crew.run(
+                user_requirements=requirements,
+                has_image=has_image,
+                image_path=image_path
+            )
+        
+        # 显示结果
+        console.print("\n" + "=" * 60)
+        if result["success"]:
+            console.print("✅ [bold green]审查完成![/bold green]\n")
+            if result["final_report"]:
+                console.print(Panel(
+                    str(result["final_report"])[:2000],
+                    title="📋 审查报告",
+                    border_style="cyan"
+                ))
+        else:
+            console.print("❌ [bold red]审查失败[/bold red]")
+        
+        console.print(f"\n[dim]执行ID: {result['execution_id']}[/dim]")
+        console.print("=" * 60)
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+        import traceback
+        traceback.print_exc()
+
+
 def main():
     """入口点"""
     cli()
