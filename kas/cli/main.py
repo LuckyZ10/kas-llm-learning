@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich.text import Text
+from dataclasses import asdict
 
 from kas.core.ingestion import ingest_project
 from kas.core.fusion import fuse_agents
@@ -17,6 +18,7 @@ from kas.core.llm_learning import LLMEnhancedLearningEngine
 from kas.core.config import get_config, init_config, setup_wizard
 from kas.core.versioning import get_version_manager, auto_save_on_evolve
 from kas.core.market import get_market, pack_agent, unpack_agent
+from kas.core.validation import CapabilityValidator, validate_agent
 
 console = Console()
 
@@ -673,6 +675,90 @@ def market_stats():
         
     except Exception as e:
         console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+@click.argument('agent')
+@click.option('--capability', '-c', help='只测试特定能力 (code_review/documentation/debugging)')
+@click.option('--output', '-o', help='保存报告到文件')
+def validate(agent, capability, output):
+    """✅ 验证 Agent 能力"""
+    try:
+        from kas.core.models import Agent
+        
+        # 加载 Agent
+        agent_dir = Path.home() / '.kas' / 'agents' / agent
+        if not agent_dir.exists():
+            console.print(f"❌ Agent not found: {agent}")
+            return
+        
+        with open(agent_dir / 'agent.yaml', 'r') as f:
+            import yaml
+            agent_data = yaml.safe_load(f)
+        
+        agent_obj = Agent.from_dict(agent_data)
+        
+        console.print(f"\n🧪 [bold blue]开始验证 {agent}...[/bold blue]")
+        console.print(f"   测试能力: {', '.join(c.name for c in agent_obj.capabilities)}\n")
+        
+        # 获取 LLM 客户端
+        llm_client = get_llm_client()
+        if not llm_client:
+            console.print("⚠️  未配置 LLM API，无法验证")
+            console.print("💡 运行 'kas config-setup' 配置 API Key")
+            return
+        
+        # 创建验证器
+        validator = CapabilityValidator(llm_client)
+        
+        # 运行测试
+        if capability:
+            from kas.core.models import CapabilityType
+            cap_map = {
+                'code_review': CapabilityType.CODE_REVIEW,
+                'documentation': CapabilityType.DOCUMENTATION,
+                'debugging': CapabilityType.DEBUGGING
+            }
+            cap_type = cap_map.get(capability.lower())
+            if cap_type:
+                report = validator.validate_capability(agent_obj, cap_type)
+            else:
+                console.print(f"❌ 未知能力: {capability}")
+                return
+        else:
+            report = validator.validate(agent_obj)
+        
+        # 显示报告
+        console.print(validator.format_report(report))
+        
+        # 保存报告
+        if output:
+            import json
+            report_dict = {
+                'agent_name': report.agent_name,
+                'agent_version': report.agent_version,
+                'timestamp': report.timestamp,
+                'overall_score': report.overall_score,
+                'total_tests': report.total_tests,
+                'passed_tests': report.passed_tests,
+                'failed_tests': report.failed_tests,
+                'capability_scores': report.capability_scores,
+                'summary': report.summary,
+                'recommendations': report.recommendations,
+                'results': [asdict(r) for r in report.results]
+            }
+            with open(output, 'w') as f:
+                json.dump(report_dict, f, indent=2, ensure_ascii=False)
+            console.print(f"\n💾 报告已保存: {output}")
+        
+        # 建议
+        if report.overall_score < 60:
+            console.print(f"\n💡 建议运行 'kas evolve {agent} --force' 来提升能力")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+        import traceback
+        traceback.print_exc()
 
 
 def main():
