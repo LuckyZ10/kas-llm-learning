@@ -1996,6 +1996,361 @@ def web(host, port, reload):
         console.print(f"❌ [bold red]Error:[/bold red] {e}")
 
 
+# ========== Crew 特种部队 ==========
+
+@cli.group()
+def crew():
+    """Agent 特种部队管理"""
+    pass
+
+
+@crew.command('create')
+@click.argument('name')
+@click.option('--description', '-d', default='', help='Crew 描述')
+@click.option('--members', '-m', help='Agent 列表，逗号分隔 (如: alice,bob,carol)')
+def crew_create(name, description, members):
+    """创建新的 Crew"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor, CrewConfig
+        
+        supervisor = SandboxSupervisor()
+        
+        # 解析成员
+        member_list = []
+        if members:
+            for member_name in members.split(','):
+                member_name = member_name.strip()
+                member_list.append({
+                    'name': member_name,
+                    'role': 'member',
+                    'description': f'Agent {member_name}'
+                })
+        
+        config = CrewConfig(
+            name=name,
+            description=description,
+            members=member_list
+        )
+        
+        crew_path = supervisor.create_crew(config)
+        
+        console.print(f"✅ [bold green]Crew 创建成功:[/bold green] {name}")
+        console.print(f"   路径: {crew_path}")
+        console.print(f"   成员: {len(member_list)} 人")
+        
+        if member_list:
+            console.print("\n👥 成员列表:")
+            for member in member_list:
+                console.print(f"   - [cyan]{member['name']}[/cyan]")
+        
+        console.print(f"\n💡 下一步:")
+        console.print(f"   注入 Agent: [bold]kas crew inject {name} <agent-name>[/bold]")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@crew.command('list')
+def crew_list():
+    """列出所有 Crew"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        
+        supervisor = SandboxSupervisor()
+        crews = supervisor.list_crews()
+        
+        if not crews:
+            console.print("📂 暂无 Crew，创建第一个:")
+            console.print("   [bold]kas crew create MyCrew -m alice,bob[/bold]")
+            return
+        
+        table = Table(title="Crew 列表")
+        table.add_column("名称", style="cyan")
+        table.add_column("成员数", style="green")
+        table.add_column("协调员", style="yellow")
+        table.add_column("状态", style="dim")
+        
+        for crew_name in crews:
+            status = supervisor.get_crew_status(crew_name)
+            running_count = sum(
+                1 for s in status.get('sandboxes', {}).values()
+                if s.get('state') == 'running'
+            )
+            table.add_row(
+                crew_name,
+                str(status.get('members', 0)),
+                status.get('coordinator', '-') or '-',
+                f"{running_count}/{status.get('members', 0)} 运行中"
+            )
+        
+        console.print(table)
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@crew.command('show')
+@click.argument('name')
+def crew_show(name):
+    """查看 Crew 详情"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        
+        supervisor = SandboxSupervisor()
+        crew = supervisor.load_crew(name)
+        
+        if not crew:
+            console.print(f"❌ Crew 不存在: {name}")
+            return
+        
+        status = supervisor.get_crew_status(name)
+        
+        # 显示基本信息
+        console.print(Panel.fit(
+            f"[bold cyan]{crew.name}[/bold cyan]\n"
+            f"[dim]{crew.description or '无描述'}[/dim]\n"
+            f"协调员: [yellow]{crew.coordinator or '未指定'}[/yellow]",
+            title="Crew 信息"
+        ))
+        
+        # 显示成员状态
+        table = Table(title="成员状态")
+        table.add_column("Agent", style="cyan")
+        table.add_column("角色", style="dim")
+        table.add_column("状态", style="green")
+        table.add_column("消息数", style="blue")
+        
+        for agent_name, agent_status in status.get('sandboxes', {}).items():
+            member_info = next(
+                (m for m in crew.members if m['name'] == agent_name),
+                {'role': 'member'}
+            )
+            
+            state = agent_status.get('state', 'unknown')
+            state_style = {
+                'running': 'green',
+                'stopped': 'dim',
+                'error': 'red',
+                'starting': 'yellow'
+            }.get(state, 'white')
+            
+            table.add_row(
+                agent_name,
+                member_info.get('role', 'member'),
+                f"[{state_style}]{state}[/{state_style}]",
+                str(agent_status.get('message_count', 0))
+            )
+        
+        console.print(table)
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@crew.command('inject')
+@click.argument('crew_name')
+@click.argument('agent_name')
+def crew_inject(crew_name, agent_name):
+    """将 Agent 注入 Crew"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        from kas.core.config import get_config
+        import yaml
+        
+        supervisor = SandboxSupervisor()
+        
+        # 加载 Agent 配置
+        config = get_config()
+        agent_path = Path(config.agents_dir) / agent_name / 'agent.yaml'
+        
+        if not agent_path.exists():
+            console.print(f"❌ Agent 不存在: {agent_name}")
+            return
+        
+        with open(agent_path, 'r', encoding='utf-8') as f:
+            agent_config = yaml.safe_load(f)
+        
+        # 注入沙盒
+        sandbox_config = supervisor.inject_agent(crew_name, agent_config)
+        
+        if sandbox_config:
+            console.print(f"✅ [bold green]Agent 注入成功:[/bold green]")
+            console.print(f"   Agent: [cyan]{agent_name}[/cyan]")
+            console.print(f"   Crew: [cyan]{crew_name}[/cyan]")
+            console.print(f"   路径: {sandbox_config.workspace_path}")
+            
+            console.print(f"\n💡 生成的文件:")
+            for file in ['SOUL.md', 'AGENTS.md', 'TOOLS.md', 'USER.md']:
+                file_path = sandbox_config.workspace_path / file
+                if file_path.exists():
+                    console.print(f"   ✓ {file}")
+        else:
+            console.print(f"❌ 注入失败")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@crew.command('start')
+@click.argument('name')
+@click.option('--mock', is_flag=True, help='使用模拟模式')
+def crew_start(name, mock):
+    """启动 Crew 的所有沙盒"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        
+        supervisor = SandboxSupervisor()
+        
+        console.print(f"🚀 启动 Crew: [bold]{name}[/bold]\n")
+        
+        with console.status("[bold green]启动中..."):
+            results = supervisor.start_crew(name, use_mock=mock)
+        
+        # 显示结果
+        table = Table(title="启动结果")
+        table.add_column("Agent", style="cyan")
+        table.add_column("状态", style="green")
+        
+        for agent_name, success in results.items():
+            status = "✅ 运行中" if success else "❌ 失败"
+            style = "green" if success else "red"
+            table.add_row(agent_name, f"[{style}]{status}[/{style}]")
+        
+        console.print(table)
+        
+        # 显示协调员
+        crew = supervisor.load_crew(name)
+        if crew and crew.coordinator:
+            console.print(f"\n👑 协调员: [yellow]{crew.coordinator}[/yellow]")
+        
+        console.print(f"\n💡 发送任务:")
+        console.print(f"   [bold]kas crew dispatch {name} <agent> '任务描述'[/bold]")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@crew.command('stop')
+@click.argument('name')
+def crew_stop(name):
+    """停止 Crew"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        
+        supervisor = SandboxSupervisor()
+        
+        console.print(f"🛑 停止 Crew: [bold]{name}[/bold]")
+        
+        supervisor.stop_crew(name)
+        
+        console.print("✅ [bold green]已停止[/bold green]")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@crew.command('dispatch')
+@click.argument('crew_name')
+@click.argument('agent_name')
+@click.argument('task')
+@click.option('--context', '-c', help='JSON 上下文')
+@click.option('--wait', '-w', is_flag=True, help='等待结果')
+@click.option('--timeout', '-t', default=30, help='等待超时(秒)')
+def crew_dispatch(crew_name, agent_name, task, context, wait, timeout):
+    """分发任务给 Agent"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        import json
+        
+        supervisor = SandboxSupervisor()
+        
+        # 解析上下文
+        ctx = {}
+        if context:
+            ctx = json.loads(context)
+        
+        console.print(f"📨 分发任务:\n   Agent: [cyan]{agent_name}[/cyan]")
+        console.print(f"   任务: [dim]{task[:50]}...[/dim]" if len(task) > 50 else f"   任务: {task}")
+        
+        if wait:
+            with console.status(f"[bold green]等待结果 (最多{timeout}s)..."):
+                result = supervisor.dispatch_task(
+                    crew_name, agent_name, task, ctx,
+                    wait_result=True, timeout=timeout
+                )
+            
+            if result:
+                console.print("\n✅ [bold]结果:[/bold]")
+                console.print_json(data=result if isinstance(result, dict) else {"result": result})
+            else:
+                console.print("\n⚠️ [yellow]超时或未返回结果[/yellow]")
+        else:
+            msg_id = supervisor.dispatch_task(
+                crew_name, agent_name, task, ctx, wait_result=False
+            )
+            console.print(f"\n✅ 任务已发送 (ID: [dim]{msg_id[:16]}...[/dim])")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@crew.command('elect')
+@click.argument('crew_name')
+def crew_elect(crew_name):
+    """选举协调员"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        
+        supervisor = SandboxSupervisor()
+        coordinator = supervisor.elect_coordinator(crew_name)
+        
+        if coordinator:
+            console.print(f"👑 协调员: [bold yellow]{coordinator}[/bold yellow]")
+        else:
+            console.print("❌ 选举失败")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@crew.command('switch')
+@click.argument('crew_name')
+@click.argument('new_coordinator')
+def crew_switch(crew_name, new_coordinator):
+    """切换协调员"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        
+        supervisor = SandboxSupervisor()
+        
+        if supervisor.switch_coordinator(crew_name, new_coordinator):
+            console.print(f"👑 协调员切换: [bold yellow]{new_coordinator}[/bold yellow]")
+        else:
+            console.print("❌ 切换失败")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@crew.command('delete')
+@click.argument('name')
+@click.confirmation_option(prompt='确认删除? 这将删除所有沙盒数据!')
+def crew_delete(name):
+    """删除 Crew"""
+    try:
+        from kas.core.sandbox.supervisor import SandboxSupervisor
+        
+        supervisor = SandboxSupervisor()
+        
+        if supervisor.delete_crew(name):
+            console.print(f"🗑️  [bold]Crew 已删除:[/bold] {name}")
+        else:
+            console.print(f"❌ 删除失败或不存在")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
 def main():
     """入口点"""
     cli()
