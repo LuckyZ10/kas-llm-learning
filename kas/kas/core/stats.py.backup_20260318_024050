@@ -120,7 +120,7 @@ class AnalyticsDatabase:
         """记录对话"""
         cursor = self.conn.cursor()
         cursor.execute('''
-            INSERT OR REPLACE INTO conversations
+            INSERT OR REPLACE INTO conversations 
             (id, agent_name, timestamp, message_count, response_time_avg,
              token_input, token_output, user_rating)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -222,7 +222,7 @@ class AnalyticsDatabase:
         
         # 一次性查询所有日期的数据（使用 SQLite date 函数）
         cursor.execute('''
-            SELECT
+            SELECT 
                 date(timestamp) as date,
                 COUNT(*) as conversations,
                 SUM(message_count) as messages,
@@ -354,7 +354,7 @@ def get_dashboard() -> StatsDashboard:
     return StatsDashboard()
 
 
-def record_conversation(agent_name: str, message_count: int,
+def record_conversation(agent_name: str, message_count: int, 
                        response_time: float, tokens: int = 0):
     """记录对话（便捷函数）"""
     db = AnalyticsDatabase()

@@ -21,7 +21,7 @@ class CrewMemory:
     shared_knowledge: Dict[str, Any] = field(default_factory=dict)
     agent_summaries: Dict[str, str] = field(default_factory=dict)
     
-    def add_conversation(self, agent_name: str, role: str, content: str,
+    def add_conversation(self, agent_name: str, role: str, content: str, 
                          message_type: str = "message"):
         """添加对话记录"""
         self.conversations.append({
@@ -315,7 +315,7 @@ class LayeredMemory:
     
     # ==================== Task 层 ====================
     
-    def build_task_context(self, task_description: str,
+    def build_task_context(self, task_description: str, 
                           previous_results: Dict[str, Any] = None) -> str:
         """
         构建任务上下文

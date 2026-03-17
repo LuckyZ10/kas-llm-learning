@@ -96,8 +96,8 @@ class KnowledgeBase:
         return None  # 使用默认
     
     def add_document(
-        self,
-        content: str,
+        self, 
+        content: str, 
         metadata: Optional[Dict[str, Any]] = None,
         doc_id: Optional[str] = None
     ) -> str:
@@ -143,8 +143,8 @@ class KnowledgeBase:
         return doc_id
     
     def add_documents(
-        self,
-        contents: List[str],
+        self, 
+        contents: List[str], 
         metadatas: Optional[List[Dict]] = None
     ) -> List[str]:
         """
@@ -187,8 +187,8 @@ class KnowledgeBase:
         return doc_ids
     
     def search(
-        self,
-        query: str,
+        self, 
+        query: str, 
         top_k: int = 5,
         filter_dict: Optional[Dict] = None
     ) -> List[SearchResult]:

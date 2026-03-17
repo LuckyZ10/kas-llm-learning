@@ -138,7 +138,7 @@ class WorkflowEngine:
         with open(yaml_path, 'w', encoding='utf-8') as f:
             yaml.dump(workflow.to_dict(), f, allow_unicode=True, sort_keys=False)
     
-    def execute(self, crew_name: str, workflow: Workflow,
+    def execute(self, crew_name: str, workflow: Workflow, 
                 context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         执行工作流

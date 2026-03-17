@@ -34,7 +34,7 @@ class SoulInjector:
     """
     灵魂注入器 - 将 KAS Agent 转换为 OpenClaw 沙盒配置
     
-    KAS Agent (agent.yaml)
+    KAS Agent (agent.yaml) 
         ↓ SoulInjector
     OpenClaw 沙盒/
     ├── SOUL.md         # 灵魂 (system_prompt)

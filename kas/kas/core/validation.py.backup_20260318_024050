@@ -118,7 +118,7 @@ class CodeReviewTest(TestCase):
             "expected_keywords": ["None", "null", "检查", "判空"]
         },
         {
-            "id": "cr_2",
+            "id": "cr_2", 
             "name": "资源泄露",
             "code": '''def read_file(path):
     f = open(path, 'r')

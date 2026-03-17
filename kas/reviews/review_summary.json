@@ -1,0 +1,13 @@
+[
+  {
+    "timestamp": "2026-03-18T02:40:50.585198",
+    "total_files": 40,
+    "files_with_issues": 33,
+    "total_issues": 2505,
+    "critical": 0,
+    "high": 10,
+    "auto_fix_attempted": 2505,
+    "auto_fix_success": 48,
+    "report_path": "/root/.openclaw/workspace/kas/reviews/code_review_20260318_024050.md"
+  }
+]

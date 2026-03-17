@@ -60,10 +60,10 @@ def get_stats_data() -> Dict:
     
     # 能力使用统计
     cursor.execute('''
-        SELECT capability, COUNT(*) as count
-        FROM capability_usage
-        GROUP BY capability
-        ORDER BY count DESC
+        SELECT capability, COUNT(*) as count 
+        FROM capability_usage 
+        GROUP BY capability 
+        ORDER BY count DESC 
         LIMIT 10
     ''')
     capability_stats = [
@@ -119,7 +119,7 @@ def api_conversations():
         db = get_db()
         cursor = db.conn.cursor()
         cursor.execute('''
-            SELECT id, agent_name, timestamp, message_count,
+            SELECT id, agent_name, timestamp, message_count, 
                    token_input + token_output as tokens
             FROM conversations
             ORDER BY timestamp DESC

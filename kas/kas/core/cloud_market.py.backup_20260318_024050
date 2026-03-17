@@ -83,10 +83,10 @@ class CloudMarketClient:
         try:
             response = self.session.get(f"{self.api_url}/health", timeout=5)
             return response.status_code == 200
-        except Exception:
+        except:
             return False
     
-    def search(self, query: str = "", tags: Optional[List[str]] = None,
+    def search(self, query: str = "", tags: Optional[List[str]] = None, 
                limit: int = 20) -> List[CloudPackageInfo]:
         """
         搜索云端 Agent
@@ -152,7 +152,7 @@ class CloudMarketClient:
         with open(package_path, 'rb') as f:
             files = {'file': (f"{name}-{version}.kas-agent", f, 'application/octet-stream')}
             response = self._request(
-                'POST',
+                'POST', 
                 '/api/v1/market/publish',
                 data={'package': json.dumps(data)},
                 files=files

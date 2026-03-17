@@ -276,13 +276,13 @@ class TextProcessor(FileProcessor):
             try:
                 import json
                 parsed_content = json.loads(text_content)
-            except Exception:
+            except:
                 pass
         elif ext in ['.yaml', '.yml']:
             try:
                 import yaml
                 parsed_content = yaml.safe_load(text_content)
-            except Exception:
+            except:
                 pass
         
         return ProcessedFile(

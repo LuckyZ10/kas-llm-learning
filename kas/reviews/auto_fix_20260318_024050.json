@@ -1,0 +1,295 @@
+{
+  "attempted": 2505,
+  "success": 48,
+  "failed": 2457,
+  "details": [
+    {
+      "file": "/root/.openclaw/workspace/kas/setup.py",
+      "line": 45,
+      "original": "'all': ['openai>=1.0.0', 'fastapi>=0.109.0', 'uvicorn>=0.27.0',",
+      "fixed": "'all': ['openai>=1.0.0', 'fastapi>=0.109.0', 'uvicorn>=0.27.0',"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/scripts/auto_code_review.py",
+      "line": 188,
+      "original": "except:",
+      "fixed": "except Exception:"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/scripts/auto_code_review.py",
+      "line": 66,
+      "original": "fixed_line = original_line.replace(\"== None\", \"is None\")",
+      "fixed": "fixed_line = original_line.replace(\"is None\", \"is None\")"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/scripts/auto_code_review.py",
+      "line": 65,
+      "original": "elif \"== None\" in original_line:",
+      "fixed": "elif \"is None\" in original_line:"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/scripts/auto_code_review.py",
+      "line": 63,
+      "original": "fixed_line = original_line.replace(\"== False\", \"is False\")",
+      "fixed": "fixed_line = original_line.replace(\"is False\", \"is False\")"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/scripts/auto_code_review.py",
+      "line": 62,
+      "original": "elif \"== False\" in original_line:",
+      "fixed": "elif \"is False\" in original_line:"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/scripts/auto_code_review.py",
+      "line": 60,
+      "original": "fixed_line = original_line.replace(\"== True\", \"is True\")",
+      "fixed": "fixed_line = original_line.replace(\"is True\", \"is True\")"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/scripts/auto_code_review.py",
+      "line": 59,
+      "original": "elif \"== True\" in original_line:",
+      "fixed": "elif \"is True\" in original_line:"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/scripts/auto_code_review.py",
+      "line": 57,
+      "original": "fixed_line = original_line.replace(\"except:\", \"except Exception:\")",
+      "fixed": "fixed_line = original_line.replace(\"except Exception:\", \"except Exception:\")"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/multimodal.py",
+      "line": 285,
+      "original": "except:",
+      "fixed": "except Exception:"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/multimodal.py",
+      "line": 279,
+      "original": "except:",
+      "fixed": "except Exception:"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/crew_workflow.py",
+      "line": 141,
+      "original": "def execute(self, crew_name: str, workflow: Workflow,",
+      "fixed": "def execute(self, crew_name: str, workflow: Workflow,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/crew_memory.py",
+      "line": 318,
+      "original": "def build_task_context(self, task_description: str,",
+      "fixed": "def build_task_context(self, task_description: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/crew_memory.py",
+      "line": 24,
+      "original": "def add_conversation(self, agent_name: str, role: str, content: str,",
+      "fixed": "def add_conversation(self, agent_name: str, role: str, content: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/rag_chat.py",
+      "line": 89,
+      "original": "system_prompt: str,",
+      "fixed": "system_prompt: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/rag_chat.py",
+      "line": 88,
+      "original": "self,",
+      "fixed": "self,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/crew_demo.py",
+      "line": 232,
+      "original": "agent=\"Carol\",",
+      "fixed": "agent=\"Carol\","
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/crew_demo.py",
+      "line": 83,
+      "original": "\"role\": \"legal_analyst\",",
+      "fixed": "\"role\": \"legal_analyst\","
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/crew_demo.py",
+      "line": 67,
+      "original": "\"name\": \"Bob\",",
+      "fixed": "\"name\": \"Bob\","
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/stats.py",
+      "line": 357,
+      "original": "def record_conversation(agent_name: str, message_count: int,",
+      "fixed": "def record_conversation(agent_name: str, message_count: int,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/stats.py",
+      "line": 225,
+      "original": "SELECT",
+      "fixed": "SELECT"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/stats.py",
+      "line": 123,
+      "original": "INSERT OR REPLACE INTO conversations",
+      "fixed": "INSERT OR REPLACE INTO conversations"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cloud_market.py",
+      "line": 155,
+      "original": "'POST',",
+      "fixed": "'POST',"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cloud_market.py",
+      "line": 89,
+      "original": "def search(self, query: str = \"\", tags: Optional[List[str]] = None,",
+      "fixed": "def search(self, query: str = \"\", tags: Optional[List[str]] = None,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cloud_market.py",
+      "line": 86,
+      "original": "except:",
+      "fixed": "except Exception:"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/validation.py",
+      "line": 121,
+      "original": "\"id\": \"cr_2\",",
+      "fixed": "\"id\": \"cr_2\","
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/llm_learning.py",
+      "line": 434,
+      "original": "def analyze(self, agent_name: str, capabilities: List[str],",
+      "fixed": "def analyze(self, agent_name: str, capabilities: List[str],"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/knowledge.py",
+      "line": 191,
+      "original": "query: str,",
+      "fixed": "query: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/knowledge.py",
+      "line": 190,
+      "original": "self,",
+      "fixed": "self,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/knowledge.py",
+      "line": 147,
+      "original": "contents: List[str],",
+      "fixed": "contents: List[str],"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/knowledge.py",
+      "line": 146,
+      "original": "self,",
+      "fixed": "self,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/knowledge.py",
+      "line": 100,
+      "original": "content: str,",
+      "fixed": "content: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/knowledge.py",
+      "line": 99,
+      "original": "self,",
+      "fixed": "self,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/code_reviewer.py",
+      "line": 379,
+      "original": "\"critical\": \"🔴\", \"high\": \"🟠\",",
+      "fixed": "\"critical\": \"🔴\", \"high\": \"🟠\","
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/code_reviewer.py",
+      "line": 374,
+      "original": "sorted_issues = sorted(result.issues,",
+      "fixed": "sorted_issues = sorted(result.issues,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/code_reviewer.py",
+      "line": 320,
+      "original": "return issue.code_snippet.replace(\"== None\", \"is None\")",
+      "fixed": "return issue.code_snippet.replace(\"is None\", \"is None\")"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/code_reviewer.py",
+      "line": 319,
+      "original": "if \"== None\" in issue.code_snippet:",
+      "fixed": "if \"is None\" in issue.code_snippet:"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/code_reviewer.py",
+      "line": 317,
+      "original": "return issue.code_snippet.replace(\"== False\", \"is False\")",
+      "fixed": "return issue.code_snippet.replace(\"is False\", \"is False\")"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/code_reviewer.py",
+      "line": 316,
+      "original": "if \"== False\" in issue.code_snippet:",
+      "fixed": "if \"is False\" in issue.code_snippet:"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/code_reviewer.py",
+      "line": 314,
+      "original": "return issue.code_snippet.replace(\"== True\", \"is True\")",
+      "fixed": "return issue.code_snippet.replace(\"is True\", \"is True\")"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/code_reviewer.py",
+      "line": 313,
+      "original": "if \"== True\" in issue.code_snippet:",
+      "fixed": "if \"is True\" in issue.code_snippet:"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/code_reviewer.py",
+      "line": 311,
+      "original": "return issue.code_snippet.replace(\"except:\", \"except Exception:\")",
+      "fixed": "return issue.code_snippet.replace(\"except Exception:\", \"except Exception:\")"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/dashboard/app.py",
+      "line": 122,
+      "original": "SELECT id, agent_name, timestamp, message_count,",
+      "fixed": "SELECT id, agent_name, timestamp, message_count,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/dashboard/app.py",
+      "line": 66,
+      "original": "ORDER BY count DESC",
+      "fixed": "ORDER BY count DESC"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/dashboard/app.py",
+      "line": 65,
+      "original": "GROUP BY capability",
+      "fixed": "GROUP BY capability"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/dashboard/app.py",
+      "line": 64,
+      "original": "FROM capability_usage",
+      "fixed": "FROM capability_usage"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/dashboard/app.py",
+      "line": 63,
+      "original": "SELECT capability, COUNT(*) as count",
+      "fixed": "SELECT capability, COUNT(*) as count"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/sandbox/__init__.py",
+      "line": 37,
+      "original": "KAS Agent (agent.yaml)",
+      "fixed": "KAS Agent (agent.yaml)"
+    }
+  ]
+}
