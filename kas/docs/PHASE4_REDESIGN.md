@@ -321,17 +321,36 @@ David: "我写报告" → David 成为临时协调员
         需要修改哪里吗？"
 ```
 
+**单 Agent 退化**: 当 Crew 只有 1 个 Agent 时，自动退化为 OpenClaw 模式
+```yaml
+# 单 Agent Crew = OpenClaw
+crew:
+  name: "SoloAgent"
+  members:
+    - name: "Assistant"
+      role: "general"
+  
+  # 退化行为:
+  # - 没有团队讨论
+  # - 没有协调员选举 (自己就是协调员)
+  # - 直接使用 Agent 的 system_prompt
+  # - 装备直接使用，不需要分配
+  # - 记忆 = Crew记忆 = Agent记忆 (同一层)
+```
+
 **选举逻辑**:
 - 需求确认阶段 → 最理解业务的 Agent 出面
 - 执行阶段 → 当前负责的 Agent 直接汇报进度
 - 有问题时 → 遇到问题的 Agent 直接询问
 - 结果汇总 → 负责最终交付的 Agent 出面
+- **单 Agent** → 自己完成所有角色，无选举过程
 
 **优势**:
 - 更自然，像真实团队讨论
 - 减少信息中转损耗
 - 每个 Agent 都有机会直接沟通
 - 问题能第一时间得到澄清
+- **向后兼容**: 单 Agent 就是 OpenClaw
 
 ### 4. 多模态输入
 支持的问题格式:
