@@ -1,0 +1,5 @@
+include README.md
+include LICENSE
+recursive-include kas *.py
+recursive-include kas *.yaml
+recursive-include kas *.txt
