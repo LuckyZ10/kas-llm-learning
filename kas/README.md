@@ -40,7 +40,7 @@ kas fuse agent1 agent2 --strategy synthesis --name "SuperAgent"
 
 ### 安装
 ```bash
-pip install kimi-agent-studio
+pip install klaw-agent-studio
 ```
 
 ### 配置
