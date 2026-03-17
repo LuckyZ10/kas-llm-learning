@@ -1037,6 +1037,229 @@ def dashboard(host, port, debug):
         console.print(f"❌ [bold red]Error:[/bold red] {e}")
 
 
+@cli.group()
+def knowledge():
+    """📚 知识库管理"""
+    pass
+
+
+@knowledge.command('add')
+@click.argument('agent')
+@click.argument('document')
+@click.option('--type', '-t', 'doc_type', default='file', 
+              type=click.Choice(['file', 'text', 'url']), help='文档类型')
+@click.option('--tag', multiple=True, help='文档标签')
+def knowledge_add(agent, document, doc_type, tag):
+    """添加文档到知识库"""
+    try:
+        from kas.core.knowledge import get_knowledge_base
+        
+        kb = get_knowledge_base(agent)
+        
+        # 读取文档内容
+        if doc_type == 'file':
+            doc_path = Path(document)
+            if not doc_path.exists():
+                console.print(f"❌ 文件不存在: {document}")
+                return
+            
+            content = doc_path.read_text(encoding='utf-8')
+            metadata = {
+                'source': str(doc_path),
+                'filename': doc_path.name,
+                'tags': list(tag) if tag else []
+            }
+            
+        elif doc_type == 'text':
+            content = document
+            metadata = {'tags': list(tag) if tag else []}
+            
+        elif doc_type == 'url':
+            import requests
+            response = requests.get(document, timeout=30)
+            content = response.text
+            metadata = {
+                'source': document,
+                'tags': list(tag) if tag else []
+            }
+        
+        # 添加到知识库
+        doc_id = kb.add_document(content, metadata)
+        
+        console.print(f"✅ 文档已添加到知识库")
+        console.print(f"   Agent: {agent}")
+        console.print(f"   ID: {doc_id[:16]}...")
+        console.print(f"   字符数: {len(content)}")
+        
+    except ImportError:
+        console.print("❌ 缺少依赖: pip install chromadb")
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@knowledge.command('search')
+@click.argument('agent')
+@click.argument('query')
+@click.option('--top', '-k', default=5, help='返回结果数量')
+@click.option('--score', '-s', is_flag=True, help='显示相似度分数')
+def knowledge_search(agent, query, top, score):
+    """搜索知识库"""
+    try:
+        from kas.core.knowledge import get_knowledge_base
+        from rich.table import Table
+        
+        kb = get_knowledge_base(agent)
+        results = kb.search(query, top_k=top)
+        
+        if not results:
+            console.print("📭 未找到相关文档")
+            return
+        
+        console.print(f"\n🔍 搜索: '{query}'")
+        console.print(f"   找到 {len(results)} 条结果\n")
+        
+        for i, result in enumerate(results, 1):
+            doc = result.document
+            preview = doc.content[:200].replace('\n', ' ') + "..."
+            
+            panel = Panel(
+                f"[dim]{preview}[/dim]",
+                title=f"#{i} [bold]{doc.metadata.get('filename', 'Document')}[/bold]",
+                subtitle=f"Score: {result.score:.3f}" if score else None,
+                border_style="blue"
+            )
+            console.print(panel)
+            
+    except ImportError:
+        console.print("❌ 缺少依赖: pip install chromadb")
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@knowledge.command('list')
+@click.argument('agent')
+@click.option('--limit', '-l', default=20, help='显示数量')
+def knowledge_list(agent, limit):
+    """列出知识库文档"""
+    try:
+        from kas.core.knowledge import get_knowledge_base
+        from rich.table import Table
+        
+        kb = get_knowledge_base(agent)
+        docs = kb.list_documents(limit=limit)
+        
+        if not docs:
+            console.print(f"📭 {agent} 的知识库为空")
+            return
+        
+        table = Table(title=f"📚 {agent} 知识库 ({kb.count()} 文档)")
+        table.add_column("ID", style="dim")
+        table.add_column("来源")
+        table.add_column("标签")
+        table.add_column("创建时间", style="dim")
+        
+        for doc in docs:
+            source = doc.metadata.get('filename', doc.metadata.get('source', 'Unknown'))
+            tags = ", ".join(doc.metadata.get('tags', [])) or "-"
+            created = doc.metadata.get('created_at', '-')[:10]
+            table.add_row(doc.id[:8], source[:30], tags, created)
+        
+        console.print(table)
+        
+    except ImportError:
+        console.print("❌ 缺少依赖: pip install chromadb")
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@knowledge.command('clear')
+@click.argument('agent')
+@click.confirmation_option(prompt='确定要清空知识库吗？')
+def knowledge_clear(agent):
+    """清空知识库"""
+    try:
+        from kas.core.knowledge import get_knowledge_base
+        
+        kb = get_knowledge_base(agent)
+        kb.clear()
+        
+        console.print(f"🗑️ {agent} 的知识库已清空")
+        
+    except ImportError:
+        console.print("❌ 缺少依赖: pip install chromadb")
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@cli.group()
+def memory():
+    """🧠 用户偏好记忆"""
+    pass
+
+
+@memory.command('show')
+@click.argument('agent')
+def memory_show(agent):
+    """查看记忆"""
+    try:
+        from kas.core.knowledge import get_user_memory
+        
+        mem = get_user_memory(agent)
+        data = mem.show()
+        
+        if not data:
+            console.print(f"📝 {agent} 没有记忆")
+            return
+        
+        console.print(f"\n🧠 {agent} 的记忆:")
+        console.print()
+        
+        for key, value in data.items():
+            if key != 'updated_at':
+                console.print(f"  [bold]{key}:[/bold] {value}")
+        
+        if 'updated_at' in data:
+            console.print(f"\n  [dim]更新时间: {data['updated_at']}[/dim]")
+            
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@memory.command('set')
+@click.argument('agent')
+@click.argument('key')
+@click.argument('value')
+def memory_set(agent, key, value):
+    """设置记忆"""
+    try:
+        from kas.core.knowledge import get_user_memory
+        
+        mem = get_user_memory(agent)
+        mem.set(key, value)
+        
+        console.print(f"✅ 已设置: {key} = {value}")
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@memory.command('clear')
+@click.argument('agent')
+@click.confirmation_option(prompt='确定要清空记忆吗？')
+def memory_clear(agent):
+    """清空记忆"""
+    try:
+        from kas.core.knowledge import get_user_memory
+        
+        mem = get_user_memory(agent)
+        mem.clear()
+        
+        console.print(f"🗑️ {agent} 的记忆已清空")
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
 def main():
     """入口点"""
     cli()
