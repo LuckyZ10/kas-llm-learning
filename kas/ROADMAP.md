@@ -1,16 +1,16 @@
 # KAS (Klaw Agent Studio) 完整路线图
 
-> 版本: v1.0
-> 最后更新: 2026-03-17
+> 版本: v1.1
+> 最后更新: 2026-03-18
 > 作者: Yilin.zhang
 
 ---
 
 ## 🎯 项目愿景
 
-**KAS = 代码吸血鬼 + Agent 孵化器 + 进化引擎**
+**KAS = 代码吸血鬼 + Agent 孵化器 + Agent 特种部队指挥系统**
 
-终极目标: 让任何人都能把代码项目变成专业的 AI Agent，并且让 Agent 自己不断学习和进化。
+终极目标: 从代码项目孵化 Agent，让多个 Agent 组成团队，装备各种工具，协作解决复杂问题。
 
 ---
 
@@ -30,315 +30,328 @@
 | 版本管理 | ✅ | `core/versioning.py` |
 | CLI 命令 | ✅ | `cli/main.py` |
 
-**CLI 命令**:
+---
+
+### Phase 2: 生态建设 ✅ (已完成)
+**时间**: 2026-03-17 完成
+**核心**: Agent 市场和能力验证
+
+| 功能 | 状态 | 文件 |
+|------|------|------|
+| Agent 市场 | ✅ | `core/market.py`, `core/cloud_market.py` |
+| 能力验证 | ✅ | `core/validation.py` |
+| 统计面板 | ✅ | `core/stats.py`, `dashboard/` |
+
+---
+
+### Phase 3: 智能化升级 ✅ (已完成)
+**时间**: 2026-03-18 完成
+**核心**: 知识库、工作流、A/B测试
+
+| 功能 | 状态 | 文件 |
+|------|------|------|
+| 知识库/RAG | ✅ | `core/knowledge.py`, `core/rag_chat.py` |
+| Agent 工作流 | ✅ | `core/workflow.py` |
+| A/B 测试 | ✅ | `core/abtest.py` |
+
+---
+
+### Phase 4: Agent 特种部队 (进行中 - 重新设计)
+**目标**: 从单个 Agent 升级为协作团队
+
+#### 4.1 网页界面 MVP ✅
+**状态**: 已完成
+**文件**: `kas/web/app.py`, `kas/web/static/index.html`
+
+**功能**:
+- FastAPI 后端 + 原生 JS 前端
+- Agent 列表/详情/对话
+- 市场搜索/安装
+- 统计数据可视化
+
+**CLI**:
 ```bash
-kas ingest <project>      # 吞食项目
-kas fuse <agents>         # 合体 Agent
-kas chat <agent>          # 对话
-kas evolve <agent>        # 进化
-kas config                # 配置管理
-kas versions <agent>      # 版本历史
-kas rollback <agent> <v>  # 回滚版本
+kas web [--host] [--port]  # 启动 Web 界面
 ```
 
 ---
 
-### Phase 2: 生态建设 (短期 - 1-2 周)
-**目标**: 让 Agent 可以分享和传播
-
-#### 2.1 Agent 市场 🛒
+#### 4.2 Agent 装备系统 🛠️ ⏳
 **优先级**: 🔴 P0
-**依赖**: 版本管理 ✅
-**工作量**: 3-4 天
+**依赖**: Web 界面 ✅
+**工作量**: 1 周
 
-**功能**:
-- `.kas-agent` 包格式规范
-- 打包/解包工具
-- 本地市场索引
-- 搜索/安装/发布
+**核心概念**: 每个 Agent 可以装备各种"武器"
 
-**CLI 命令**:
-```bash
-kas export <agent> -o my-agent.kas-agent    # 导出
-kas import my-agent.kas-agent               # 导入
-kas market search <keyword>                 # 搜索
-kas market install <name>                   # 安装
-kas market publish <agent>                  # 发布
-```
-
-**技术方案**:
-```python
-# .kas-agent 文件结构 (ZIP)
-MyAgent-v1.0.0.kas-agent
-├── agent.yaml           # 元数据
-├── system_prompt.txt    # Prompt
-├── capabilities.yaml    # 能力清单
-├── icon.png            # 图标(可选)
-└── manifest.json       # 校验信息
-```
-
----
-
-#### 2.2 能力验证系统 ✅
-**优先级**: 🔴 P0
-**依赖**: Agent 模型 ✅
-**工作量**: 4-5 天
-
-**功能**:
-- 自动化测试套件
-- 基准测试题目
-- 能力评分系统
-- 测试报告生成
-
-**CLI 命令**:
-```bash
-kas validate <agent>              # 运行所有测试
-kas validate <agent> --benchmark  # 基准测试
-kas validate <agent> --test coding # 特定能力测试
-kas report <agent>                # 生成能力报告
-```
-
-**技术方案**:
-```python
-# core/validation.py
-class CapabilityValidator:
-    def test_code_review(self, agent):
-        # 给 Agent 一段有 bug 的代码
-        # 检查是否能找出问题
-        pass
-    
-    def test_documentation(self, agent):
-        # 给 Agent 一段代码
-        # 检查生成的文档质量
-        pass
-```
-
----
-
-#### 2.3 使用统计面板 📊
-**优先级**: 🟡 P1
-**依赖**: 版本管理 ✅, LLM 学习 ✅
-**工作量**: 2-3 天
-
-**功能**:
-- 对话次数统计
-- 质量趋势图表
-- 能力使用频率
-- Token 消耗统计
-
-**CLI 命令**:
-```bash
-kas stats <agent>           # 查看统计
-kas stats <agent> --viz     # 生成可视化图表
-kas dashboard               # 启动本地仪表板
-```
-
-**技术方案**:
-- 数据存储: SQLite 或 JSON
-- 可视化: matplotlib / rich 图表
-- Web 仪表板: Flask + Chart.js (可选)
-
----
-
-### Phase 3: 智能化升级 (中期 - 2-4 周)
-**目标**: 让 Agent 更聪明、更有用
-
-#### 3.1 知识库/RAG系统 🧠
-**优先级**: 🔴 P0
-**依赖**: 配置管理 ✅
-**工作量**: 5-7 天
-
-**功能**:
-- 向量数据库存储 (FAISS/Chroma)
-- 项目知识库
-- 用户偏好记忆
-- RAG 检索增强
-
-**CLI 命令**:
-```bash
-kas knowledge add <agent> <document>    # 添加文档到知识库
-kas knowledge search <agent> <query>    # 搜索知识库
-kas memory show <agent>                 # 查看记忆
-kas memory clear <agent>                # 清空记忆
-```
-
-**技术方案**:
-```python
-# core/knowledge.py
-class KnowledgeBase:
-    def __init__(self, agent_name):
-        self.vector_store = ChromaDB()
-        self.embeddings = OpenAIEmbeddings()
-    
-    def add_document(self, content, metadata):
-        # 切分、嵌入、存储
-        pass
-    
-    def search(self, query, top_k=5):
-        # 向量相似度搜索
-        pass
-```
-
----
-
-#### 3.2 Agent 工作流 🔗
-**优先级**: 🟡 P1
-**依赖**: Agent 市场, 对话引擎 ✅
-**工作量**: 5-7 天
-
-**功能**:
-- 多 Agent 协作
-- 工作流编排
-- 任务分发
-- 结果汇总
-
-**CLI 命令**:
-```bash
-kas workflow create my-flow         # 创建工作流
-kas workflow add my-flow agent1     # 添加 Agent
-kas workflow add my-flow agent2
-kas workflow run my-flow "任务描述"  # 执行工作流
-```
-
-**使用场景**:
 ```yaml
-# workflow.yaml
-name: "代码审查流程"
-steps:
-  - agent: "CodeReviewer"
-    task: "审查代码"
-  - agent: "DocWriter"
-    task: "根据审查意见写文档"
-    depends_on: [0]
-  - agent: "TestGenerator"
-    task: "生成测试用例"
-    depends_on: [0]
+# agent.yaml 扩展
+name: "ResearchAgent"
+equipment:
+  - type: mcp
+    name: "web_search"
+    config: { engine: "duckduckgo" }
+  - type: mcp
+    name: "ocr"
+    config: { language: "zh+en" }
+  - type: plugin
+    name: "pdf_parser"
+  - type: plugin
+    name: "code_executor"
+    config: { sandbox: "docker" }
 ```
 
----
+**内置装备清单**:
+| 装备 | 功能 | 场景 |
+|------|------|------|
+| `web_search` | 联网搜索 | 获取最新信息 |
+| `ocr` | 图片文字识别 | 处理扫描件 |
+| `pdf_parser` | PDF 解析 | 文档分析 |
+| `code_executor` | 代码执行(沙箱) | 验证代码 |
+| `file_reader` | 文件读取 | 处理各种格式 |
+| `image_analysis` | 图片分析 | 理解图像内容 |
 
-#### 3.3 A/B 测试系统 🧪
-**优先级**: 🟡 P1
-**依赖**: 版本管理 ✅, 统计面板
-**工作量**: 3-4 天
-
-**功能**:
-- 两个版本并行测试
-- 用户盲测
-- 自动选择优胜者
-- 统计显著性检验
-
-**CLI 命令**:
+**CLI**:
 ```bash
-kas abtest start <agent> <v1> <v2>    # 开始 A/B 测试
-kas abtest status <test-id>           # 查看测试状态
-kas abtest winner <test-id>           # 宣布优胜者
+kas equip list                           # 列出可用装备
+kas equip add MyAgent web_search         # 给 Agent 添加装备
+kas equip remove MyAgent ocr             # 移除装备
+kas equip show MyAgent                   # 查看已装备
 ```
 
----
-
-### Phase 4: 产品化 (长期 - 1-2 月)
-**目标**: 从工具变成产品
-
-#### 4.1 网页界面 🌐
-**优先级**: 🟡 P1
-**依赖**: 所有核心功能
-**工作量**: 2-3 周
-
-**功能**:
-- 可视化 Agent 管理
-- 拖拽式工作流编排
-- 实时对话界面
-- 图表 Dashboard
-
-**技术栈**:
-- 后端: FastAPI
-- 前端: React + TypeScript
-- 实时: WebSocket
-- 部署: Docker
-
-**页面**:
-- 首页: Agent 列表
-- 创建页: 上传代码/配置参数
-- 对话页: 类似 ChatGPT 界面
-- 进化页: 显示学习进度
-- 市场页: 浏览/安装 Agent
-
----
-
-#### 4.2 插件系统 🔌
-**优先级**: 🟢 P2
-**依赖**: 核心功能稳定
-**工作量**: 2 周
-
-**功能**:
-- 第三方扩展机制
-- Hook 系统
-- 插件市场
-
-**示例插件**:
+**技术方案**:
 ```python
-# my_plugin.py
-class MyPlugin:
-    def on_ingestion_complete(self, agent):
-        # 吞食完成后自动执行
-        send_email(f"Agent {agent.name} 创建成功!")
-    
-    def on_chat_response(self, agent, response):
-        # 每次对话后处理
-        log_to_file(response)
+# core/equipment.py
+class Equipment(ABC):
+    @abstractmethod
+    def use(self, params: dict) -> Any:
+        pass
+
+class MCPEquipment(Equipment):
+    """MCP 协议装备"""
+    def use(self, params):
+        # 调用 MCP Server
+        pass
+
+class PluginEquipment(Equipment):
+    """内置插件装备"""
+    def use(self, params):
+        # 调用本地插件
+        pass
+
+# Agent 使用装备
+class Agent:
+    def use_tool(self, name: str, params: dict):
+        equip = self.get_equipment(name)
+        return equip.use(params)
 ```
 
 ---
 
-#### 4.3 多模态支持 🖼️
-**优先级**: 🟢 P2
-**依赖**: 网页界面
-**工作量**: 1-2 周
+#### 4.3 多模态输入 📁 ⏳
+**优先级**: 🔴 P0
+**依赖**: Web 界面 ✅
+**工作量**: 3 天
 
 **功能**:
-- 图片分析 (OCR/理解)
-- PDF 文档处理
-- 代码截图识别
-- 架构图生成
+- 文件上传 (PDF, 图片, 代码文件)
+- 图片 OCR 预处理
+- PDF 文本提取
+- 附件传递给 Agent
+
+**CLI**:
+```bash
+kas chat MyAgent "分析这份合同" --attach contract.pdf --attach photo.jpg
+```
+
+**Web**:
+```
+用户上传文件 → 预处理器 → Agent 获取内容
+              ↓
+         PDF → pdf_parser
+         JPG → ocr / image_analysis
+         PY  → file_reader
+```
 
 ---
 
-### Phase 5: 企业级功能 (长期 - 2-3 月)
+#### 4.4 Agent 团队 (Crew) 👥 ⏳
+**优先级**: 🔴 P0
+**依赖**: 装备系统, 多模态
+**工作量**: 1 周
+
+**核心概念**: 多个 Agent 组成团队，分工协作
+
+```yaml
+# crew.yaml
+name: "ContractReviewCrew"
+description: "合同审查团队"
+
+members:
+  - name: "Alice"
+    role: "coordinator"      # 协调员角色
+    description: "法律背景，协调沟通"
+    equipment: ["web_search", "file_reader"]
+    
+  - name: "Bob"
+    role: "ocr_expert"
+    description: "OCR 专家，处理扫描件"
+    equipment: ["ocr", "image_analysis"]
+    
+  - name: "Carol"
+    role: "legal_analyst"
+    description: "法律分析师，提取关键信息"
+    equipment: ["pdf_parser", "web_search"]
+    
+  - name: "David"
+    role: "writer"
+    description: "报告撰写员"
+    equipment: ["file_reader"]
+
+workflow:
+  - step: 1
+    agent: "Alice"
+    task: "理解用户需求，确认文档类型"
+    
+  - step: 2
+    agent: "Bob"
+    task: "对图片/扫描件进行 OCR"
+    condition: "if input.has_image"
+    
+  - step: 3
+    agent: "Carol"
+    task: "分析文档内容，提取关键信息"
+    depends_on: [2]
+    
+  - step: 4
+    agent: "David"
+    task: "撰写分析报告"
+    depends_on: [3]
+    
+  - step: 5
+    agent: "Alice"
+    task: "审核报告，向用户展示结果并确认"
+    depends_on: [4]
+```
+
+**CLI**:
+```bash
+kas crew create ReviewTeam                    # 创建团队
+kas crew add ReviewTeam MyAgent --role analyst # 添加成员
+kas crew run ReviewTeam "分析合同" \
+  --attach contract.pdf \
+  --attach photo.jpg
+
+kas crew chat ReviewTeam                      # 交互式团队对话
+```
+
+---
+
+#### 4.5 协调员模式 (动态选举) 🎭 ⏳
+**优先级**: 🔴 P0
+**依赖**: Agent 团队
+**工作量**: 1 周
+
+**核心概念**: 协调员不是固定的，根据任务动态选举谁对外沟通
+
+**交互示例**:
+```
+用户: 分析这份合同的风险点
+附件: contract.pdf, photo1.jpg
+
+[团队内部讨论]
+
+Alice: "我来确认需求"
+       → 临时协调员
+       "我看到你上传了合同 PDF 和一张照片。
+        让 [Bob] 处理图片，[Carol] 分析条款。
+        需要我这样做吗？"
+
+用户: 是的
+
+[Bob 处理图片...]
+Bob: "图片识别完成，这是签署页"
+    → Bob 汇报进度
+
+[Carol 分析条款...]
+Carol: "第5条违约责任表述模糊，不确定具体含义"
+       → Carol 成为临时协调员，询问用户
+       "你能解释一下这条的意图吗？"
+
+用户: 这是想表达违约方需赔偿...
+
+Carol: [把解释同步给团队]
+
+[David 撰写报告...]
+David: "报告完成，关键风险点：1. XX 2. YY"
+       → David 成为临时协调员
+       "需要修改哪里吗？"
+
+用户: 没问题
+
+David: "最终报告已生成"
+```
+
+**选举逻辑**:
+| 阶段 | 谁出面 | 原因 |
+|------|--------|------|
+| 需求确认 | 最理解业务的 Agent | 快速理解意图 |
+| 执行阶段 | 当前负责的 Agent | 直接汇报进度 |
+| 有问题时 | 遇到问题的 Agent | 第一时间澄清 |
+| 结果汇总 | 负责交付的 Agent | 完整呈现结果 |
+
+**技术方案**:
+```python
+# core/crew.py
+class Crew:
+    def elect_coordinator(self, context: dict) -> Agent:
+        """根据上下文选举临时协调员"""
+        # 策略1: 谁最相关选谁
+        # 策略2: 轮流制
+        # 策略3: 指定优先级
+        pass
+    
+    def execute_with_coordination(self, task: str, attachments: list):
+        """带协调的团队执行"""
+        # 1. 选举初始协调员
+        coordinator = self.elect_coordinator({'stage': 'init'})
+        
+        # 2. 协调员确认需求
+        confirmed = coordinator.confirm_with_user(task)
+        
+        # 3. 分发任务给各成员
+        for member in self.members:
+            if member != coordinator:
+                result = member.execute(confirmed)
+                
+                # 4. 需要询问时，该成员成为临时协调员
+                if result.needs_clarification:
+                    temp_coord = member
+                    clarification = temp_coord.ask_user(result.question)
+                    result.update(clarification)
+        
+        # 5. 最终汇总
+        final_coord = self.elect_coordinator({'stage': 'final'})
+        return final_coord.summarize_results()
+```
+
+---
+
+### Phase 5: 企业级功能 (长期 - 2-3 月) ⏳
 **目标**: 生产环境可用
 
 #### 5.1 安全沙箱 🔒
-**优先级**: 🟢 P2
-**依赖**: 无
-**工作量**: 1 周
-
-**功能**:
-- 代码执行隔离 (Docker)
+- Docker 隔离代码执行
 - 网络访问限制
 - 敏感信息过滤
 - 资源配额限制
 
----
-
 #### 5.2 性能监控 📈
-**优先级**: 🟢 P2
-**依赖**: 统计面板
-**工作量**: 3-5 天
-
-**功能**:
 - 响应时间监控
 - Token 消耗统计
 - 错误率追踪
 - 告警机制
 
----
-
 #### 5.3 团队协作 👥
-**优先级**: ⚪ P3
-**依赖**: 网页界面
-**工作量**: 2 周
-
-**功能**:
 - 多用户支持
 - 权限管理
 - Agent 共享
@@ -346,96 +359,82 @@ class MyPlugin:
 
 ---
 
-## 🗺️ 依赖关系图
+## 🗺️ 新架构图
 
 ```
-基础功能 (Phase 1) ✅
-├── 配置管理 ✅
-├── 版本管理 ✅
-└── LLM 学习 ✅
-    │
-    ├──→ Agent 市场 (P2.1)
-    │    └──→ 插件系统 (P4.2)
-    │
-    ├──→ 能力验证 (P2.2)
-    │    └──→ A/B 测试 (P3.3)
-    │
-    ├──→ 统计面板 (P2.3)
-    │    └──→ 性能监控 (P5.2)
-    │
-    ├──→ 知识库 (P3.1)
-    │    └──→ 团队协作 (P5.3)
-    │
-    ├──→ Agent 工作流 (P3.2)
-    │    └──→ 网页界面 (P4.1)
-    │        └──→ 多模态 (P4.3)
-    │
-    └──→ 安全沙箱 (P5.1)
+┌─────────────────────────────────────────────────────────────┐
+│                        KAS Core                             │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+│  │   Agent      │  │   Agent      │  │   Agent      │     │
+│  │  (Alice)     │  │   (Bob)      │  │  (Carol)     │     │
+│  │              │  │              │  │              │     │
+│  │ Equipment:   │  │ Equipment:   │  │ Equipment:   │     │
+│  │ - web_search │  │ - ocr        │  │ - pdf_parser │     │
+│  │ - file_reader│  │ - image      │  │ - web_search │     │
+│  │              │  │              │  │              │     │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘     │
+│         │                 │                 │              │
+│         └─────────────────┼─────────────────┘              │
+│                           │                                │
+│                    ┌──────┴──────┐                        │
+│                    │   Crew      │                        │
+│                    │   团队      │                        │
+│                    │             │                        │
+│                    │ 动态选举    │                        │
+│                    │ 协调员      │                        │
+│                    └──────┬──────┘                        │
+│                           │                                │
+│         ┌─────────────────┼─────────────────┐             │
+│         │                 │                 │              │
+│    ┌────┴────┐      ┌────┴────┐      ┌────┴────┐         │
+│    │   MCP   │      │ Plugin  │      │ Multimodal│        │
+│    │ Server  │      │ System  │      │  Input    │        │
+│    │         │      │         │      │           │        │
+│    │ - web   │      │ - pdf   │      │ - PDF     │        │
+│    │ - search│      │ - parser│      │ - Image   │        │
+│    │ - ocr   │      │ - code  │      │ - File    │        │
+│    └─────────┘      └─────────┘      └───────────┘        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │      User       │
+                    │   (动态协调)    │
+                    └─────────────────┘
 ```
 
 ---
 
-## 📊 实施建议
+## 📊 实施计划
 
-### 推荐开发顺序
+### 当前状态
+| 阶段 | 完成度 | 核心交付 |
+|------|--------|----------|
+| Phase 1-3 | ✅ 100% | 25个CLI命令，8868行代码 |
+| Phase 4.1 | ✅ 100% | Web界面MVP |
+| Phase 4.2-4.5 | ⏳ 0% | Agent特种部队 |
 
-**第 1 周**:
-- [ ] Agent 市场 (生态核心)
-- [ ] 能力验证 (质量保证)
-
-**第 2 周**:
-- [ ] 统计面板 (可视化)
-- [ ] 知识库 MVP (记忆功能)
-
-**第 3-4 周**:
-- [ ] Agent 工作流 (高级功能)
-- [ ] A/B 测试 (优化工具)
-
-**第 5-8 周**:
-- [ ] 网页界面 (产品化)
-- [ ] 多模态支持 (增强体验)
-
-**第 9-12 周**:
-- [ ] 企业级功能 (安全/监控/协作)
+### 下一步 (Phase 4.2 开始)
+| 周 | 任务 | 产出 |
+|----|------|------|
+| W1 | 装备系统 | MCP适配器 + 6个内置装备 |
+| W2 | 多模态输入 | 文件上传 + 预处理 |
+| W3 | Agent团队 | Crew定义 + 工作流编排 |
+| W4 | 协调员模式 | 动态选举 + 用户确认流程 |
 
 ---
 
-## 💡 技术选型建议
+## 💡 关键设计决策
 
-| 功能 | 推荐方案 | 备选方案 |
-|------|---------|---------|
-| 向量数据库 | ChromaDB | FAISS, Pinecone |
-| Web 框架 | FastAPI | Flask, Django |
-| 前端 | React + TS | Vue, Svelte |
-| 数据库 | SQLite | PostgreSQL |
-| 任务队列 | Celery | RQ, APScheduler |
-| 容器化 | Docker | Podman |
-| 部署 | Docker Compose | Kubernetes |
+1. **轻量 Web**: 原生 JS 够用，不上 React
+2. **MCP 优先**: 装备系统基于 MCP 协议，兼容生态
+3. **动态协调**: 谁负责谁沟通，不固定协调员
+4. **多模态**: 文件上传 + 预处理器链
+5. **团队协作**: 声明式 Crew YAML + 运行时选举
 
 ---
 
-## 🎯 成功指标
-
-### 技术指标
-- [ ] 支持 10+ 种编程语言
-- [ ] Agent 创建时间 < 30 秒
-- [ ] 对话响应时间 < 3 秒
-- [ ] 版本回滚时间 < 5 秒
-
-### 产品指标
-- [ ] 可用 Agent 数量 > 100
-- [ ] 用户留存率 > 60%
-- [ ] NPS 评分 > 50
-
----
-
-## 📝 备注
-
-- **API Key 安全**: 所有阶段都要注意，永远不上传 git
-- **向后兼容**: 新版本要兼容旧版 Agent 格式
-- **测试覆盖**: 每个功能都要有单元测试
-- **文档同步**: 代码和文档同时更新
-
----
-
-**下一步**: 选择 Phase 2 开始实施，或者调整优先级？
+**已推送**: `e62d6f7` feat: Web Market API + Phase 4 设计更新
