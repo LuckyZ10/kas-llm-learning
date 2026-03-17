@@ -4,11 +4,13 @@ KAS Web 服务 - FastAPI 后端
 """
 import os
 import json
+import secrets
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
@@ -27,6 +29,41 @@ from kas.core.workflow import get_workflow_engine
 from kas.core.abtest import get_abtest_engine
 
 app = FastAPI(title="KAS Web API", version="0.2.0")
+
+# API Key 认证
+security = HTTPBearer(auto_error=False)
+
+# 从环境变量或配置文件获取 API Key
+# 如果没有设置，生成一个随机 Key 并打印到日志
+API_KEY = os.environ.get("KAS_API_KEY")
+if not API_KEY:
+    API_KEY = secrets.token_urlsafe(32)
+    print(f"⚠️  Warning: KAS_API_KEY not set, using generated key: {API_KEY}")
+    print(f"   Set KAS_API_KEY environment variable to use a custom key")
+
+
+def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """验证 API Key"""
+    # 开发模式可以禁用认证 (设置 KAS_DISABLE_AUTH=1)
+    if os.environ.get("KAS_DISABLE_AUTH") == "1":
+        return True
+    
+    if not credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="API Key required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    if credentials.credentials != API_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API Key",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    return True
+
 
 # 存储 WebSocket 连接
 active_connections: List[WebSocket] = []
@@ -77,12 +114,13 @@ async def root():
     return {
         "name": "KAS Web API",
         "version": "0.2.0",
-        "status": "running"
+        "status": "running",
+        "auth_required": os.environ.get("KAS_DISABLE_AUTH") != "1"
     }
 
 
 @app.get("/api/agents", response_model=AgentList)
-async def list_agents():
+async def list_agents(authenticated: bool = Depends(verify_api_key)):
     """获取 Agent 列表"""
     config = get_config()
     agents_dir = Path(config.agents_dir)
@@ -107,7 +145,7 @@ async def list_agents():
 
 
 @app.get("/api/agents/{agent_name}")
-async def get_agent(agent_name: str):
+async def get_agent(agent_name: str, authenticated: bool = Depends(verify_api_key)):
     """获取 Agent 详情"""
     config = get_config()
     agent_path = Path(config.agents_dir) / agent_name
@@ -131,7 +169,7 @@ async def get_agent(agent_name: str):
 
 
 @app.post("/api/agents/{agent_name}/chat")
-async def chat_with_agent(agent_name: str, request: ChatRequest):
+async def chat_with_agent(agent_name: str, request: ChatRequest, authenticated: bool = Depends(verify_api_key)):
     """与 Agent 对话"""
     try:
         chat = ChatEngine(agent_name)
@@ -142,7 +180,7 @@ async def chat_with_agent(agent_name: str, request: ChatRequest):
 
 
 @app.post("/api/agents/ingest")
-async def ingest_agent(data: AgentCreate):
+async def ingest_agent(data: AgentCreate, authenticated: bool = Depends(verify_api_key)):
     """创建新 Agent"""
     try:
         result = ingest_project(
@@ -160,7 +198,7 @@ async def ingest_agent(data: AgentCreate):
 
 
 @app.get("/api/stats")
-async def get_stats():
+async def get_stats(authenticated: bool = Depends(verify_api_key)):
     """获取统计数据"""
     db = AnalyticsDatabase()
     
@@ -192,7 +230,7 @@ async def get_stats():
 
 
 @app.get("/api/market/search")
-async def market_search(q: str = Query(..., min_length=1)):
+async def market_search(q: str = Query(..., min_length=1), authenticated: bool = Depends(verify_api_key)):
     """搜索市场"""
     try:
         client = get_cloud_client()
@@ -208,7 +246,7 @@ async def market_search(q: str = Query(..., min_length=1)):
 
 
 @app.get("/api/market/list")
-async def market_list():
+async def market_list(authenticated: bool = Depends(verify_api_key)):
     """列出市场所有 Agent"""
     try:
         market = get_market()
@@ -219,7 +257,7 @@ async def market_list():
 
 
 @app.post("/api/market/install/{agent_name}")
-async def market_install(agent_name: str):
+async def market_install(agent_name: str, authenticated: bool = Depends(verify_api_key)):
     """从市场安装 Agent"""
     try:
         market = get_market()
@@ -230,7 +268,7 @@ async def market_install(agent_name: str):
 
 
 @app.post("/api/market/download/{package_id}")
-async def market_download(package_id: str):
+async def market_download(package_id: str, authenticated: bool = Depends(verify_api_key)):
     """从云端市场下载 Agent"""
     try:
         client = get_cloud_client()
@@ -244,7 +282,7 @@ async def market_download(package_id: str):
 
 
 @app.get("/api/workflows")
-async def list_workflows():
+async def list_workflows(authenticated: bool = Depends(verify_api_key)):
     """列出工作流"""
     engine = get_workflow_engine()
     workflows = engine.list_workflows()
@@ -252,7 +290,7 @@ async def list_workflows():
 
 
 @app.get("/api/workflows/{name}")
-async def get_workflow(name: str):
+async def get_workflow(name: str, authenticated: bool = Depends(verify_api_key)):
     """获取工作流详情"""
     engine = get_workflow_engine()
     wf = engine.load(name)
@@ -262,7 +300,7 @@ async def get_workflow(name: str):
 
 
 @app.get("/api/abtests")
-async def list_abtests():
+async def list_abtests(authenticated: bool = Depends(verify_api_key)):
     """列出 A/B 测试"""
     engine = get_abtest_engine()
     tests = engine.list_tests()
@@ -270,7 +308,7 @@ async def list_abtests():
 
 
 @app.get("/api/abtests/{test_id}")
-async def get_abtest(test_id: str):
+async def get_abtest(test_id: str, authenticated: bool = Depends(verify_api_key)):
     """获取 A/B 测试详情"""
     engine = get_abtest_engine()
     stats = engine.get_stats(test_id)

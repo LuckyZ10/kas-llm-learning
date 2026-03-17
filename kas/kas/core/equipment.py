@@ -5,11 +5,14 @@ KAS 装备系统
 import os
 import json
 import subprocess
+import shutil
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Any, Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 import logging
+import select
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +74,7 @@ class MCPEquipment(Equipment):
         self._process = None
     
     def initialize(self) -> bool:
-        """初始化 MCP Server"""
+        """初始化 MCP Server，带超时控制"""
         try:
             if not self.server_command:
                 logger.error(f"MCP equipment {self.name}: no command specified")
@@ -97,7 +100,7 @@ class MCPEquipment(Equipment):
                 env=env
             )
             
-            # 发送初始化请求
+            # 发送初始化请求，带超时控制
             init_request = {
                 "jsonrpc": "2.0",
                 "id": 1,
@@ -110,7 +113,9 @@ class MCPEquipment(Equipment):
             }
             
             self._send_request(init_request)
-            response = self._read_response()
+            
+            # 读取响应，带 10 秒超时
+            response = self._read_response(timeout=10.0)
             
             if response and "result" in response:
                 self._initialized = True
@@ -118,19 +123,26 @@ class MCPEquipment(Equipment):
                 return True
             else:
                 logger.error(f"MCP equipment {self.name} initialization failed: {response}")
+                self.shutdown()  # 清理失败的进程
                 return False
                 
+        except subprocess.TimeoutExpired:
+            logger.error(f"MCP equipment {self.name}: initialization timeout")
+            self.shutdown()
+            return False
         except Exception as e:
             logger.error(f"MCP equipment {self.name} initialization error: {e}")
+            self.shutdown()
             return False
     
     def use(self, params: Dict[str, Any]) -> Any:
-        """调用 MCP 工具"""
+        """调用 MCP 工具，带超时控制"""
         if not self._initialized:
             raise RuntimeError(f"Equipment {self.name} not initialized")
         
         tool_name = params.get("tool")
         tool_params = params.get("params", {})
+        timeout = params.get("timeout", 30.0)  # 默认 30 秒超时
         
         request = {
             "jsonrpc": "2.0",
@@ -143,26 +155,25 @@ class MCPEquipment(Equipment):
         }
         
         self._send_request(request)
-        response = self._read_response()
+        response = self._read_response(timeout=timeout)
         
         if response and "result" in response:
             return response["result"]
         elif response and "error" in response:
             raise RuntimeError(f"MCP error: {response['error']}")
         else:
-            raise RuntimeError("No response from MCP server")
+            raise RuntimeError(f"No response from MCP server (timeout: {timeout}s)")
     
     def _find_command(self, cmd: str) -> Optional[str]:
-        """查找命令路径"""
+        """查找命令路径 - 使用 shutil.which() 更可靠"""
         # 先检查是否是绝对路径
         if os.path.isabs(cmd) and os.path.isfile(cmd):
             return cmd
         
-        # 在 PATH 中查找
-        for path in os.environ.get("PATH", "").split(os.pathsep):
-            full_path = os.path.join(path, cmd)
-            if os.path.isfile(full_path):
-                return full_path
+        # 使用 shutil.which() 查找命令 (支持 Windows/Unix)
+        cmd_path = shutil.which(cmd)
+        if cmd_path:
+            return cmd_path
         
         return None
     
@@ -173,13 +184,31 @@ class MCPEquipment(Equipment):
             self._process.stdin.write(message)
             self._process.stdin.flush()
     
-    def _read_response(self) -> Optional[dict]:
-        """从 MCP Server 读取响应"""
-        if self._process and self._process.stdout:
-            line = self._process.stdout.readline()
-            if line:
-                return json.loads(line.strip())
-        return None
+    def _read_response(self, timeout: float = 30.0) -> Optional[dict]:
+        """从 MCP Server 读取响应，带超时控制"""
+        if not self._process or not self._process.stdout:
+            return None
+        
+        try:
+            # 使用 select 实现超时读取
+            import select
+            ready, _, _ = select.select([self._process.stdout], [], [], timeout)
+            
+            if ready:
+                line = self._process.stdout.readline()
+                if line:
+                    return json.loads(line.strip())
+            else:
+                # 超时
+                logger.warning(f"MCP equipment {self.name}: read response timeout ({timeout}s)")
+                return None
+                
+        except json.JSONDecodeError as e:
+            logger.error(f"MCP equipment {self.name}: invalid JSON response - {e}")
+            return None
+        except Exception as e:
+            logger.error(f"MCP equipment {self.name}: read error - {e}")
+            return None
     
     def _next_id(self) -> int:
         """生成下一个请求 ID"""
