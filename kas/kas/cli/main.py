@@ -1395,40 +1395,61 @@ def workflow_show(name):
 @click.argument('name')
 @click.argument('context')
 @click.option('--verbose', '-v', is_flag=True, help='显示详细输出')
-def workflow_run(name, context, verbose):
+@click.option('--timeout', '-t', default=300, help='单步骤超时时间（秒），默认300')
+@click.option('--mock', is_flag=True, help='使用 mock 模式（不调用 LLM）')
+def workflow_run(name, context, verbose, timeout, mock):
     """执行工作流"""
     try:
         from kas.core.workflow import get_workflow_engine, StepStatus
-        
+
         engine = get_workflow_engine()
         wf = engine.load(name)
-        
+
         if not wf:
             console.print(f"❌ 工作流不存在: {name}")
             return
-        
+
+        # 检查是否有循环依赖
+        try:
+            execution_order = wf.get_execution_order()
+        except ValueError as e:
+            console.print(f"❌ 工作流配置错误: {e}")
+            console.print("💡 请检查步骤依赖关系是否有循环")
+            return
+
         console.print(f"\n🚀 执行工作流: [bold]{name}[/bold]")
-        console.print(f"   上下文: {context}\n")
-        
+        console.print(f"   上下文: {context}")
+        console.print(f"   步骤数: {len(wf.steps)}")
+        console.print(f"   超时: {timeout}秒\n")
+
         # 进度回调
         def on_step_complete(step, output):
             status_icon = "✅" if step.status == StepStatus.COMPLETED else "❌"
             console.print(f"{status_icon} [{step.id}] {step.agent_name} 完成")
             if verbose and output:
                 console.print(f"   输出: {output[:200]}...")
-        
+            if step.error:
+                console.print(f"   错误: {step.error}")
+
         # 执行
-        results = engine.execute(wf, context, callback=on_step_complete)
-        
+        results = engine.execute(
+            wf, context,
+            callback=on_step_complete,
+            timeout=timeout,
+            use_mock=mock
+        )
+
         console.print()
         if results['success']:
             console.print(f"✅ 工作流执行成功")
         else:
             console.print(f"❌ 工作流执行失败")
-        
+            if 'error' in results:
+                console.print(f"   错误: {results['error']}")
+
         console.print(f"\n   开始: {results['started_at']}")
         console.print(f"   结束: {results.get('completed_at', 'N/A')}")
-        
+
     except Exception as e:
         console.print(f"❌ Error: {e}")
 

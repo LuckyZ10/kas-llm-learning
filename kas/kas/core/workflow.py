@@ -192,57 +192,75 @@ class WorkflowEngine:
         return False
     
     def execute(
-        self, 
-        workflow: Workflow, 
+        self,
+        workflow: Workflow,
         context: str,
-        callback: Optional[Callable[[WorkflowStep, str], None]] = None
+        callback: Optional[Callable[[WorkflowStep, str], None]] = None,
+        timeout: int = 300,
+        use_mock: Optional[bool] = None
     ) -> Dict[str, Any]:
         """
         执行工作流
-        
+
         Args:
             workflow: 工作流对象
             context: 任务上下文/输入
             callback: 步骤完成回调 (step, output) -> None
-            
+            timeout: 单步骤超时时间（秒），默认 300
+            use_mock: 是否使用 mock 模式，默认从配置读取
+
         Returns:
             执行结果
         """
         from kas.core.chat import ChatEngine
-        
+        from kas.core.config import get_config
+        import signal
+
+        # 确定是否使用 mock
+        if use_mock is None:
+            config = get_config()
+            use_mock = not config.has_api_key()
+
         results = {
             'workflow': workflow.name,
             'started_at': datetime.now().isoformat(),
             'steps': {},
             'success': True
         }
-        
+
         # 获取执行顺序
         try:
             execution_order = workflow.get_execution_order()
         except ValueError as e:
             results['success'] = False
-            results['error'] = str(e)
+            results['error'] = f"工作流配置错误: {e}"
             return results
-        
+
         # 步骤输出缓存
         step_outputs = {}
-        
+
+        def timeout_handler(signum, frame):
+            raise TimeoutError(f"步骤执行超时（{timeout}秒）")
+
         # 按层执行
         for layer in execution_order:
             for step_id in layer:
                 step = next(s for s in workflow.steps if s.id == step_id)
-                
+
                 # 更新状态
                 step.status = StepStatus.RUNNING
                 step.started_at = datetime.now().isoformat()
-                
+
                 try:
+                    # 设置超时
+                    signal.signal(signal.SIGALRM, timeout_handler)
+                    signal.alarm(timeout)
+
                     # 构建任务描述
                     task_desc = step.task
                     if context:
                         task_desc = f"上下文: {context}\n\n任务: {task_desc}"
-                    
+
                     # 添加上游步骤的输出作为参考
                     if step.depends_on:
                         refs = []
@@ -251,10 +269,13 @@ class WorkflowEngine:
                                 refs.append(f"[{dep_id}]\n{step_outputs[dep_id]}")
                         if refs:
                             task_desc += "\n\n前置步骤输出:\n" + "\n---\n".join(refs)
-                    
+
                     # 执行 Agent
                     chat = ChatEngine(step.agent_name)
-                    output = chat.run(task_desc, use_mock=True)
+                    output = chat.run(task_desc, use_mock=use_mock)
+
+                    # 取消超时
+                    signal.alarm(0)
                     
                     # 更新步骤
                     step.output = output
@@ -269,8 +290,20 @@ class WorkflowEngine:
                     
                     if callback:
                         callback(step, output)
-                    
+
+                except TimeoutError as e:
+                    signal.alarm(0)  # 取消超时
+                    step.status = StepStatus.FAILED
+                    step.error = str(e)
+                    step.completed_at = datetime.now().isoformat()
+                    results['steps'][step_id] = {
+                        'status': 'failed',
+                        'error': str(e)
+                    }
+                    results['success'] = False
+
                 except Exception as e:
+                    signal.alarm(0)  # 取消超时
                     step.status = StepStatus.FAILED
                     step.error = str(e)
                     step.completed_at = datetime.now().isoformat()
