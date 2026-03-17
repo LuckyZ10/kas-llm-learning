@@ -1740,6 +1740,28 @@ def abtest_winner(test_id, version):
         console.print(f"❌ Error: {e}")
 
 
+@cli.command()
+@click.option('--host', default='0.0.0.0', help='绑定地址')
+@click.option('--port', '-p', default=3000, help='端口号')
+@click.option('--reload', is_flag=True, help='开发模式（自动重载）')
+def web(host, port, reload):
+    """🌐 启动 Web 界面"""
+    try:
+        console.print(f"\n🌐 [bold blue]启动 KAS Web...[/bold blue]")
+        console.print(f"   地址: http://{host}:{port}")
+        console.print(f"   按 Ctrl+C 停止\n")
+        
+        from kas.web.app import run_web
+        run_web(host=host, port=port, reload=reload)
+        
+    except ImportError as e:
+        console.print(f"❌ [bold red]缺少依赖:[/bold red] {e}")
+        console.print("💡 请安装 web 依赖:")
+        console.print("   pip install fastapi uvicorn")
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
 def main():
     """入口点"""
     cli()
