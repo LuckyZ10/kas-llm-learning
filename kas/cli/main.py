@@ -55,7 +55,7 @@ def get_llm_client(force_mock=False):
 @click.group()
 @click.version_option(version="0.1.0")
 def cli():
-    """Kimi Agent Studio - 专业开发者 Agent 孵化平台
+    """Klaw Agent Studio - 专业开发者 Agent 孵化平台
     
     核心概念：代码吞食 → 能力提取 → Agent 进化
     """

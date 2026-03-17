@@ -1,11 +1,11 @@
-# KAS (Kimi Agent Studio)
+# KAS (Klaw Agent Studio)
 
 > 专业开发者的 CLI-first Agent 孵化平台
 > 核心：代码吞食 → 能力提取 → Agent 进化
 
 ## 为什么不是 Dify/Coze？
 
-| 特性 | Dify/Coze | Kimi Agent Studio |
+| 特性 | Dify/Coze | Klaw Agent Studio |
 |------|-----------|-------------------|
 | 目标用户 | 业务人员 | 专业开发者 |
 | 创建方式 | 拖拉拽组装 | 代码吞食提取 |

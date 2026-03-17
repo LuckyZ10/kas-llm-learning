@@ -1,4 +1,4 @@
-# KAS (Kimi Agent Studio) 完整路线图
+# KAS (Klaw Agent Studio) 完整路线图
 
 > 版本: v1.0
 > 最后更新: 2026-03-17

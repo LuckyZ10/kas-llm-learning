@@ -1,5 +1,5 @@
 """
-KAS - Kimi Agent Studio
+KAS - Klaw Agent Studio
 简单优先的Agent孵化平台
 """
 

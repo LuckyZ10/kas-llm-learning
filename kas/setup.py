@@ -1,5 +1,5 @@
 """
-KAS - Kimi Agent Studio
+KAS - Klaw Agent Studio
 """
 from setuptools import setup, find_packages
 
