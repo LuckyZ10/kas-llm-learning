@@ -1,0 +1,2 @@
+[console_scripts]
+kas = kas.cli.main:main
