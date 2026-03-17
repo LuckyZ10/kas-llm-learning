@@ -5,8 +5,62 @@
 
 ## 核心概念
 
-### 1. Agent 装备系统 (MCP/Plugin)
-每个 Agent 可以装备不同的"武器":
+### 1. Agent 装备系统 (共享资源池)
+
+装备不是每个 Agent 独占，而是 **Crew 级别的共享资源池**：
+
+```yaml
+# crew.yaml
+name: "ContractReviewCrew"
+
+# 共享装备池 - 所有成员都可以使用
+shared_equipment:
+  - name: "web_search"
+    type: mcp
+    config: { engine: "duckduckgo" }
+    
+  - name: "ocr"
+    type: mcp
+    config: { language: "zh+en" }
+    
+  - name: "pdf_parser"
+    type: plugin
+    
+  - name: "code_executor"
+    type: plugin
+    config: { sandbox: "docker" }
+
+members:
+  - name: "Alice"
+    role: "coordinator"
+    # 不指定 equipment，使用 shared_equipment 中的全部
+    
+  - name: "Bob"
+    role: "ocr_expert"
+    preferred_equipment: ["ocr", "image_analysis"]  # 偏好使用这些
+    
+  - name: "Carol"
+    role: "legal_analyst"
+    preferred_equipment: ["pdf_parser", "web_search"]
+```
+
+**使用规则**:
+- 任何 Agent 都可以调用 Crew 的共享装备
+- Agent 可以有 `preferred_equipment` 表示擅长使用哪些
+- 协调员根据任务分配合适的 Agent + 装备组合
+
+**示例**:
+```
+任务: 分析合同扫描件
+
+Carol: "需要 OCR 识别" 
+       → 调用 shared_equipment.ocr
+       → 协调员分配给 Bob (ocr_expert)
+       
+Bob: 完成 OCR，发现第5条有问题
+     → 结果存入 Crew 共同记忆
+     → Carol 从共同记忆中读取继续分析
+```
 
 ```yaml
 # agent.yaml
@@ -36,7 +90,149 @@ equipment:
 - `file_reader` - 文件读取
 - `image_analysis` - 图片分析
 
-### 2. Agent 团队 (Crew)
+### 2. 分层记忆系统
+
+**三层记忆架构**:
+
+```
+┌─────────────────────────────────────┐
+│         Crew 共同记忆                │
+│  - 当前任务上下文                    │
+│  - 对话历史 (完整)                   │
+│  - 共享知识 (RAG)                    │
+│  - 中间结果                         │
+└─────────────────────────────────────┘
+          │
+    ┌─────┴─────┐
+    ▼           ▼
+┌────────┐  ┌────────┐
+│ Alice  │  │  Bob   │
+│ 记忆   │  │  记忆   │
+│        │  │        │
+│-从共同 │  │-从共同 │
+│ 记忆中 │  │ 记忆中 │
+│ 提取的 │  │ 提取的 │
+│ 相关部分│  │ 相关部分│
+│        │  │        │
+│-个人   │  │-个人   │
+│ 偏好   │  │ 专长   │
+│        │  │ 记忆   │
+└────────┘  └────────┘
+```
+
+**Crew 共同记忆**:
+```python
+class CrewMemory:
+    """团队共享记忆"""
+    
+    def __init__(self, crew_name: str):
+        self.conversation_history = []  # 完整对话历史
+        self.task_context = {}          # 当前任务上下文
+        self.shared_knowledge = ChromaDBVectorStore()  # 共享知识库
+        self.intermediate_results = {}  # 中间结果缓存
+    
+    def add_message(self, agent_name: str, role: str, content: str):
+        """添加对话记录"""
+        self.conversation_history.append({
+            "agent": agent_name,
+            "role": role,  # user/assistant/system
+            "content": content,
+            "timestamp": datetime.now()
+        })
+    
+    def get_relevant_context(self, agent_name: str, query: str, k: int = 5) -> str:
+        """为特定 Agent 提取相关上下文"""
+        # 1. 从对话历史中检索相关部分
+        relevant_history = self._retrieve_relevant_history(query, k)
+        
+        # 2. 从共享知识库检索
+        relevant_knowledge = self.shared_knowledge.search(query, k)
+        
+        # 3. 该 Agent 之前的中间结果
+        agent_results = self.intermediate_results.get(agent_name, [])
+        
+        return self._format_context(relevant_history, relevant_knowledge, agent_results)
+    
+    def store_intermediate_result(self, agent_name: str, task_id: str, result: Any):
+        """存储中间结果"""
+        if agent_name not in self.intermediate_results:
+            self.intermediate_results[agent_name] = []
+        self.intermediate_results[agent_name].append({
+            "task_id": task_id,
+            "result": result,
+            "timestamp": datetime.now()
+        })
+```
+
+**Agent 个人记忆**:
+```python
+class AgentMemory:
+    """Agent 个人记忆 - 从 Crew 记忆 + 个人偏好"""
+    
+    def __init__(self, agent_name: str, crew_memory: CrewMemory):
+        self.agent_name = agent_name
+        self.crew_memory = crew_memory
+        self.personal_preferences = {}  # 个人偏好记忆
+        self.specialty_knowledge = {}   # 专业领域知识
+    
+    def get_context_for_task(self, task: str) -> str:
+        """获取任务相关的上下文"""
+        # 1. 从 Crew 共同记忆中提取相关部分
+        crew_context = self.crew_memory.get_relevant_context(
+            self.agent_name, task, k=5
+        )
+        
+        # 2. 个人偏好
+        personal = f"\n[你的偏好和风格]\n{self.personal_preferences}"
+        
+        # 3. 专业背景
+        specialty = f"\n[你的专业领域]\n{self.specialty_knowledge}"
+        
+        return f"{crew_context}\n{personal}\n{specialty}"
+    
+    def update_from_crew_memory(self, key_events: List[str]):
+        """从 Crew 记忆中提取关键事件更新个人记忆"""
+        # 提取与自己相关的决策/结果
+        for event in key_events:
+            if self._is_relevant_to_me(event):
+                self.specialty_knowledge[event["topic"]] = event["conclusion"]
+```
+
+**使用流程**:
+```
+1. 用户输入问题
+   ↓
+2. 存入 Crew 共同记忆
+   ↓
+3. 协调员分配给 Bob
+   ↓
+4. Bob 从 Crew 记忆提取相关上下文
+   Bob: "我需要处理合同扫描件"
+   CrewMemory.get_relevant_context("Bob", "合同扫描件 OCR")
+   → 返回: 用户上传了 contract_scan.pdf
+   → 返回: 这是采购合同类型
+   → 返回: 需要关注第3、5条
+   ↓
+5. Bob 完成 OCR，结果存入 Crew 记忆
+   CrewMemory.store_intermediate_result("Bob", "ocr_task", result)
+   ↓
+6. 协调员分配给 Carol
+   ↓
+7. Carol 从 Crew 记忆提取 (包含 Bob 的 OCR 结果)
+   Carol: "分析合同条款"
+   CrewMemory.get_relevant_context("Carol", "分析合同条款")
+   → 返回: Bob 已完成 OCR，文本内容: ...
+   → 返回: 第3条是关于...，第5条是关于...
+   ↓
+8. Carol 完成分析，结果存入 Crew 记忆
+   ...
+```
+
+**记忆同步机制**:
+- 每个 Agent 的 `system_prompt` 构建时，注入从 Crew 记忆提取的上下文
+- Agent 产出结果后，自动同步回 Crew 记忆
+- 关键决策/结论会广播给所有成员更新个人记忆
+- 定期整理：从 Crew 对话历史中提炼结构化知识到个人专长
 多个 Agent 组成团队，分工协作:
 
 ```yaml
