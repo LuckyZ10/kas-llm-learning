@@ -365,6 +365,246 @@ ZeroDivisionError: division by zero''',
             )
 
 
+class TestGenerationTest(TestCase):
+    """测试生成能力测试"""
+    
+    CODE_SAMPLES = [
+        {
+            "id": "test_1",
+            "name": "函数测试",
+            "code": '''def calculate_discount(price, customer_type):
+    """Calculate discount based on customer type"""
+    if customer_type == "vip":
+        return price * 0.8
+    elif customer_type == "member":
+        return price * 0.9
+    return price''',
+            "expected_tests": ["test", "assert", "vip", "member", "price", "边界"]
+        }
+    ]
+    
+    def __init__(self, sample_index: int = 0):
+        sample = self.CODE_SAMPLES[sample_index % len(self.CODE_SAMPLES)]
+        super().__init__(
+            test_id=sample["id"],
+            name=f"测试生成 - {sample['name']}",
+            capability=CapabilityType.TEST_GENERATION,
+            description=f"为代码生成测试用例",
+            difficulty=3
+        )
+        self.sample = sample
+    
+    def run(self, agent: Agent, chat_engine: ChatEngine) -> TestResult:
+        import time
+        start_time = time.time()
+        
+        prompt = f"""请为以下函数生成单元测试:
+
+```python
+{self.sample['code']}
+```
+
+请包含: 正常情况、边界情况、异常情况。"""
+        
+        try:
+            response = chat_engine.chat(agent, prompt)
+            execution_time = time.time() - start_time
+            
+            score = 0
+            for keyword in self.sample["expected_tests"]:
+                if keyword.lower() in response.lower():
+                    score += 15
+            
+            score = min(score, 100)
+            status = TestStatus.PASSED if score >= 45 else TestStatus.FAILED
+            
+            return TestResult(
+                test_id=self.test_id,
+                test_name=self.name,
+                capability_type=self.capability,
+                status=status,
+                score=score,
+                max_score=100,
+                feedback=response[:500],
+                expected=f"应包含: {', '.join(self.sample['expected_tests'][:4])}...",
+                execution_time=execution_time
+            )
+            
+        except Exception as e:
+            return TestResult(
+                test_id=self.test_id,
+                test_name=self.name,
+                capability_type=self.capability,
+                status=TestStatus.ERROR,
+                score=0,
+                max_score=100,
+                feedback="",
+                expected="测试用例生成",
+                execution_time=time.time() - start_time,
+                error_message=str(e)
+            )
+
+
+class RefactoringTest(TestCase):
+    """重构能力测试"""
+    
+    REFACTOR_SCENARIOS = [
+        {
+            "id": "refactor_1",
+            "name": "简化条件",
+            "code": '''def get_price(quantity):
+    if quantity == 1:
+        return 100
+    elif quantity == 2:
+        return 180
+    elif quantity == 3:
+        return 250
+    else:
+        return quantity * 80''',
+            "expected_improvements": ["字典", "dict", "映射", "表驱动", "简化"]
+        }
+    ]
+    
+    def __init__(self, sample_index: int = 0):
+        sample = self.REFACTOR_SCENARIOS[sample_index % len(self.REFACTOR_SCENARIOS)]
+        super().__init__(
+            test_id=sample["id"],
+            name=f"重构 - {sample['name']}",
+            capability=CapabilityType.REFACTORING,
+            description="重构代码以提高质量",
+            difficulty=3
+        )
+        self.sample = sample
+    
+    def run(self, agent: Agent, chat_engine: ChatEngine) -> TestResult:
+        import time
+        start_time = time.time()
+        
+        prompt = f"""请重构以下代码，使其更清晰:
+
+```python
+{self.sample['code']}
+```
+
+请说明: 1) 问题所在 2) 重构后的代码 3) 改进点。"""
+        
+        try:
+            response = chat_engine.chat(agent, prompt)
+            execution_time = time.time() - start_time
+            
+            score = 0
+            for keyword in self.sample["expected_improvements"]:
+                if keyword.lower() in response.lower():
+                    score += 20
+            
+            score = min(score, 100)
+            status = TestStatus.PASSED if score >= 40 else TestStatus.FAILED
+            
+            return TestResult(
+                test_id=self.test_id,
+                test_name=self.name,
+                capability_type=self.capability,
+                status=status,
+                score=score,
+                max_score=100,
+                feedback=response[:500],
+                expected="应使用字典/映射表等简化条件",
+                execution_time=execution_time
+            )
+            
+        except Exception as e:
+            return TestResult(
+                test_id=self.test_id,
+                test_name=self.name,
+                capability_type=self.capability,
+                status=TestStatus.ERROR,
+                score=0,
+                max_score=100,
+                feedback="",
+                expected="代码重构",
+                execution_time=time.time() - start_time,
+                error_message=str(e)
+            )
+
+
+class ArchitectureTest(TestCase):
+    """架构能力测试"""
+    
+    ARCH_SCENARIOS = [
+        {
+            "id": "arch_1",
+            "name": "设计评估",
+            "description": '''现有系统是一个单体应用，包含:
+- 用户管理模块 (用户注册/登录/权限)
+- 订单处理模块 (下单/支付/退款)
+- 库存管理模块 (库存查询/更新)
+- 报表模块 (数据统计/导出)
+
+目前所有模块共享同一个数据库，部署在一起。''',
+            "expected_points": ["微服务", "拆分", "独立", "数据库", "解耦", "扩展"]
+        }
+    ]
+    
+    def __init__(self, sample_index: int = 0):
+        sample = self.ARCH_SCENARIOS[sample_index % len(self.ARCH_SCENARIOS)]
+        super().__init__(
+            test_id=sample["id"],
+            name=f"架构 - {sample['name']}",
+            capability=CapabilityType.ARCHITECTURE,
+            description="评估架构设计并提供改进建议",
+            difficulty=4
+        )
+        self.sample = sample
+    
+    def run(self, agent: Agent, chat_engine: ChatEngine) -> TestResult:
+        import time
+        start_time = time.time()
+        
+        prompt = f"""请评估以下架构设计:
+
+{self.sample['description']}
+
+请分析: 1) 当前架构的问题 2) 改进建议 3) 迁移方案。"""
+        
+        try:
+            response = chat_engine.chat(agent, prompt)
+            execution_time = time.time() - start_time
+            
+            score = 0
+            for keyword in self.sample["expected_points"]:
+                if keyword.lower() in response.lower():
+                    score += 15
+            
+            score = min(score, 100)
+            status = TestStatus.PASSED if score >= 45 else TestStatus.FAILED
+            
+            return TestResult(
+                test_id=self.test_id,
+                test_name=self.name,
+                capability_type=self.capability,
+                status=status,
+                score=score,
+                max_score=100,
+                feedback=response[:500],
+                expected="应考虑微服务拆分、数据库解耦等",
+                execution_time=execution_time
+            )
+            
+        except Exception as e:
+            return TestResult(
+                test_id=self.test_id,
+                test_name=self.name,
+                capability_type=self.capability,
+                status=TestStatus.ERROR,
+                score=0,
+                max_score=100,
+                feedback="",
+                expected="架构设计评估",
+                execution_time=time.time() - start_time,
+                error_message=str(e)
+            )
+
+
 class CapabilityValidator:
     """
     能力验证器 - 给 Agent 出考题
@@ -396,6 +636,18 @@ class CapabilityValidator:
         # 调试测试
         for i in range(len(DebugTest.DEBUG_SCENARIOS)):
             self.test_cases.append(DebugTest(i))
+        
+        # 测试生成
+        for i in range(len(TestGenerationTest.CODE_SAMPLES)):
+            self.test_cases.append(TestGenerationTest(i))
+        
+        # 重构测试
+        for i in range(len(RefactoringTest.REFACTOR_SCENARIOS)):
+            self.test_cases.append(RefactoringTest(i))
+        
+        # 架构测试
+        for i in range(len(ArchitectureTest.ARCH_SCENARIOS)):
+            self.test_cases.append(ArchitectureTest(i))
     
     def validate(self, agent: Agent, capability_filter: List[CapabilityType] = None) -> ValidationReport:
         """

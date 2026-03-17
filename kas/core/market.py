@@ -286,12 +286,13 @@ class LocalMarket:
                 'last_updated': datetime.now().isoformat()
             }, f, indent=2, ensure_ascii=False, default=str)
     
-    def publish(self, package_path: str) -> bool:
+    def publish(self, package_path: str, force: bool = False) -> bool:
         """
         发布包到市场
         
         Args:
             package_path: .kas-agent 文件路径
+            force: 强制覆盖已存在的包
         
         Returns:
             是否成功
@@ -304,6 +305,13 @@ class LocalMarket:
         packer = PackagePacker()
         agent = packer.unpack(package_path)
         if not agent:
+            return False
+        
+        # 检查是否已存在
+        existing = self.index.get(agent.name)
+        if existing and not force:
+            print(f"⚠️  包 {agent.name} v{existing.version} 已存在")
+            print(f"   使用 force=True 覆盖，或使用不同名称")
             return False
         
         # 读取 manifest
@@ -322,9 +330,14 @@ class LocalMarket:
             
             # 复制到市场目录
             market_package = self.packages_dir / f"{agent.name}.kas-agent"
+            
+            # 如果已存在，保留 downloads 计数
+            preserved_downloads = existing.downloads if existing else 0
+            
             shutil.copy2(package, market_package)
             
             # 更新索引
+            now = datetime.now().isoformat()
             package_info = PackageInfo(
                 name=agent.name,
                 version=agent.version,
@@ -333,13 +346,20 @@ class LocalMarket:
                 author_email=manifest.get('author_email', ''),
                 tags=manifest.get('tags', []),
                 capabilities=[c.name for c in agent.capabilities],
+                downloads=preserved_downloads,  # 保留下载计数
                 file_size=package.stat().st_size,
                 package_hash=packer._hash_file(package),
-                updated_at=datetime.now().isoformat()
+                created_at=existing.created_at if existing else now,
+                updated_at=now  # 更新更新时间
             )
             
             self.index[agent.name] = package_info
             self._save_index()
+            
+            action = "更新" if existing else "发布"
+            print(f"✅ {action}成功: {agent.name} v{agent.version}")
+            if existing:
+                print(f"   保留下载计数: {preserved_downloads}")
             
             return True
             
