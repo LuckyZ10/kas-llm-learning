@@ -11,6 +11,7 @@ KAS Core - Capability Validation
 """
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import List, Dict, Optional, Callable
@@ -20,6 +21,9 @@ from enum import Enum
 
 from .models import Agent, Capability, CapabilityType
 from .chat import ChatEngine
+
+# 设置日志
+logger = logging.getLogger(__name__)
 
 
 class TestStatus(Enum):
@@ -179,7 +183,7 @@ class CodeReviewTest(TestCase):
             
             score = min(score, 100)  # 满分 100
             
-            status = TestStatus.PASSED if score >= 60 else TestStatus.FAILED
+            status = TestStatus.PASSED if score >= 70 else TestStatus.FAILED  # 阈值从60提高到70
             
             return TestResult(
                 test_id=self.test_id,
@@ -194,6 +198,7 @@ class CodeReviewTest(TestCase):
             )
             
         except Exception as e:
+            logger.error(f"代码审查测试失败 {self.test_id}: {e}", exc_info=True)
             return TestResult(
                 test_id=self.test_id,
                 test_name=self.name,
@@ -259,7 +264,7 @@ class DocumentationTest(TestCase):
                     score += 15
             
             score = min(score, 100)
-            status = TestStatus.PASSED if score >= 50 else TestStatus.FAILED
+            status = TestStatus.PASSED if score >= 60 else TestStatus.FAILED  # 阈值从50提高到60
             
             return TestResult(
                 test_id=self.test_id,
@@ -274,6 +279,7 @@ class DocumentationTest(TestCase):
             )
             
         except Exception as e:
+            logger.error(f"文档编写测试失败 {self.test_id}: {e}", exc_info=True)
             return TestResult(
                 test_id=self.test_id,
                 test_name=self.name,
@@ -336,7 +342,7 @@ ZeroDivisionError: division by zero''',
                     score += 20
             
             score = min(score, 100)
-            status = TestStatus.PASSED if score >= 40 else TestStatus.FAILED
+            status = TestStatus.PASSED if score >= 60 else TestStatus.FAILED
             
             return TestResult(
                 test_id=self.test_id,
@@ -351,6 +357,7 @@ ZeroDivisionError: division by zero''',
             )
             
         except Exception as e:
+            logger.error(f"调试测试失败 {self.test_id}: {e}", exc_info=True)
             return TestResult(
                 test_id=self.test_id,
                 test_name=self.name,
@@ -416,7 +423,7 @@ class TestGenerationTest(TestCase):
                     score += 15
             
             score = min(score, 100)
-            status = TestStatus.PASSED if score >= 45 else TestStatus.FAILED
+            status = TestStatus.PASSED if score >= 60 else TestStatus.FAILED
             
             return TestResult(
                 test_id=self.test_id,
@@ -431,6 +438,7 @@ class TestGenerationTest(TestCase):
             )
             
         except Exception as e:
+            logger.error(f"测试生成失败 {self.test_id}: {e}", exc_info=True)
             return TestResult(
                 test_id=self.test_id,
                 test_name=self.name,
@@ -498,7 +506,7 @@ class RefactoringTest(TestCase):
                     score += 20
             
             score = min(score, 100)
-            status = TestStatus.PASSED if score >= 40 else TestStatus.FAILED
+            status = TestStatus.PASSED if score >= 60 else TestStatus.FAILED
             
             return TestResult(
                 test_id=self.test_id,
@@ -513,6 +521,7 @@ class RefactoringTest(TestCase):
             )
             
         except Exception as e:
+            logger.error(f"重构测试失败 {self.test_id}: {e}", exc_info=True)
             return TestResult(
                 test_id=self.test_id,
                 test_name=self.name,
@@ -576,7 +585,7 @@ class ArchitectureTest(TestCase):
                     score += 15
             
             score = min(score, 100)
-            status = TestStatus.PASSED if score >= 45 else TestStatus.FAILED
+            status = TestStatus.PASSED if score >= 60 else TestStatus.FAILED
             
             return TestResult(
                 test_id=self.test_id,
@@ -591,6 +600,7 @@ class ArchitectureTest(TestCase):
             )
             
         except Exception as e:
+            logger.error(f"架构评估失败 {self.test_id}: {e}", exc_info=True)
             return TestResult(
                 test_id=self.test_id,
                 test_name=self.name,

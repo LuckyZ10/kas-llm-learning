@@ -4,11 +4,15 @@ KAS Core - Ingestion Engine
 """
 import os
 import re
+import logging
 from pathlib import Path
 from typing import List, Dict, Optional, Set
 import yaml
 
 from .models import Agent, Capability, CapabilityType, DEFAULT_MODEL_CONFIG
+
+# 设置日志
+logger = logging.getLogger(__name__)
 
 
 class IngestionEngine:
@@ -135,6 +139,7 @@ class IngestionEngine:
                 if llm_capabilities:
                     return llm_capabilities
             except Exception as e:
+                logger.warning(f"LLM 能力检测失败: {e}", exc_info=True)
                 print(f"⚠️  LLM 能力检测失败，回退到规则检测: {e}")
 
         # 回退到规则检测
