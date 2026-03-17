@@ -1260,6 +1260,197 @@ def memory_clear(agent):
         console.print(f"❌ Error: {e}")
 
 
+@cli.group()
+def workflow():
+    """🔗 Agent 工作流编排"""
+    pass
+
+
+@workflow.command('create')
+@click.argument('name')
+@click.option('--desc', '-d', help='工作流描述')
+def workflow_create(name, desc):
+    """创建工作流"""
+    try:
+        from kas.core.workflow import get_workflow_engine
+        
+        engine = get_workflow_engine()
+        wf = engine.create(name, description=desc)
+        
+        console.print(f"✅ 工作流已创建: {name}")
+        if desc:
+            console.print(f"   描述: {desc}")
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@workflow.command('add')
+@click.argument('name')
+@click.argument('agent')
+@click.argument('task')
+@click.option('--after', '-a', help='在指定步骤后执行')
+def workflow_add(name, agent, task, after):
+    """添加步骤到工作流"""
+    try:
+        from kas.core.workflow import get_workflow_engine
+        
+        engine = get_workflow_engine()
+        wf = engine.load(name)
+        
+        if not wf:
+            console.print(f"❌ 工作流不存在: {name}")
+            return
+        
+        depends_on = [after] if after else []
+        step_id = wf.add_step(agent, task, depends_on)
+        engine.save(wf)
+        
+        console.print(f"✅ 步骤已添加: {step_id}")
+        console.print(f"   Agent: {agent}")
+        console.print(f"   任务: {task}")
+        if after:
+            console.print(f"   依赖: {after}")
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@workflow.command('list')
+def workflow_list():
+    """列出所有工作流"""
+    try:
+        from kas.core.workflow import get_workflow_engine
+        
+        engine = get_workflow_engine()
+        workflows = engine.list_workflows()
+        
+        if not workflows:
+            console.print("📭 暂无工作流")
+            return
+        
+        table = Table(title="🔗 工作流列表")
+        table.add_column("名称", style="bold")
+        table.add_column("步骤数", justify="center")
+        table.add_column("描述", style="dim")
+        
+        for wf_name in workflows:
+            wf = engine.load(wf_name)
+            table.add_row(
+                wf_name,
+                str(len(wf.steps)),
+                wf.description or "-"
+            )
+        
+        console.print(table)
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@workflow.command('show')
+@click.argument('name')
+def workflow_show(name):
+    """查看工作流详情"""
+    try:
+        from kas.core.workflow import get_workflow_engine
+        from rich.tree import Tree
+        
+        engine = get_workflow_engine()
+        wf = engine.load(name)
+        
+        if not wf:
+            console.print(f"❌ 工作流不存在: {name}")
+            return
+        
+        console.print(f"\n🔗 [bold]{wf.name}[/bold]")
+        if wf.description:
+            console.print(f"   {wf.description}")
+        console.print()
+        
+        if not wf.steps:
+            console.print("   (暂无步骤)")
+            return
+        
+        # 显示执行顺序
+        try:
+            order = wf.get_execution_order()
+            console.print("[bold]执行顺序:[/bold]")
+            
+            for i, layer in enumerate(order, 1):
+                console.print(f"\n  第{i}层:")
+                for step_id in layer:
+                    step = next(s for s in wf.steps if s.id == step_id)
+                    dep_str = f" (依赖: {', '.join(step.depends_on)})" if step.depends_on else ""
+                    console.print(f"    - [{step_id}] {step.agent_name}: {step.task}{dep_str}")
+        
+        except ValueError as e:
+            console.print(f"   ⚠️ {e}")
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@workflow.command('run')
+@click.argument('name')
+@click.argument('context')
+@click.option('--verbose', '-v', is_flag=True, help='显示详细输出')
+def workflow_run(name, context, verbose):
+    """执行工作流"""
+    try:
+        from kas.core.workflow import get_workflow_engine, StepStatus
+        
+        engine = get_workflow_engine()
+        wf = engine.load(name)
+        
+        if not wf:
+            console.print(f"❌ 工作流不存在: {name}")
+            return
+        
+        console.print(f"\n🚀 执行工作流: [bold]{name}[/bold]")
+        console.print(f"   上下文: {context}\n")
+        
+        # 进度回调
+        def on_step_complete(step, output):
+            status_icon = "✅" if step.status == StepStatus.COMPLETED else "❌"
+            console.print(f"{status_icon} [{step.id}] {step.agent_name} 完成")
+            if verbose and output:
+                console.print(f"   输出: {output[:200]}...")
+        
+        # 执行
+        results = engine.execute(wf, context, callback=on_step_complete)
+        
+        console.print()
+        if results['success']:
+            console.print(f"✅ 工作流执行成功")
+        else:
+            console.print(f"❌ 工作流执行失败")
+        
+        console.print(f"\n   开始: {results['started_at']}")
+        console.print(f"   结束: {results.get('completed_at', 'N/A')}")
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
+@workflow.command('delete')
+@click.argument('name')
+@click.confirmation_option(prompt='确定要删除工作流吗？')
+def workflow_delete(name):
+    """删除工作流"""
+    try:
+        from kas.core.workflow import get_workflow_engine
+        
+        engine = get_workflow_engine()
+        if engine.delete(name):
+            console.print(f"🗑️ 工作流已删除: {name}")
+        else:
+            console.print(f"❌ 工作流不存在: {name}")
+        
+    except Exception as e:
+        console.print(f"❌ Error: {e}")
+
+
 def main():
     """入口点"""
     cli()
