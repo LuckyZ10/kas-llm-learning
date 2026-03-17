@@ -207,6 +207,42 @@ async def market_search(q: str = Query(..., min_length=1)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/market/list")
+async def market_list():
+    """列出市场所有 Agent"""
+    try:
+        market = get_market()
+        agents = market.list_agents()
+        return {"success": True, "agents": agents}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/market/install/{agent_name}")
+async def market_install(agent_name: str):
+    """从市场安装 Agent"""
+    try:
+        market = get_market()
+        result = market.install(agent_name)
+        return {"success": True, "message": f"Agent {agent_name} 安装成功", "result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/market/download/{package_id}")
+async def market_download(package_id: str):
+    """从云端市场下载 Agent"""
+    try:
+        client = get_cloud_client()
+        if not client.is_available():
+            raise HTTPException(status_code=503, detail="云端市场不可用")
+        
+        result = client.download(package_id)
+        return {"success": True, "message": "下载成功", "result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/workflows")
 async def list_workflows():
     """列出工作流"""
