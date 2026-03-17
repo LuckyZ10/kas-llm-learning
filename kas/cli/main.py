@@ -14,30 +14,35 @@ from kas.core.ingestion import ingest_project
 from kas.core.fusion import fuse_agents
 from kas.core.chat import ChatEngine, SimpleLLMClient
 from kas.core.llm_learning import LLMEnhancedLearningEngine
+from kas.core.config import get_config, init_config, setup_wizard
+from kas.core.versioning import get_version_manager, auto_save_on_evolve
 
 console = Console()
 
 
 def get_llm_client(force_mock=False):
-    """从环境变量获取LLM配置并创建客户端"""
+    """从配置获取LLM客户端"""
     if force_mock:
         return None
     
-    # 检测 key 类型并设置对应的 base_url
-    if os.environ.get('OPENAI_API_KEY'):
-        api_key = os.environ.get('OPENAI_API_KEY')
-        base_url = os.environ.get('LLM_BASE_URL')  # OpenAI 可选自定义
-        model = "gpt-3.5-turbo"
-    elif os.environ.get('KIMI_API_KEY'):
-        api_key = os.environ.get('KIMI_API_KEY')
-        base_url = "https://api.moonshot.cn/v1"
-        model = "moonshot-v1-8k"
-    elif os.environ.get('DEEPSEEK_API_KEY'):
-        api_key = os.environ.get('DEEPSEEK_API_KEY')
-        base_url = "https://api.deepseek.com/v1"
-        model = "deepseek-chat"
-    else:
+    # 使用新的配置系统
+    config = get_config()
+    api_key = config.get_api_key()
+    
+    if not api_key:
         return None
+    
+    # 根据配置的 provider 创建客户端
+    provider = config.llm.provider
+    base_url = config.llm.base_url
+    model = config.llm.model
+    
+    if provider == "kimi" and not base_url:
+        base_url = "https://api.moonshot.cn/v1"
+        model = model or "moonshot-v1-8k"
+    elif provider == "deepseek" and not base_url:
+        base_url = "https://api.deepseek.com/v1"
+        model = model or "deepseek-chat"
     
     return SimpleLLMClient(api_key=api_key, base_url=base_url, model=model)
 
@@ -329,6 +334,25 @@ def evolve(agent, force, output):
                         change.get('reason', '')[:40]
                     )
                 console.print(table)
+            
+            # 自动保存版本
+            console.print(f"\n💾 [bold blue]Saving evolution to version history...[/bold blue]")
+            
+            # 重新加载当前 agent
+            from kas.core.models import Agent
+            current_agent = Agent.from_dict(agent_data)
+            
+            vm = get_version_manager(agent)
+            version_id = vm.save_version(
+                agent=current_agent,
+                description=f"Evolution Gen{result['generation']}: {result['analysis'].get('top_recommendation', 'Auto evolution')[:50]}...",
+                tags=["evolution", f"gen{result['generation']}"],
+                changes=[c.get('action', 'unknown') + ': ' + c.get('name', '') for c in changes],
+                quality_score=result['analysis'].get('confidence', 0) * 100
+            )
+            
+            console.print(f"✅ Saved as version: [bold]{version_id}[/bold]")
+            console.print(f"💡 Run 'kas versions {agent}' to see history")
         else:
             # 显示当前学习状态
             console.print(learning_engine.get_learning_report())
@@ -353,6 +377,128 @@ def evolve(agent, force, output):
         console.print(f"❌ [bold red]Error:[/bold red] {e}")
         import traceback
         console.print(traceback.format_exc())
+
+
+@cli.command()
+def config():
+    """⚙️  配置 KAS 设置"""
+    try:
+        # 初始化配置
+        init_config()
+        config_manager = get_config()
+        
+        # 显示当前状态
+        console.print(config_manager.get_status())
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command(name='config-setup')
+def config_setup():
+    """🔧 交互式配置向导"""
+    try:
+        setup_wizard()
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+@click.argument('agent')
+@click.option('--limit', '-n', default=10, help='显示最近 N 个版本')
+def versions(agent, limit):
+    """📚 查看 Agent 版本历史"""
+    try:
+        vm = get_version_manager(agent)
+        versions_list = vm.list_versions(limit=limit)
+        
+        if not versions_list:
+            console.print(f"📭 {agent} 暂无版本历史")
+            console.print("提示: 运行 'kas evolve --force' 创建第一个版本")
+            return
+        
+        console.print(vm.format_version_list(versions_list))
+        
+        # 显示统计
+        stats = vm.get_statistics()
+        console.print(f"\n📊 统计: 平均质量 {stats['average_quality']}, 最佳版本 {stats['best_version'] or 'N/A'}")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+@click.argument('agent')
+@click.argument('version_id')
+def rollback(agent, version_id):
+    """⏪ 回滚 Agent 到指定版本"""
+    try:
+        vm = get_version_manager(agent)
+        
+        # 确认版本存在
+        version_info = vm.get_version(version_id)
+        if not version_info:
+            console.print(f"❌ 版本 {version_id} 不存在")
+            return
+        
+        # 确认回滚
+        from rich.prompt import Confirm
+        if not Confirm.ask(f"确定要回滚 {agent} 到 {version_id} 吗?"):
+            console.print("已取消")
+            return
+        
+        # 执行回滚
+        agent_data = vm.rollback(version_id)
+        if agent_data:
+            # 保存回滚后的版本到当前 agent
+            agent_dir = Path.home() / '.kas' / 'agents' / agent
+            agent_dir.mkdir(parents=True, exist_ok=True)
+            
+            import yaml
+            with open(agent_dir / 'agent.yaml', 'w') as f:
+                yaml.dump(agent_data.to_dict(), f, allow_unicode=True)
+            
+            with open(agent_dir / 'system_prompt.txt', 'w') as f:
+                f.write(agent_data.system_prompt)
+            
+            console.print(f"✅ {agent} 已回滚到 {version_id}")
+            console.print(f"💾 当前状态已保存为新的版本（以防后悔）")
+        else:
+            console.print(f"❌ 回滚失败")
+            
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+@click.argument('agent')
+@click.argument('version_a')
+@click.argument('version_b')
+def diff(agent, version_a, version_b):
+    """🔍 对比两个 Agent 版本"""
+    try:
+        vm = get_version_manager(agent)
+        
+        result = vm.compare_versions(version_a, version_b)
+        
+        if 'error' in result:
+            console.print(f"❌ {result['error']}")
+            return
+        
+        console.print(Panel.fit(
+            f"[bold cyan]🔍 {agent} 版本对比[/bold cyan]\n\n"
+            f"{version_a} vs {version_b}\n\n"
+            f"[bold]能力变化:[/bold]\n"
+            f"  + 新增: {', '.join(result['capabilities']['added']) or '无'}\n"
+            f"  - 移除: {', '.join(result['capabilities']['removed']) or '无'}\n\n"
+            f"[bold]配置变化:[/bold]\n"
+            + "\n".join(f"  {k}: {v['from']} → {v['to']}" for k, v in result['config_changes'].items())
+            + f"\n\n[bold]Prompt 变化:[/bold] {len(result['prompt_changes'])} 处",
+            title="🔍 Version Diff"
+        ))
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
 
 
 def main():

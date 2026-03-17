@@ -1,0 +1,68 @@
+# KAS - Kimi Agent Studio
+# Git忽略文件
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 虚拟环境
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# KAS 配置和敏感信息（重要！）
+.kas/
+*.kas-agent
+.kas_config.yaml
+.kas_credentials
+
+# API Keys 和凭证（绝对不要上传！）
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*.crt
+
+# 日志
+*.log
+logs/
+
+# 测试数据
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 临时文件
+tmp/
+temp/
+*.tmp
