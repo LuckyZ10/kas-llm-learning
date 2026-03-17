@@ -330,15 +330,35 @@ class VersionManager:
         
         return tree
     
-    def delete_version(self, version_id: str) -> bool:
+    def delete_version(self, version_id: str, force: bool = False) -> tuple[bool, str]:
         """
         删除版本
         
-        清理不需要的旧版本
+        清理不需要的旧版本。默认会检查是否有子版本依赖，防止版本树断裂。
+        
+        Args:
+            version_id: 要删除的版本 ID
+            force: 强制删除，忽略子版本依赖检查
+        
+        Returns:
+            (成功, 消息)
         """
         version = self.get_version(version_id)
         if not version:
-            return False
+            return False, f"版本 {version_id} 不存在"
+        
+        # 检查是否有子版本依赖
+        children = [v for v in self.versions if v.parent_version == version_id]
+        if children and not force:
+            child_ids = [v.version_id for v in children]
+            return False, f"无法删除: 有 {len(children)} 个子版本依赖它 ({', '.join(child_ids[:3])}...)。使用 force=True 强制删除"
+        
+        # 如果强制删除，更新子版本的 parent 指向祖父版本
+        if children and force:
+            grandparent = version.parent_version
+            for child in children:
+                child.parent_version = grandparent
+            self._save_metadata()
         
         # 删除文件
         version_dir = self._get_version_dir(version_id)
@@ -349,7 +369,10 @@ class VersionManager:
         self.versions = [v for v in self.versions if v.version_id != version_id]
         self._save_metadata()
         
-        return True
+        msg = f"版本 {version_id} 已删除"
+        if children and force:
+            msg += f"，{len(children)} 个子版本已重新挂载到父版本"
+        return True, msg
     
     def export_version(self, version_id: str, output_path: str) -> bool:
         """

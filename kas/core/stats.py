@@ -49,12 +49,29 @@ class DailyStats:
 
 
 class AnalyticsDatabase:
-    """分析数据库"""
+    """分析数据库 - 单例模式"""
     
-    def __init__(self):
+    _instance = None
+    _conn = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._init_db()
+        return cls._instance
+    
+    def _init_db(self):
+        """初始化数据库"""
         STATS_DIR.mkdir(parents=True, exist_ok=True)
-        self.conn = sqlite3.connect(str(STATS_DB))
+        if self._conn is None:
+            self._conn = sqlite3.connect(str(STATS_DB), check_same_thread=False)
+            self._conn.row_factory = sqlite3.Row
         self._init_tables()
+    
+    @property
+    def conn(self):
+        """获取连接"""
+        return self._conn
     
     def _init_tables(self):
         """初始化表结构"""
@@ -199,14 +216,55 @@ class AnalyticsDatabase:
         }
     
     def get_daily_stats(self, days: int = 7) -> List[DailyStats]:
-        """获取每日统计"""
+        """获取每日统计 - 优化版（单次查询）"""
         cursor = self.conn.cursor()
+        since = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
         
-        stats = []
-        for i in range(days):
+        # 一次性查询所有日期的数据（使用 SQLite date 函数）
+        cursor.execute('''
+            SELECT 
+                date(timestamp) as date,
+                COUNT(*) as conversations,
+                SUM(message_count) as messages,
+                AVG(response_time_avg) as avg_response,
+                SUM(token_input + token_output) as tokens,
+                COUNT(DISTINCT agent_name) as agents
+            FROM conversations
+            WHERE date(timestamp) >= ?
+            GROUP BY date(timestamp)
+            ORDER BY date DESC
+            LIMIT ?
+        ''', (since, days))
+        
+        # 构建结果字典
+        stats_by_date = {}
+        for row in cursor.fetchall():
+            stats_by_date[row[0]] = DailyStats(
+                date=row[0],
+                total_conversations=row[1] or 0,
+                total_messages=row[2] or 0,
+                avg_response_time=round(row[3] or 0, 2),
+                total_tokens=row[4] or 0,
+                unique_users=row[5] or 0
+            )
+        
+        # 填充缺失的日期
+        result = []
+        for i in range(days - 1, -1, -1):
             date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
-            start = f"{date}T00:00:00"
-            end = f"{date}T23:59:59"
+            if date in stats_by_date:
+                result.append(stats_by_date[date])
+            else:
+                result.append(DailyStats(
+                    date=date,
+                    total_conversations=0,
+                    total_messages=0,
+                    avg_response_time=0.0,
+                    total_tokens=0,
+                    unique_users=0
+                ))
+        
+        return result
             
             cursor.execute('''
                 SELECT COUNT(*), SUM(message_count), AVG(response_time_avg),
