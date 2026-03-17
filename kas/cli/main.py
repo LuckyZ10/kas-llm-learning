@@ -16,6 +16,7 @@ from kas.core.chat import ChatEngine, SimpleLLMClient
 from kas.core.llm_learning import LLMEnhancedLearningEngine
 from kas.core.config import get_config, init_config, setup_wizard
 from kas.core.versioning import get_version_manager, auto_save_on_evolve
+from kas.core.market import get_market, pack_agent, unpack_agent
 
 console = Console()
 
@@ -495,6 +496,179 @@ def diff(agent, version_a, version_b):
             + "\n".join(f"  {k}: {v['from']} → {v['to']}" for k, v in result['config_changes'].items())
             + f"\n\n[bold]Prompt 变化:[/bold] {len(result['prompt_changes'])} 处",
             title="🔍 Version Diff"
+        ))
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+@click.argument('agent')
+@click.option('--output', '-o', help='输出路径')
+@click.option('--author', help='作者名')
+@click.option('--email', help='作者邮箱')
+@click.option('--tag', multiple=True, help='标签（可多次使用）')
+def export(agent, output, author, email, tag):
+    """📦 导出 Agent 为 .kas-agent 包"""
+    try:
+        # 加载 Agent
+        from kas.core.models import Agent
+        agent_dir = Path.home() / '.kas' / 'agents' / agent
+        
+        if not agent_dir.exists():
+            console.print(f"❌ Agent not found: {agent}")
+            return
+        
+        with open(agent_dir / 'agent.yaml', 'r') as f:
+            import yaml
+            agent_data = yaml.safe_load(f)
+        
+        agent_obj = Agent.from_dict(agent_data)
+        
+        # 打包
+        tags = list(tag) if tag else []
+        package_path = pack_agent(
+            agent_obj,
+            output_path=output,
+            author=author or "Unknown",
+            author_email=email or "",
+            tags=tags
+        )
+        
+        console.print(f"✅ 导出成功: {package_path}")
+        console.print(f"📦 大小: {Path(package_path).stat().st_size / 1024:.1f} KB")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+@click.argument('package')
+@click.option('--install', is_flag=True, help='直接安装')
+def import_pkg(package, install):
+    """📂 导入 .kas-agent 包"""
+    try:
+        agent = unpack_agent(package, install=install)
+        
+        if agent:
+            console.print(f"✅ 导入成功: {agent.name} v{agent.version}")
+            
+            if install:
+                console.print(f"💾 已安装到: ~/.kas/agents/{agent.name}")
+                console.print(f"💡 使用: kas chat {agent.name}")
+            else:
+                console.print(f"📋 预览模式，使用 --install 安装")
+        else:
+            console.print(f"❌ 导入失败")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+@click.argument('package')
+def market_publish(package):
+    """🛒 发布包到本地市场"""
+    try:
+        market = get_market()
+        
+        if market.publish(package):
+            console.print(f"✅ 发布成功")
+            
+            # 获取包信息
+            pkg_path = Path(package)
+            agent = unpack_agent(package)
+            if agent:
+                console.print(f"📦 {agent.name} v{agent.version}")
+                console.print(f"💡 其他人可以用 'kas market install {agent.name}' 安装")
+        else:
+            console.print(f"❌ 发布失败")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+@click.argument('query', default="")
+@click.option('--tag', multiple=True, help='按标签过滤')
+def market_search(query, tag):
+    """🔍 搜索市场"""
+    try:
+        market = get_market()
+        tags = list(tag) if tag else None
+        
+        results = market.search(query, tags=tags)
+        
+        if results:
+            console.print(market.format_search_results(results))
+        else:
+            console.print(f"📭 未找到匹配的 Agent")
+            console.print(f"💡 尝试: kas market search python")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+@click.argument('name')
+def market_install(name):
+    """⬇️  从市场安装 Agent"""
+    try:
+        market = get_market()
+        
+        info = market.get_info(name)
+        if not info:
+            console.print(f"❌ 市场找不到: {name}")
+            console.print(f"💡 搜索: kas market search {name}")
+            return
+        
+        console.print(f"📦 安装 {name} v{info.version}...")
+        
+        if market.install(name):
+            console.print(f"✅ 安装成功")
+            console.print(f"💡 使用: kas chat {name}")
+        else:
+            console.print(f"❌ 安装失败")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+def market_list():
+    """📋 列出已安装的 Agent"""
+    try:
+        market = get_market()
+        installed = market.list_installed()
+        
+        if installed:
+            console.print(f"\n📦 已安装 {len(installed)} 个 Agent:")
+            for name in installed:
+                console.print(f"  • {name}")
+            console.print(f"\n💡 使用 'kas chat <name>' 开始对话")
+        else:
+            console.print(f"📭 未安装任何 Agent")
+            console.print(f"💡 尝试: kas market search")
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
+
+
+@cli.command()
+def market_stats():
+    """📊 市场统计"""
+    try:
+        market = get_market()
+        stats = market.get_stats()
+        
+        console.print(Panel.fit(
+            f"[bold cyan]📊 本地市场统计[/bold cyan]\n\n"
+            f"📦 总包数: {stats.total_packages}\n"
+            f"📥 总下载: {stats.total_downloads}\n"
+            f"🕐 更新时间: {stats.last_updated[:19]}\n\n"
+            f"[bold]热门标签:[/bold]\n"
+            + "\n".join(f"  • {tag} ({count})" for tag, count in stats.top_tags[:5]),
+            title="📊 Market Stats"
         ))
         
     except Exception as e:
