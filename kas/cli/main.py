@@ -19,6 +19,7 @@ from kas.core.config import get_config, init_config, setup_wizard
 from kas.core.versioning import get_version_manager, auto_save_on_evolve
 from kas.core.market import get_market, pack_agent, unpack_agent
 from kas.core.validation import CapabilityValidator, validate_agent
+from kas.core.stats import get_dashboard, record_conversation
 
 console = Console()
 
@@ -759,6 +760,23 @@ def validate(agent, capability, output):
         console.print(f"❌ [bold red]Error:[/bold red] {e}")
         import traceback
         traceback.print_exc()
+
+
+@cli.command()
+@click.argument('agent', required=False)
+@click.option('--days', '-d', default=30, help='统计天数')
+def stats(agent, days):
+    """📊 查看使用统计"""
+    try:
+        dashboard = get_dashboard()
+        
+        if agent:
+            console.print(dashboard.show_agent_stats(agent, days))
+        else:
+            console.print(dashboard.show_overview())
+        
+    except Exception as e:
+        console.print(f"❌ [bold red]Error:[/bold red] {e}")
 
 
 def main():
