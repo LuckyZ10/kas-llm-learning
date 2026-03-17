@@ -19,6 +19,7 @@ from kas.core.llm_learning import LLMEnhancedLearningEngine
 from kas.core.config import get_config, init_config, setup_wizard
 from kas.core.versioning import get_version_manager, auto_save_on_evolve
 from kas.core.market import get_market, pack_agent, unpack_agent
+from kas.core.cloud_market import get_cloud_client, CloudMarketError
 from kas.core.validation import CapabilityValidator, validate_agent
 from kas.core.stats import get_dashboard, record_conversation
 
@@ -645,20 +646,69 @@ def import_pkg(package, install):
 
 @cli.command()
 @click.argument('package')
-def market_publish(package):
-    """🛒 发布包到本地市场"""
+@click.option('--cloud/--local', default=False, help='发布到云端市场 (默认本地)')
+@click.option('--name', help='包名称 (默认从包中读取)')
+@click.option('--version', help='版本号 (默认从包中读取)')
+@click.option('--description', help='包描述')
+@click.option('--tag', multiple=True, help='标签')
+def market_publish(package, cloud, name, version, description, tag):
+    """🛒 发布包到市场"""
     try:
+        pkg_path = Path(package)
+        if not pkg_path.exists():
+            console.print(f"❌ 包文件不存在: {package}")
+            return
+        
+        # 解包获取信息
+        agent = unpack_agent(package)
+        if not agent:
+            console.print(f"❌ 无法解析包: {package}")
+            return
+        
+        # 使用提供的参数或从包中读取
+        pkg_name = name or agent.name
+        pkg_version = version or agent.version
+        pkg_description = description or agent.description or f"{agent.name} Agent"
+        pkg_tags = list(tag) if tag else []
+        
+        # 发布到云端
+        if cloud:
+            try:
+                client = get_cloud_client()
+                if not client.is_available():
+                    console.print("❌ 云端市场服务器不可用")
+                    console.print("💡 请确保服务器在运行: cd kas-cloud && bash start.sh")
+                    return
+                
+                console.print(f"☁️  正在发布到云端市场...")
+                console.print(f"   名称: {pkg_name}")
+                console.print(f"   版本: {pkg_version}")
+                
+                result = client.publish(
+                    package_path=str(pkg_path),
+                    name=pkg_name,
+                    version=pkg_version,
+                    description=pkg_description,
+                    tags=pkg_tags
+                )
+                
+                console.print(f"✅ 云端发布成功!")
+                console.print(f"📦 {result.get('name')} v{result.get('version')}")
+                console.print(f"💡 其他人可以用 'kas market install {pkg_name}' 安装")
+                return
+                
+            except CloudMarketError as e:
+                console.print(f"❌ 云端发布失败: {e}")
+                console.print(f"💡 尝试发布到本地: kas market publish {package}")
+                return
+        
+        # 发布到本地市场
         market = get_market()
         
         if market.publish(package):
-            console.print(f"✅ 发布成功")
-            
-            # 获取包信息
-            pkg_path = Path(package)
-            agent = unpack_agent(package)
-            if agent:
-                console.print(f"📦 {agent.name} v{agent.version}")
-                console.print(f"💡 其他人可以用 'kas market install {agent.name}' 安装")
+            console.print(f"✅ 本地发布成功")
+            console.print(f"📦 {agent.name} v{agent.version}")
+            console.print(f"💡 其他人可以用 'kas market install {agent.name}' 安装")
         else:
             console.print(f"❌ 发布失败")
         
@@ -669,18 +719,60 @@ def market_publish(package):
 @cli.command()
 @click.argument('query', default="")
 @click.option('--tag', multiple=True, help='按标签过滤')
-def market_search(query, tag):
+@click.option('--cloud/--local', default=True, help='使用云端或本地市场 (默认云端)')
+def market_search(query, tag, cloud):
     """🔍 搜索市场"""
     try:
-        market = get_market()
         tags = list(tag) if tag else None
         
+        # 优先尝试云端市场
+        if cloud:
+            try:
+                client = get_cloud_client()
+                if client.is_available():
+                    results = client.search(query, tags=tags)
+                    
+                    if results:
+                        table = Table(title=f"🔍 云端市场搜索结果: '{query or 'all'}'")
+                        table.add_column("名称", style="cyan")
+                        table.add_column("版本", style="green")
+                        table.add_column("作者", style="yellow")
+                        table.add_column("下载", justify="right", style="blue")
+                        table.add_column("评分", justify="right", style="magenta")
+                        table.add_column("标签", style="dim")
+                        
+                        for pkg in results:
+                            rating_str = f"⭐ {pkg.rating:.1f}" if pkg.rating > 0 else "-"
+                            tags_str = ", ".join(pkg.tags[:3]) if pkg.tags else ""
+                            table.add_row(
+                                pkg.name,
+                                pkg.version,
+                                pkg.author_name,
+                                str(pkg.downloads),
+                                rating_str,
+                                tags_str
+                            )
+                        
+                        console.print(table)
+                        console.print(f"\n💡 使用 'kas market install <name>' 安装")
+                    else:
+                        console.print(f"📭 云端市场未找到: {query or '任何 Agent'}")
+                    
+                    return
+                else:
+                    console.print("⚠️  云端市场不可用，回退到本地市场...")
+            except CloudMarketError as e:
+                console.print(f"⚠️  云端错误: {e}")
+                console.print("🔄 回退到本地市场...")
+        
+        # 本地市场
+        market = get_market()
         results = market.search(query, tags=tags)
         
         if results:
             console.print(market.format_search_results(results))
         else:
-            console.print(f"📭 未找到匹配的 Agent")
+            console.print(f"📭 本地市场未找到: {query or '任何 Agent'}")
             console.print(f"💡 尝试: kas market search python")
         
     except Exception as e:
@@ -689,18 +781,87 @@ def market_search(query, tag):
 
 @cli.command()
 @click.argument('name')
-def market_install(name):
+@click.option('--cloud/--local', default=True, help='从云端或本地市场安装 (默认云端)')
+@click.option('--id', type=int, help='云端包 ID (精确安装)')
+def market_install(name, cloud, id):
     """⬇️  从市场安装 Agent"""
     try:
-        market = get_market()
+        # 如果指定了云端 ID
+        if id and cloud:
+            try:
+                client = get_cloud_client()
+                if not client.is_available():
+                    console.print("❌ 云端市场不可用")
+                    return
+                
+                console.print(f"📦 从云端下载 (ID: {id})...")
+                
+                # 获取包信息
+                info = client.get_package_info(id)
+                console.print(f"📋 {info['name']} v{info['version']} by {info['author_name']}")
+                
+                # 下载
+                download_path = client.download(id, output_dir='/tmp')
+                console.print(f"📥 下载完成: {download_path}")
+                
+                # 安装
+                from kas.core.market import unpack_agent
+                agent = unpack_agent(download_path, install=True)
+                if agent:
+                    console.print(f"✅ 安装成功: {agent.name}")
+                    console.print(f"💡 使用: kas chat {agent.name}")
+                else:
+                    console.print(f"❌ 安装失败")
+                
+                # 清理临时文件
+                Path(download_path).unlink(missing_ok=True)
+                return
+                
+            except CloudMarketError as e:
+                console.print(f"❌ 云端安装失败: {e}")
+                return
         
+        # 优先尝试云端市场
+        if cloud:
+            try:
+                client = get_cloud_client()
+                if client.is_available():
+                    results = client.search(name)
+                    
+                    # 找精确匹配的
+                    for pkg in results:
+                        if pkg.name.lower() == name.lower():
+                            console.print(f"📦 在云端市场找到: {pkg.name} v{pkg.version}")
+                            console.print(f"   作者: {pkg.author_name} | 下载: {pkg.downloads} | 评分: ⭐ {pkg.rating:.1f}")
+                            
+                            # 下载并安装
+                            download_path = client.download(pkg.id, output_dir='/tmp')
+                            agent = unpack_agent(download_path, install=True)
+                            
+                            if agent:
+                                console.print(f"✅ 安装成功!")
+                                console.print(f"💡 使用: kas chat {agent.name}")
+                            
+                            Path(download_path).unlink(missing_ok=True)
+                            return
+                    
+                    console.print(f"⚠️  云端市场未找到精确匹配: {name}")
+                    console.print(f"💡 尝试搜索: kas market search {name}")
+                    return
+                    
+            except CloudMarketError as e:
+                console.print(f"⚠️  云端错误: {e}")
+                console.print("🔄 回退到本地市场...")
+        
+        # 本地市场
+        market = get_market()
         info = market.get_info(name)
         if not info:
-            console.print(f"❌ 市场找不到: {name}")
-            console.print(f"💡 搜索: kas market search {name}")
+            console.print(f"❌ 本地市场找不到: {name}")
+            console.print(f"💡 搜索云端: kas market search {name}")
             return
         
-        console.print(f"📦 安装 {name} v{info.version}...")
+        console.print(f"📦 从本地市场安装 {name} v{info.version}...")
         
         if market.install(name):
             console.print(f"✅ 安装成功")

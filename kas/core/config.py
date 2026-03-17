@@ -66,6 +66,14 @@ class EvolutionConfig:
 
 
 @dataclass
+class CloudConfig:
+    """云端市场配置"""
+    api_url: str = "http://localhost:8000"
+    enabled: bool = True
+    auto_sync: bool = False  # 是否自动同步到云端
+
+
+@dataclass
 class KASConfig:
     """KAS 全局配置"""
     version: str = "0.1.0"
@@ -73,6 +81,7 @@ class KASConfig:
     ingestion: IngestionConfig = field(default_factory=IngestionConfig)
     chat: ChatConfig = field(default_factory=ChatConfig)
     evolution: EvolutionConfig = field(default_factory=EvolutionConfig)
+    cloud: CloudConfig = field(default_factory=CloudConfig)
     user_preferences: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -145,6 +154,7 @@ class ConfigManager:
             ingestion=IngestionConfig(**data.get('ingestion', {})),
             chat=ChatConfig(**data.get('chat', {})),
             evolution=EvolutionConfig(**data.get('evolution', {})),
+            cloud=CloudConfig(**data.get('cloud', {})),
             user_preferences=data.get('user_preferences', {})
         )
     
@@ -165,6 +175,10 @@ class ConfigManager:
     @property
     def evolution(self) -> EvolutionConfig:
         return self.config.evolution
+    
+    @property
+    def cloud(self) -> CloudConfig:
+        return self.config.cloud
     
     # ========== API Key 管理 ==========
     
@@ -320,6 +334,30 @@ def setup_wizard():
         config.set_api_key(provider, api_key)
         console.print(f"✅ {provider} API Key 已安全保存", style="green")
     
+    console.print("\n☁️ 云端市场配置", style="bold blue")
+    
+    # 云端市场设置
+    config.cloud.enabled = Confirm.ask(
+        "是否启用云端市场？",
+        default=True
+    )
+    
+    if config.cloud.enabled:
+        cloud_url = Prompt.ask(
+            "云端市场 API 地址",
+            default="http://localhost:8000"
+        )
+        config.cloud.api_url = cloud_url
+        
+        # 云端 API Key（可选）
+        cloud_key = Prompt.ask(
+            "云端市场 API Key (可选，发布/评分需要)",
+            password=True
+        )
+        if cloud_key:
+            config.credentials['cloud_api_key'] = cloud_key
+            console.print("✅ 云端 API Key 已保存", style="green")
+    
     # 其他设置
     config.llm.temperature = float(Prompt.ask(
         "设置回答创造性 (0.0-1.0)",
@@ -333,6 +371,7 @@ def setup_wizard():
     
     # 保存
     config.save()
+    config._save_credentials()  # 确保凭证也保存
     
     console.print(f"\n✅ 配置完成！", style="bold green")
     console.print(f"📁 配置文件: {CONFIG_FILE}")
