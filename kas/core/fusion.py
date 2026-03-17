@@ -88,13 +88,25 @@ class FusionEngine:
         result = copy.deepcopy(agents[0])
         
         # 找出所有Agent都有的能力类型
-        common_types = set(agents[0].capabilities)
+        common_types = set(c.type for c in agents[0].capabilities)
         for agent in agents[1:]:
-            agent_types = set(agent.capabilities)
+            agent_types = set(c.type for c in agent.capabilities)
             common_types = common_types.intersection(agent_types)
         
-        # 保留共同能力（取平均置信度）
-        result.capabilities = list(common_types)
+        # 保留共同能力（取最高置信度）
+        result.capabilities = []
+        for cap_type in common_types:
+            # 找到所有Agent中该类型的最高置信度
+            max_confidence = 0
+            best_cap = None
+            for agent in agents:
+                for cap in agent.capabilities:
+                    if cap.type == cap_type and cap.confidence > max_confidence:
+                        max_confidence = cap.confidence
+                        best_cap = cap
+            if best_cap:
+                result.capabilities.append(best_cap)
+        
         result.system_prompt = agents[0].system_prompt  # 使用第一个的prompt
         
         return result

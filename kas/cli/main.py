@@ -286,8 +286,9 @@ def inspect(agent):
 @cli.command()
 @click.argument('agent')
 @click.option('--force', is_flag=True, help='强制进化，忽略收敛状态')
+@click.option('--apply', is_flag=True, help='真正应用进化（修改 agent.yaml）')
 @click.option('--output', '-o', help='输出报告到文件')
-def evolve(agent, force, output):
+def evolve(agent, force, apply, output):
     """🧬 触发 Agent 进化 (LLM 增强学习)"""
     try:
         console.print(f"\n🧠 [bold blue]Initializing LLM Learning Engine for {agent}...[/bold blue]")
@@ -338,6 +339,62 @@ def evolve(agent, force, output):
                         change.get('reason', '')[:40]
                     )
                 console.print(table)
+            
+            # 真正应用进化
+            if apply:
+                console.print(f"\n📝 [bold yellow]Applying evolution to {agent}...[/bold yellow]")
+                
+                # 更新 system_prompt
+                new_prompt = result['evolution_plan'].get('new_system_prompt', current_prompt)
+                if new_prompt != current_prompt:
+                    agent_data['system_prompt'] = new_prompt
+                    console.print(f"  ✓ Updated system_prompt")
+                
+                # 更新能力
+                if changes:
+                    current_caps = {c['type']: c for c in agent_data.get('capabilities', [])}
+                    
+                    for change in changes:
+                        action = change.get('action')
+                        cap_name = change.get('name')
+                        cap_type = change.get('capability_type', 'CODE_REVIEW')
+                        
+                        if action == 'add':
+                            if cap_type not in current_caps:
+                                agent_data['capabilities'].append({
+                                    'name': cap_name,
+                                    'type': cap_type,
+                                    'description': change.get('description', ''),
+                                    'confidence': 0.7
+                                })
+                                console.print(f"  ✓ Added capability: {cap_name}")
+                        
+                        elif action == 'remove' and cap_type in current_caps:
+                            agent_data['capabilities'] = [
+                                c for c in agent_data['capabilities'] 
+                                if c['type'] != cap_type
+                            ]
+                            console.print(f"  ✓ Removed capability: {cap_name}")
+                        
+                        elif action == 'enhance':
+                            for c in agent_data['capabilities']:
+                                if c['type'] == cap_type:
+                                    c['confidence'] = min(c.get('confidence', 0.5) + 0.1, 0.95)
+                                    console.print(f"  ✓ Enhanced capability: {cap_name}")
+                
+                # 增加代数
+                agent_data['generation'] = result.get('generation', agent_data.get('generation', 0) + 1)
+                
+                # 保存到文件
+                with open(agent_dir / 'agent.yaml', 'w') as f:
+                    yaml.dump(agent_data, f, allow_unicode=True, default_flow_style=False)
+                
+                with open(agent_dir / 'system_prompt.txt', 'w') as f:
+                    f.write(agent_data['system_prompt'])
+                
+                console.print(f"✅ Evolution applied successfully!")
+            else:
+                console.print(f"\n💡 Use --apply to actually modify {agent}")
             
             # 自动保存版本
             console.print(f"\n💾 [bold blue]Saving evolution to version history...[/bold blue]")
