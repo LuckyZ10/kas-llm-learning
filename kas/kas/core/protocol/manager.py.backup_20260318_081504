@@ -402,7 +402,7 @@ class CommunicationManager:
         
         async def response_handler(msg: Message):
             nonlocal response_msg
-            if (msg.type == MessageType.RESPONSE and
+            if (msg.type == MessageType.RESPONSE and 
                 msg.correlation_id == request.id):
                 response_msg = msg
                 response_event.set()

@@ -277,7 +277,7 @@ class TCPTransport(Transport):
         await transport.connect()
     """
     
-    def __init__(self, agent_id: str,
+    def __init__(self, agent_id: str, 
                  host: str = "0.0.0.0", port: int = 0,
                  server_host: Optional[str] = None, server_port: Optional[int] = None,
                  serialization_format: SerializationFormat = SerializationFormat.JSON):

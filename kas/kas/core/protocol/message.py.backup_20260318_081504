@@ -242,7 +242,7 @@ class Message:
             key = base64.urlsafe_b64encode(kdf.derive(key))
         return Fernet(key)
     
-    def create_response(self, payload: Dict[str, Any],
+    def create_response(self, payload: Dict[str, Any], 
                         msg_type: MessageType = MessageType.RESPONSE) -> 'Message':
         """
         创建响应消息
@@ -275,7 +275,7 @@ class Message:
             correlation_id=self.id
         )
     
-    def create_error(self, error_code: str, error_message: str,
+    def create_error(self, error_code: str, error_message: str, 
                      details: Optional[Dict] = None) -> 'Message':
         """
         创建错误响应消息

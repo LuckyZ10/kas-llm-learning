@@ -1,0 +1,31 @@
+{
+  "attempted": 2958,
+  "success": 4,
+  "failed": 2954,
+  "details": [
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/protocol/transport.py",
+      "line": 280,
+      "original": "def __init__(self, agent_id: str,",
+      "fixed": "def __init__(self, agent_id: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/protocol/manager.py",
+      "line": 405,
+      "original": "if (msg.type == MessageType.RESPONSE and",
+      "fixed": "if (msg.type == MessageType.RESPONSE and"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/protocol/message.py",
+      "line": 278,
+      "original": "def create_error(self, error_code: str, error_message: str,",
+      "fixed": "def create_error(self, error_code: str, error_message: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/protocol/message.py",
+      "line": 245,
+      "original": "def create_response(self, payload: Dict[str, Any],",
+      "fixed": "def create_response(self, payload: Dict[str, Any],"
+    }
+  ]
+}
