@@ -252,12 +252,133 @@ class OpenClawSandbox:
         logger.info(f"Sandbox {self.name} started in mock mode")
     
     def _start_openclaw_mode(self):
-        """启动真正的 OpenClaw 模式（待实现）"""
-        # TODO: 当 OpenClaw 支持 headless 模式时实现
-        # 启动子进程运行 OpenClaw
-        # 通过 stdio 或 socket 通信
-        logger.info(f"Sandbox {self.name} would start OpenClaw (not yet implemented)")
-        self._start_mock_mode()  # 暂时回退到模拟模式
+        """
+        启动真正的 OpenClaw 沙盒
+        
+        由于 OpenClaw 是命令行工具，沙盒模式工作原理:
+        1. 启动消息监听线程（监控 MessageBus 文件队列）
+        2. 当收到 TASK 消息时，调用 openclaw agent 执行
+        3. 将 OpenClaw 的输出通过 MessageBus 返回
+        """
+        try:
+            # 检查 openclaw 是否可用
+            result = subprocess.run(
+                ["openclaw", "--version"],
+                capture_output=True,
+                timeout=5
+            )
+            if result.returncode != 0:
+                raise RuntimeError("openclaw not available")
+            
+            # 准备 OpenClaw 工作目录（配置文件已存在）
+            openclaw_workspace = self.workspace_path / ".openclaw"
+            openclaw_workspace.mkdir(exist_ok=True)
+            
+            # 日志文件
+            log_file = openclaw_workspace / "openclaw.log"
+            self._log_file = log_file
+            
+            # 注册真实任务处理器（调用 openclaw agent）
+            self.on_task(self._execute_with_openclaw)
+            
+            logger.info(f"Sandbox {self.name} started in OpenClaw mode (message-driven)")
+            
+        except FileNotFoundError:
+            logger.error("openclaw command not found, falling back to mock mode")
+            self._start_mock_mode()
+        except Exception as e:
+            logger.error(f"Failed to start OpenClaw mode: {e}, falling back to mock mode")
+            self._start_mock_mode()
+    
+    def _execute_with_openclaw(self, task: str, context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        使用 OpenClaw 执行任务
+        
+        调用: openclaw agent --local --message "task" --json
+        """
+        import tempfile
+        import json
+        
+        try:
+            # 构建系统提示词（从 SOUL.md）
+            soul_content = ""
+            soul_file = self.workspace_path / "SOUL.md"
+            if soul_file.exists():
+                soul_content = soul_file.read_text(encoding='utf-8')
+            
+            # 构建完整提示词
+            full_prompt = f"""{soul_content}
+
+## 当前任务
+{task}
+
+## 上下文
+{json.dumps(context, indent=2, ensure_ascii=False)}
+"""
+            
+            # 写入临时文件（避免命令行长度限制）
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
+                f.write(full_prompt)
+                prompt_file = f.name
+            
+            try:
+                # 调用 OpenClaw
+                cmd = [
+                    "openclaw", "agent",
+                    "--local",           # 本地运行，不使用 Gateway
+                    "--message", f"@{prompt_file}",  # 从文件读取消息
+                    "--json",            # JSON 输出
+                    "--timeout", "120",  # 2分钟超时
+                ]
+                
+                # 执行命令
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=130,
+                    cwd=str(self.workspace_path)
+                )
+                
+                # 解析结果
+                output = result.stdout
+                error = result.stderr
+                
+                # 尝试解析 JSON
+                try:
+                    response = json.loads(output)
+                    return {
+                        "status": "success",
+                        "output": response.get("message", output),
+                        "exit_code": result.returncode
+                    }
+                except json.JSONDecodeError:
+                    # 非 JSON 输出
+                    return {
+                        "status": "success" if result.returncode == 0 else "error",
+                        "output": output,
+                        "error": error if error else None,
+                        "exit_code": result.returncode
+                    }
+                
+            finally:
+                # 清理临时文件
+                try:
+                    os.unlink(prompt_file)
+                except:
+                    pass
+                
+        except subprocess.TimeoutExpired:
+            return {
+                "status": "error",
+                "error": "OpenClaw execution timeout (120s)"
+            }
+        except Exception as e:
+            logger.error(f"OpenClaw execution error: {e}")
+            return {
+                "status": "error",
+                "error": str(e)
+            }
     
     def _save_status(self):
         """保存状态到文件"""
@@ -281,6 +402,20 @@ class OpenClawSandbox:
         return None
     
     def get_logs(self, lines: int = 100) -> List[str]:
-        """获取日志（待实现）"""
-        # TODO: 从日志文件读取
-        return []
+        """获取 OpenClaw 日志"""
+        log_file = getattr(self, '_log_file', None)
+        if not log_file or not log_file.exists():
+            # 尝试默认路径
+            log_file = self.workspace_path / ".openclaw" / "openclaw.log"
+        
+        if not log_file.exists():
+            return []
+        
+        try:
+            # 读取最后 N 行
+            with open(log_file, 'r', encoding='utf-8') as f:
+                all_lines = f.readlines()
+                return all_lines[-lines:] if len(all_lines) > lines else all_lines
+        except Exception as e:
+            logger.error(f"Failed to read logs: {e}")
+            return []

@@ -208,7 +208,7 @@ class SandboxSupervisor:
         logger.info(f"Agent {agent_name} injected into crew {crew_name}")
         return sandbox_config
     
-    def start_sandbox(self, crew_name: str, agent_name: str, use_mock: bool = True) -> bool:
+    def start_sandbox(self, crew_name: str, agent_name: str, use_mock: bool = False) -> bool:
         """启动沙盒"""
         sandbox_key = f"{crew_name}/{agent_name}"
         
@@ -249,7 +249,7 @@ class SandboxSupervisor:
         
         return True
     
-    def start_crew(self, crew_name: str, use_mock: bool = True) -> Dict[str, bool]:
+    def start_crew(self, crew_name: str, use_mock: bool = False) -> Dict[str, bool]:
         """启动 Crew 的所有沙盒"""
         crew = self.load_crew(crew_name)
         if not crew:

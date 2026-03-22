@@ -180,6 +180,16 @@ class ConfigManager:
     def cloud(self) -> CloudConfig:
         return self.config.cloud
     
+    @property
+    def agents_dir(self) -> Path:
+        """Agent存储目录"""
+        return KAS_DIR / 'agents'
+    
+    @property
+    def config_dir(self) -> Path:
+        """配置目录"""
+        return KAS_DIR
+    
     # ========== API Key 管理 ==========
     
     def set_api_key(self, provider: str, api_key: str):
