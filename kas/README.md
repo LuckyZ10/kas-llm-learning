@@ -45,7 +45,21 @@ pip install klaw-agent-studio
 
 ### 配置
 ```bash
-kas config set api_key <your-openai-key>
+kas config set api_key <your-api-key>
+```
+
+#### 智谱 AI Coding Plan 配置
+```bash
+# 设置智谱 AI 作为默认提供商
+kas config set provider zhipu
+
+# 配置 API Key (ANTHROPIC_AUTH_TOKEN 格式)
+kas config set api_key your_api_key
+
+# 使用环境变量方式（推荐）
+export ANTHROPIC_AUTH_TOKEN="your_api_key"
+export ANTHROPIC_BASE_URL="https://open.bigmodel.cn/api/anthropic"
+export API_TIMEOUT_MS="3000000"  # 50分钟，适合 Coding Plan
 ```
 
 ### 吞食你的项目
