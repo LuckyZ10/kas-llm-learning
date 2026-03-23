@@ -350,5 +350,82 @@
     "auto_fix_attempted": 2954,
     "auto_fix_success": 0,
     "report_path": "/root/.openclaw/workspace/kas/reviews/code_review_20260318_114505.md"
+  },
+  {
+    "timestamp": "2026-03-18T12:15:08.909703",
+    "total_files": 55,
+    "files_with_issues": 47,
+    "total_issues": 3804,
+    "critical": 0,
+    "high": 4,
+    "auto_fix_attempted": 3804,
+    "auto_fix_success": 22,
+    "report_path": "/root/.openclaw/workspace/kas/reviews/code_review_20260318_121508.md"
+  },
+  {
+    "timestamp": "2026-03-18T12:32:15.677417",
+    "total_files": 55,
+    "files_with_issues": 47,
+    "total_issues": 3782,
+    "critical": 0,
+    "high": 4,
+    "auto_fix_attempted": 3782,
+    "auto_fix_success": 0,
+    "report_path": "/root/.openclaw/workspace/kas/reviews/code_review_20260318_123215.md"
+  },
+  {
+    "timestamp": "2026-03-18T12:45:04.111277",
+    "total_files": 55,
+    "files_with_issues": 47,
+    "total_issues": 3782,
+    "critical": 0,
+    "high": 4,
+    "auto_fix_attempted": 3782,
+    "auto_fix_success": 0,
+    "report_path": "/root/.openclaw/workspace/kas/reviews/code_review_20260318_124504.md"
+  },
+  {
+    "timestamp": "2026-03-18T13:00:05.351567",
+    "total_files": 55,
+    "files_with_issues": 47,
+    "total_issues": 3782,
+    "critical": 0,
+    "high": 4,
+    "auto_fix_attempted": 3782,
+    "auto_fix_success": 0,
+    "report_path": "/root/.openclaw/workspace/kas/reviews/code_review_20260318_130005.md"
+  },
+  {
+    "timestamp": "2026-03-18T13:15:08.732680",
+    "total_files": 55,
+    "files_with_issues": 47,
+    "total_issues": 3782,
+    "critical": 0,
+    "high": 4,
+    "auto_fix_attempted": 3782,
+    "auto_fix_success": 0,
+    "report_path": "/root/.openclaw/workspace/kas/reviews/code_review_20260318_131508.md"
+  },
+  {
+    "timestamp": "2026-03-18T13:30:06.090947",
+    "total_files": 55,
+    "files_with_issues": 47,
+    "total_issues": 3782,
+    "critical": 0,
+    "high": 4,
+    "auto_fix_attempted": 3782,
+    "auto_fix_success": 0,
+    "report_path": "/root/.openclaw/workspace/kas/reviews/code_review_20260318_133006.md"
+  },
+  {
+    "timestamp": "2026-03-18T13:45:06.392788",
+    "total_files": 55,
+    "files_with_issues": 47,
+    "total_issues": 3782,
+    "critical": 0,
+    "high": 4,
+    "auto_fix_attempted": 3782,
+    "auto_fix_success": 0,
+    "report_path": "/root/.openclaw/workspace/kas/reviews/code_review_20260318_134506.md"
   }
 ]

@@ -418,7 +418,7 @@ class DistributedScheduler:
         
         return task
     
-    async def submit_sharded_task(self, name: str, 
+    async def submit_sharded_task(self, name: str,
                                    shards_data: List[Dict[str, Any]],
                                    payload: Optional[Dict] = None,
                                    aggregator: str = "concat",
@@ -466,7 +466,7 @@ class DistributedScheduler:
             Task对象
         """
         # 每个数据项作为一个分片
-        shards_data = [{"item": item, "index": i} 
+        shards_data = [{"item": item, "index": i}
                        for i, item in enumerate(map_data)]
         
         return await self.submit_task({
@@ -478,7 +478,7 @@ class DistributedScheduler:
             "timeout": timeout
         })
     
-    def _split_payload(self, payload: Dict[str, Any], 
+    def _split_payload(self, payload: Dict[str, Any],
                        num_shards: int) -> List[Dict[str, Any]]:
         """将payload分割为多个分片"""
         shards = []
@@ -754,7 +754,7 @@ class DistributedScheduler:
                 now = datetime.now()
                 
                 for task in self._tasks.values():
-                    if task.status not in [TaskStatus.COMPLETED, TaskStatus.FAILED, 
+                    if task.status not in [TaskStatus.COMPLETED, TaskStatus.FAILED,
                                           TaskStatus.CANCELLED, TaskStatus.TIMEOUT]:
                         # 检查是否超时
                         if task.started_at:
@@ -802,7 +802,7 @@ class DistributedScheduler:
         """获取任务结果"""
         return self._task_results.get(task_id)
     
-    async def wait_for_task(self, task_id: str, 
+    async def wait_for_task(self, task_id: str,
                             timeout: Optional[float] = None) -> Optional[TaskResult]:
         """
         等待任务完成
@@ -896,9 +896,9 @@ class DistributedScheduler:
         """获取调度器统计信息"""
         return {
             **self._stats,
-            "tasks_pending": len([t for t in self._tasks.values() 
+            "tasks_pending": len([t for t in self._tasks.values()
                                   if t.status == TaskStatus.PENDING]),
-            "tasks_running": len([t for t in self._tasks.values() 
+            "tasks_running": len([t for t in self._tasks.values()
                                  if t.status == TaskStatus.RUNNING]),
             "tasks_in_memory": len(self._tasks),
             "results_in_memory": len(self._task_results),

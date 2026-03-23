@@ -242,7 +242,7 @@ class ClusterMessageHandler:
             logger.info(f"Task {task_id} migrated to this node from {from_node}")
             # 这里应该接管任务执行
     
-    async def _send_response(self, request_message: Message, 
+    async def _send_response(self, request_message: Message,
                              payload: Dict[str, Any]) -> None:
         """发送响应消息"""
         # 实际发送由ClusterIntegration处理
@@ -295,7 +295,7 @@ class ClusterIntegration:
         )
     """
     
-    def __init__(self, cluster_node, cluster_manager, 
+    def __init__(self, cluster_node, cluster_manager,
                  state_store=None, enable_local_transport: bool = True):
         """
         初始化集群集成器
@@ -380,7 +380,7 @@ class ClusterIntegration:
         self.comm_manager.add_transport(config)
         logger.info("Local transport configured")
     
-    def configure_tcp_transport(self, port: int, 
+    def configure_tcp_transport(self, port: int,
                                  host: str = "0.0.0.0",
                                  priority: int = 1) -> None:
         """
@@ -592,7 +592,7 @@ class ClusterIntegration:
     
     # ==================== 回调函数 ====================
     
-    async def _send_message_callback(self, msg_type: str, 
+    async def _send_message_callback(self, msg_type: str,
                                      data: Dict[str, Any]) -> Any:
         """
         ClusterManager的消息发送回调
@@ -642,7 +642,7 @@ class ClusterIntegration:
         
         return response
     
-    async def _node_message_callback(self, msg_type: str, 
+    async def _node_message_callback(self, msg_type: str,
                                      data: Dict[str, Any]) -> Any:
         """
         ClusterNode的消息处理回调
@@ -777,7 +777,7 @@ class ClusterIntegration:
             "connections": len(self._node_connections),
             "pending_responses": len(self.msg_handler._pending_responses),
             "transport_states": {
-                name: state.value 
+                name: state.value
                 for name, state in self.comm_manager.get_transport_states().items()
             }
         }

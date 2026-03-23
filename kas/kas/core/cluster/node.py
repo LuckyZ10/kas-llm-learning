@@ -151,7 +151,7 @@ class ClusterNode:
         await node.join_cluster(["localhost:8000"])  # 加入现有集群
     """
     
-    def __init__(self, node_id: str, host: str, port: int, 
+    def __init__(self, node_id: str, host: str, port: int,
                  config: Optional[ClusterConfig] = None,
                  metadata: Optional[Dict[str, Any]] = None):
         """
@@ -486,8 +486,8 @@ class ClusterNode:
     def get_active_members(self) -> Dict[str, NodeInfo]:
         """获取活跃成员"""
         return {
-            node_id: info 
-            for node_id, info in self._members.items() 
+            node_id: info
+            for node_id, info in self._members.items()
             if info.is_healthy(self.config.node_timeout)
         }
     

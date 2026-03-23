@@ -244,7 +244,7 @@ class DistributedStateStore:
         
         return self._state.get(key)
     
-    async def set(self, key: str, value: Any, 
+    async def set(self, key: str, value: Any,
                   wait_commit: bool = True,
                   timeout: float = 5.0) -> bool:
         """
@@ -342,7 +342,7 @@ class DistributedStateStore:
     
     # ==================== 分布式锁 ====================
     
-    async def acquire_lock(self, lock_id: str, 
+    async def acquire_lock(self, lock_id: str,
                            ttl: float = 30.0,
                            blocking: bool = False,
                            blocking_timeout: Optional[float] = None) -> bool:
@@ -641,7 +641,7 @@ class DistributedStateStore:
     
     # ==================== 外部请求处理 ====================
     
-    async def _forward_to_leader(self, command: str, key: str, 
+    async def _forward_to_leader(self, command: str, key: str,
                                   value: Any) -> Any:
         """转发请求给Leader"""
         leader_id = self.node.get_leader_id()

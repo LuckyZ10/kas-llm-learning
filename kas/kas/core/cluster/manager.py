@@ -147,7 +147,7 @@ class ClusterManager:
         await manager.distribute_task(task_data, target_node)
     """
     
-    def __init__(self, node: ClusterNode, 
+    def __init__(self, node: ClusterNode,
                  lb_config: Optional[LoadBalancerConfig] = None):
         """
         初始化集群管理器
@@ -242,7 +242,7 @@ class ClusterManager:
     
     # ==================== 负载均衡 ====================
     
-    def select_node_for_task(self, task_id: str, 
+    def select_node_for_task(self, task_id: str,
                              requirements: Optional[Dict[str, Any]] = None) -> Optional[str]:
         """
         为任务选择节点
@@ -337,7 +337,7 @@ class ClusterManager:
         
         return available
     
-    def _meets_requirements(self, node_info: NodeInfo, 
+    def _meets_requirements(self, node_info: NodeInfo,
                             requirements: Optional[Dict[str, Any]]) -> bool:
         """检查节点是否满足任务要求"""
         if not requirements:
