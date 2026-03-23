@@ -14,6 +14,7 @@ import logging
 import time
 
 from kas.core.sandbox.message_bus import MessageBus, Message, MessageType
+from kas.core.security.sensitive_filter import SensitiveInfoFilter, FilterConfig
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +70,11 @@ class OpenClawSandbox:
         self.process: Optional[subprocess.Popen] = None
         self.message_bus: Optional[MessageBus] = None
         self.status = SandboxStatus(name=self.name, agent_name=agent_name)
+        
+        self._sensitive_filter = SensitiveInfoFilter(FilterConfig(
+            mask_email=False,
+            mask_phone=False
+        ))
         
         # 状态文件
         self.status_file = self.workspace_path / ".sandbox_status.json"
@@ -213,6 +219,11 @@ class OpenClawSandbox:
                 context = msg.content.get("context", {})
                 result = self._task_handler(task, context)
                 
+                if isinstance(result, str):
+                    result = self._sensitive_filter.filter(result)
+                elif isinstance(result, dict):
+                    result = self._sensitive_filter.filter_dict(result)
+                
                 # 发送结果
                 self.message_bus.send_result(
                     to_agent=msg.from_agent,
@@ -224,6 +235,9 @@ class OpenClawSandbox:
                 question = msg.content.get("question", "")
                 context = msg.content.get("context", {})
                 answer = self._question_handler(question, context)
+                
+                if isinstance(answer, str):
+                    answer = self._sensitive_filter.filter(answer)
                 
                 # 发送回答
                 self.message_bus.answer_question(msg, answer)
@@ -247,9 +261,15 @@ class OpenClawSandbox:
     
     def _start_mock_mode(self):
         """启动模拟模式（当前实现）"""
-        # 在模拟模式下，Agent 逻辑在 KAS 进程中运行
-        # 通过 MessageBus 进行通信
         logger.info(f"Sandbox {self.name} started in mock mode")
+    
+    def filter_output(self, text: str) -> str:
+        """Filter sensitive information from output text"""
+        return self._sensitive_filter.filter(text)
+    
+    def filter_log(self, text: str) -> str:
+        """Filter sensitive information from log text"""
+        return self._sensitive_filter.filter(text)
     
     def _start_openclaw_mode(self):
         """
@@ -349,15 +369,15 @@ class OpenClawSandbox:
                     response = json.loads(output)
                     return {
                         "status": "success",
-                        "output": response.get("message", output),
+                        "output": self._sensitive_filter.filter(response.get("message", output)),
                         "exit_code": result.returncode
                     }
                 except json.JSONDecodeError:
                     # 非 JSON 输出
                     return {
                         "status": "success" if result.returncode == 0 else "error",
-                        "output": output,
-                        "error": error if error else None,
+                        "output": self._sensitive_filter.filter(output),
+                        "error": self._sensitive_filter.filter(error) if error else None,
                         "exit_code": result.returncode
                     }
                 
@@ -401,7 +421,7 @@ class OpenClawSandbox:
                 logger.error(f"Failed to load status: {e}")
         return None
     
-    def get_logs(self, lines: int = 100) -> List[str]:
+    def get_logs(self, lines: int = 100, filter_sensitive: bool = True) -> List[str]:
         """获取 OpenClaw 日志"""
         log_file = getattr(self, '_log_file', None)
         if not log_file or not log_file.exists():
@@ -415,7 +435,12 @@ class OpenClawSandbox:
             # 读取最后 N 行
             with open(log_file, 'r', encoding='utf-8') as f:
                 all_lines = f.readlines()
-                return all_lines[-lines:] if len(all_lines) > lines else all_lines
+                result = all_lines[-lines:] if len(all_lines) > lines else all_lines
+                
+                if filter_sensitive:
+                    result = [self._sensitive_filter.filter(line) for line in result]
+                
+                return result
         except Exception as e:
             logger.error(f"Failed to read logs: {e}")
             return []

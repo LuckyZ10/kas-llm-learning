@@ -1,9 +1,9 @@
-# KAS (Klaw Agent Studio) ROADMAP v1.3
+# KAS (Klaw Agent Studio) ROADMAP v1.4
 
-> 版本: v1.3
+> 版本: v1.4
 > 最后更新: 2026-03-23
 > 作者: Yilin.zhang
-> 状态: Phase 5 企业级功能开发中
+> 状态: Phase 5.3 团队协作开发中
 
 ---
 
@@ -123,15 +123,44 @@ kas crew dispatch ReviewTeam Alice "分析合同" --wait
 
 **目标**: 生产环境可用
 
-### 5.1 安全沙箱强化 🔒 ⏳
-**优先级**: 🔴 P0
+### 5.1 安全沙箱强化 🔒 ✅ (2026-03-23 完成)
 
-| 功能 | 状态 | 说明 |
-|------|------|------|
-| Docker 隔离 | ❌ | 代码执行沙箱隔离 |
-| 网络访问限制 | ❌ | 代理模式控制外网访问 |
-| 敏感信息过滤 | ❌ | API Key、密码等过滤 |
-| 资源配额限制 | ❌ | CPU/内存/执行时间限制 |
+| 功能 | 状态 | 核心文件 |
+|------|------|----------|
+| 敏感信息过滤 | ✅ | `core/security/sensitive_filter.py` |
+| 资源配额限制 | ✅ | `core/security/resource_quota.py` |
+| 网络访问控制 | ✅ | `core/security/network_controller.py` |
+| Docker 沙箱隔离 | ✅ | `core/security/docker_sandbox.py` |
+| 安全沙箱集成 | ✅ | `core/security/secure_sandbox.py` |
+
+**安全模块功能**:
+```python
+from kas.core.security import (
+    # 敏感信息过滤
+    SensitiveInfoFilter, filter_text, is_sensitive,
+    
+    # 资源配额
+    ResourceQuota, ResourceMonitor, ResourceLimiter,
+    
+    # 网络控制
+    NetworkPolicy, NetworkAccessController,
+    
+    # Docker 沙箱
+    DockerSandbox, DockerSandboxConfig,
+    
+    # 集成安全沙箱
+    SecureSandbox, create_secure_sandbox,
+)
+
+# 使用示例
+sandbox = create_secure_sandbox(
+    name="secure-agent",
+    work_dir="./workspace",
+    preset="strict"  # strict/default/relaxed
+)
+result = sandbox.execute(["python", "script.py"])
+print(result.filtered_output)  # 自动过滤敏感信息
+```
 
 ### 5.3 团队协作 👥 ⏳
 **优先级**: 🟡 P1
@@ -165,14 +194,14 @@ kas crew dispatch ReviewTeam Alice "分析合同" --wait
 | Phase 4.3 多模态 | ✅ | 100% |
 | Phase 4.4 沙盒化 | ✅ | 100% |
 | Phase 4.5 特种部队 | ✅ | 100% |
-| Phase 5.1 安全沙箱 | ⏳ | 0% |
+| Phase 5.1 安全沙箱 | ✅ | 100% |
 | Phase 5.2 分布式集群 | ✅ | 100% |
 | Phase 5.3 团队协作 | ⏳ | 0% |
 | Phase 5.4 高级装备 | 🔄 | 25% |
 
-**总体进度**: Phase 4 完整完成，Phase 5 进行中
+**总体进度**: Phase 4 + Phase 5.1 + 5.2 完成，Phase 5.3 进行中
 
-**下一步**: Phase 5.1 安全沙箱强化
+**下一步**: Phase 5.3 团队协作 (多用户、RBAC)
 
 ---
 
@@ -183,9 +212,10 @@ kas crew dispatch ReviewTeam Alice "分析合同" --wait
 | CLI | `cli/main.py` | 2561 |
 | 核心引擎 | `core/*.py` | ~9000 |
 | 沙盒系统 | `core/sandbox/*.py` | ~1600 |
+| 安全模块 | `core/security/*.py` | ~2500 |
 | 集群系统 | `core/cluster/*.py` | ~4000 |
 | Web 界面 | `web/app.py` | ~460 |
-| **总计** | - | **~18000** |
+| **总计** | - | **~20000** |
 
 ---
 
@@ -201,11 +231,12 @@ kas crew dispatch ReviewTeam Alice "分析合同" --wait
 
 ## 🎯 成功标准
 
-### Phase 5.1 (安全沙箱)
-- [ ] Docker 容器隔离可用
-- [ ] 网络访问白名单机制
-- [ ] 敏感信息自动脱敏
-- [ ] 资源限制可配置
+### Phase 5.1 (安全沙箱) ✅
+- [x] 敏感信息过滤器可用
+- [x] 资源配额监控和限制
+- [x] 网络访问白名单机制
+- [x] Docker 容器隔离可用
+- [x] 集成安全沙箱 (SecureSandbox)
 
 ### Phase 5.3 (团队协作)
 - [ ] 多用户认证系统
@@ -219,6 +250,16 @@ kas crew dispatch ReviewTeam Alice "分析合同" --wait
 ---
 
 ## 📅 更新日志
+
+### v1.4 (2026-03-23)
+- ✅ Phase 5.1 安全沙箱强化完成
+  - 敏感信息过滤器 (API Key, 密码, 数据库连接串等)
+  - 资源配额限制器 (CPU/内存/执行时间)
+  - 网络访问控制器 (白名单/代理模式)
+  - Docker 沙箱隔离 (容器化执行环境)
+  - 集成安全沙箱 (SecureSandbox)
+- 📝 新增 security 模块测试
+- 📝 requirements.txt 更新 (psutil, docker)
 
 ### v1.3 (2026-03-23)
 - ✅ Phase 4.3 多模态输入完成
