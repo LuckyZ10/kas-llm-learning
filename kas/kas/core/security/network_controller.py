@@ -234,6 +234,11 @@ class NetworkAccessController:
             self._compile_patterns()
             logger.info(f"Removed {host} from blocked hosts")
 
+    def apply_policy(self):
+        """Apply the current network policy (recompile patterns)"""
+        self._compile_patterns()
+        logger.info(f"Network policy applied: mode={self.policy.mode}")
+
     def set_proxy(self, url: str):
         parsed = urlparse(url)
         if not parsed.scheme or not parsed.netloc:

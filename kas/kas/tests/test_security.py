@@ -56,7 +56,7 @@ class TestSensitiveInfoFilter:
     
     def test_detect_sensitive(self):
         """Test sensitive info detection"""
-        text = "API key: sk-test123 and email: test@example.com"
+        text = "API key: sk-test123456789012 and email: test@example.com"
         assert is_sensitive(text) == True
         
         text = "This is a normal text without secrets"

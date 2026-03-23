@@ -247,8 +247,20 @@ class ResourceLimiter:
         func: Callable[..., Any],
         *args,
         **kwargs
-    ) -> Any:
+    ) -> Dict[str, Any]:
+        """
+        Execute function with resource limits
+        
+        Returns:
+            Dict with keys:
+                - success: bool
+                - result: Any (function return value)
+                - error: Optional[str]
+                - quota_status: Optional[QuotaStatus]
+                - execution_time: float
+        """
         self._timeout_triggered = False
+        start_time = time.time()
 
         if self.monitor:
             self.monitor.start_monitoring()
@@ -259,7 +271,33 @@ class ResourceLimiter:
             else:
                 result = self._execute_with_signal_timeout(func, *args, **kwargs)
 
-            return result
+            execution_time = time.time() - start_time
+            
+            return {
+                "success": True,
+                "result": result,
+                "error": None,
+                "quota_status": self.monitor.check_quota() if self.monitor else None,
+                "execution_time": execution_time,
+            }
+        except TimeoutError as e:
+            execution_time = time.time() - start_time
+            return {
+                "success": False,
+                "result": None,
+                "error": str(e),
+                "quota_status": self.monitor.check_quota() if self.monitor else None,
+                "execution_time": execution_time,
+            }
+        except Exception as e:
+            execution_time = time.time() - start_time
+            return {
+                "success": False,
+                "result": None,
+                "error": str(e),
+                "quota_status": self.monitor.check_quota() if self.monitor else None,
+                "execution_time": execution_time,
+            }
         finally:
             if self.monitor:
                 self.monitor.stop_monitoring()

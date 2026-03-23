@@ -78,10 +78,8 @@ class SecureSandboxConfig:
                 "moderate": PolicyPreset.MODERATE,
                 "permissive": PolicyPreset.PERMISSIVE,
             }
-            self.network_policy = NetworkPolicy(
-                mode="whitelist",
-                preset=preset_map.get(self.network_preset, PolicyPreset.MODERATE)
-            )
+            preset = preset_map.get(self.network_preset, PolicyPreset.MODERATE)
+            self.network_policy = NetworkPolicy.from_preset(preset)
 
 
 @dataclass
@@ -183,7 +181,7 @@ class SecureSandbox:
         try:
             # Start resource monitoring
             if self.monitor:
-                self.monitor.start()
+                self.monitor.start_monitoring()
             
             # Start Docker container if available
             if self.docker:
@@ -215,7 +213,7 @@ class SecureSandbox:
             
             # Stop resource monitoring
             if self.monitor:
-                self.monitor.stop()
+                self.monitor.stop_monitoring()
             
             self._running = False
             logger.info(f"Secure sandbox {self.name} stopped")

@@ -2,6 +2,7 @@
 Docker Sandbox - Container isolation for secure code execution
 """
 import asyncio
+import io
 import time
 import logging
 from dataclasses import dataclass, field

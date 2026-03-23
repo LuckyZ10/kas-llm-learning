@@ -48,7 +48,7 @@ class SensitiveInfoFilter:
     """
     
     DEFAULT_RULES: Dict[str, str] = {
-        "api_key": r"(?i)(?:sk-[a-zA-Z0-9]{20,}|xox[baprs]-[a-zA-Z0-9-]{10,}|ghp_[a-zA-Z0-9]{36}|ghpat_[a-zA-Z0-9]{22}|api[_-]?key\s*[=:]\s*['\"]?[a-zA-Z0-9_-]{20,}['\"]?|Bearer\s+[a-zA-Z0-9._-]{20,})",
+        "api_key": r"(?i)(?:sk-[a-zA-Z0-9]{8,}|xox[baprs]-[a-zA-Z0-9-]{10,}|ghp_[a-zA-Z0-9]{36}|ghpat_[a-zA-Z0-9]{22}|api[_-]?key\s*[=:]\s*['\"]?[a-zA-Z0-9_-]{20,}['\"]?|Bearer\s+[a-zA-Z0-9._-]{20,})",
         "password": r"(?i)(?:password|passwd|pwd)\s*[=:]\s*['\"]?[^'\"\s\n]{4,}['\"]?",
         "database": r"(?i)(?:mysql|postgres|postgresql|mongodb|redis)://[^\s'\"]+",
         "jwt": r"eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*",
