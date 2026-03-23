@@ -122,6 +122,22 @@ kas crew start ContractReviewCrew
 kas crew dispatch ContractReviewCrew Alice "审查这份合同" --wait
 ```
 
+### 使用安全沙箱
+```python
+from kas.core.security import create_secure_sandbox
+
+# 创建安全沙箱 (自动过滤敏感信息、限制资源、网络控制)
+sandbox = create_secure_sandbox(
+    name="secure-agent",
+    work_dir="./workspace",
+    preset="strict"  # strict/default/relaxed
+)
+
+# 执行代码 (在 Docker 容器中隔离运行)
+result = sandbox.execute(["python", "script.py"])
+print(result.filtered_output)  # 自动脱敏的输出
+```
+
 ## 架构
 
 ```
@@ -131,7 +147,8 @@ kas/
 │   ├── ingestion.py        # 吞食引擎
 │   ├── fusion.py           # 合体引擎
 │   ├── chat.py             # 对话引擎
-│   ├── equipment.py        # 装备系统
+│   ├── llm_learning.py     # 进化引擎
+│   ├── equipment.py        # 装备系统 (MCP/Plugin)
 │   ├── multimodal.py       # 多模态处理
 │   ├── knowledge.py        # 知识库/RAG
 │   ├── market.py           # Agent 市场
@@ -141,23 +158,55 @@ kas/
 │   ├── workflow.py         # 工作流引擎
 │   ├── crew_*.py           # 特种部队
 │   ├── sandbox/            # OpenClaw 沙盒
+│   │   ├── __init__.py     # SoulInjector
+│   │   ├── sandbox.py      # OpenClawSandbox
+│   │   ├── message_bus.py  # MessageBus
+│   │   └── supervisor.py   # SandboxSupervisor
+│   ├── security/           # 安全模块
+│   │   ├── sensitive_filter.py  # 敏感信息过滤
+│   │   ├── resource_quota.py    # 资源配额
+│   │   ├── network_controller.py # 网络控制
+│   │   ├── docker_sandbox.py    # Docker 隔离
+│   │   └── secure_sandbox.py    # 集成安全沙箱
 │   └── cluster/            # 分布式集群
+│       ├── node.py         # 节点管理
+│       ├── manager.py      # 集群管理
+│       ├── scheduler.py    # 分布式调度
+│       └── state.py        # 状态存储
 ├── cli/                     # CLI 工具
-│   └── main.py             # 命令入口
+│   └── main.py             # 命令入口 (30+ 命令)
 ├── web/                     # Web 界面
 │   └── app.py              # Flask 应用
 ├── dashboard/               # 仪表盘
-└── tests/                   # 测试
+├── tests/                   # 测试
+└── docs/                    # 文档
+    └── ARCHITECTURE.md     # 架构文档
 ```
 
 ## 设计原则
 
-1. **简单优先**: 能用规则解决的不用ML，能用ML解决的不用DRL
+1. **简单优先**: 能用规则解决的不用 ML，能用 ML 解决的不用 DRL
 2. **CLI First**: 开发者最爱的交互方式
 3. **代码即知识**: 从实战代码提取能力，而非预设模板
-4. **可组合**: Agent可以合体，能力可以流通
+4. **可组合**: Agent 可以合体，能力可以流通
+5. **沙盒化优先**: 多 Agent 协作必须基于沙盒隔离
 
-## 开发
+## 核心特性
+
+| 特性 | 描述 |
+|------|------|
+| 🔥 **代码吞食** | 从项目代码自动提取 Agent 能力 |
+| 🧬 **Agent 合体** | 多 Agent 融合，产生涌现能力 |
+| 🎯 **特种部队** | 多 Agent 沙盒化协作 (Crew) |
+| 🛡️ **安全沙箱** | 敏感过滤 + 资源限制 + Docker 隔离 |
+| 🌐 **分布式集群** | 跨机器 Agent 协作 |
+| 🔌 **装备系统** | MCP/Plugin 可扩展工具 |
+| 📚 **知识库** | RAG 增强对话 |
+| 🧪 **A/B 测试** | Agent 效果对比 |
+| 📦 **版本管理** | Agent 版本控制与回滚 |
+| 🏪 **Agent 市场** | 发布、搜索、下载 Agent |
+
+## 快速开始
 
 ```bash
 # 克隆
@@ -188,10 +237,46 @@ python -m kas.cli.main --help
 - [x] OpenClaw 沙盒化
 - [x] Agent 特种部队 (多 Agent 协作)
 - [x] 分布式集群
-- [ ] 安全沙箱强化 (Docker 隔离)
-- [ ] 团队协作 (多用户, RBAC)
+- [x] 安全沙箱强化 (Docker 隔离)
+- [ ] 团队协作 (多用户, RBAC) - 可选
 - [ ] VS Code 插件
 - [ ] MCP Server 接入
+
+## 文档
+
+- [架构文档](docs/ARCHITECTURE.md) - 详细架构设计
+- [路线图](ROADMAP.md) - 开发进度和计划
+
+## 开发
+
+```bash
+# 克隆
+git clone https://github.com/LuckyZ10/kas-llm-learning.git
+cd kas-llm-learning/kas
+
+# 安装依赖
+pip install -e ".[dev]"
+
+# 运行测试
+pytest
+
+# 本地运行
+python -m kas.cli.main --help
+```
+
+## 依赖
+
+```
+click>=8.0.0         # CLI 框架
+rich>=13.0.0         # 终端美化
+pyyaml>=6.0          # YAML 解析
+openai>=1.0.0        # OpenAI API
+requests>=2.28.0     # HTTP 客户端
+flask>=2.0.0         # Web 界面
+chromadb>=0.4.0      # 向量数据库
+psutil>=5.9.0        # 资源监控
+docker>=6.0.0        # Docker SDK (可选)
+```
 
 ## License
 
