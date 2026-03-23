@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import '@testing-library/jest-dom';
 import { useAppStore } from '../index';
 
 describe('App Store', () => {
