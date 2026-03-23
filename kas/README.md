@@ -70,8 +70,21 @@ kas fuse BackendAgent TestAgent --name "FullStackAgent"
 | `kas ingest <path>` | 吞食项目，提取能力 |
 | `kas fuse <agents...>` | 合体多个 Agent |
 | `kas chat <agent>` | 与 Agent 对话 |
+| `kas evolve <agent>` | Agent 自主进化 |
 | `kas list` | 列出所有 Agents |
 | `kas inspect <agent>` | 查看 Agent 详情 |
+| `kas validate <agent>` | 能力验证测试 |
+| `kas stats [agent]` | 使用统计 |
+| `kas knowledge` | 知识库管理 |
+| `kas abtest` | A/B 测试 |
+| `kas versions <agent>` | 版本管理 |
+| `kas market publish/search/install` | Agent 市场 |
+| `kas equip list/add/remove` | 装备管理 |
+| `kas crew create/list/show` | 特种部队管理 |
+| `kas crew start/dispatch` | 团队任务执行 |
+| `kas workflow run` | 工作流执行 |
+| `kas web` | 启动 Web 界面 |
+| `kas dashboard` | 启动仪表盘 |
 
 ## 示例
 
@@ -96,6 +109,19 @@ kas fuse BackendAgent TestAgent --strategy synthesis --name "TDDExpert"
 kas inspect TDDExpert
 ```
 
+### 创建特种部队
+```bash
+# 创建合同审查团队
+kas crew create ContractReviewCrew --members "Alice,Bob,Carol"
+
+# 注入 Agent 到沙盒
+kas crew inject ContractReviewCrew LegalExpert
+
+# 启动并执行任务
+kas crew start ContractReviewCrew
+kas crew dispatch ContractReviewCrew Alice "审查这份合同" --wait
+```
+
 ## 架构
 
 ```
@@ -104,10 +130,24 @@ kas/
 │   ├── models.py           # Agent 数据模型
 │   ├── ingestion.py        # 吞食引擎
 │   ├── fusion.py           # 合体引擎
-│   └── chat.py             # 对话引擎
+│   ├── chat.py             # 对话引擎
+│   ├── equipment.py        # 装备系统
+│   ├── multimodal.py       # 多模态处理
+│   ├── knowledge.py        # 知识库/RAG
+│   ├── market.py           # Agent 市场
+│   ├── validation.py       # 能力验证
+│   ├── abtest.py           # A/B 测试
+│   ├── versioning.py       # 版本管理
+│   ├── workflow.py         # 工作流引擎
+│   ├── crew_*.py           # 特种部队
+│   ├── sandbox/            # OpenClaw 沙盒
+│   └── cluster/            # 分布式集群
 ├── cli/                     # CLI 工具
 │   └── main.py             # 命令入口
-└── examples/                # 示例
+├── web/                     # Web 界面
+│   └── app.py              # Flask 应用
+├── dashboard/               # 仪表盘
+└── tests/                   # 测试
 ```
 
 ## 设计原则
@@ -136,11 +176,22 @@ python -m kas.cli.main --help
 
 ## 路线图
 
-- [x] 核心 CLI 命令 (ingest, fuse, chat)
-- [ ] Agent Registry (市场)
-- [ ] 更多 LLM 支持
+- [x] 核心 CLI 命令 (ingest, fuse, chat, evolve)
+- [x] Agent 市场和云端服务
+- [x] 知识库/RAG 支持
+- [x] 工作流引擎
+- [x] A/B 测试
+- [x] 版本管理
+- [x] Web 界面
+- [x] 装备系统
+- [x] 多模态输入 (PDF, 图片, 代码)
+- [x] OpenClaw 沙盒化
+- [x] Agent 特种部队 (多 Agent 协作)
+- [x] 分布式集群
+- [ ] 安全沙箱强化 (Docker 隔离)
+- [ ] 团队协作 (多用户, RBAC)
 - [ ] VS Code 插件
-- [ ] Web UI (轻量级)
+- [ ] MCP Server 接入
 
 ## License
 
