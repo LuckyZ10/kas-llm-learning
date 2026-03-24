@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { FridgeItem, TAG_COLORS } from '../../types';
 import { useAppStore } from '../../store';
 import { FileImage, FileText, File } from 'lucide-react';
+import { TagEditor } from './TagEditor';
 
 interface FridgeItemCardProps {
   item: FridgeItem;
@@ -9,6 +10,8 @@ interface FridgeItemCardProps {
 
 export function FridgeItemCard({ item }: FridgeItemCardProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showTagEditor, setShowTagEditor] = useState(false);
   const { updateFridgeItemPosition } = useAppStore();
   
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -52,48 +55,97 @@ export function FridgeItemCard({ item }: FridgeItemCardProps) {
   const tagColor = TAG_COLORS[item.tags.color];
   
   return (
-    <div
-      onMouseDown={handleMouseDown}
-      style={{
-        transform: `translate(${item.position.x}px, ${item.position.y}px) rotate(${item.position.rotation}deg) scale(${item.visual.scale})`,
-        zIndex: isDragging ? 9999 : item.position.zIndex,
-      }}
-      className={`
-        absolute w-28 p-3 bg-white rounded-lg cursor-move select-none
-        transition-shadow duration-200
-        ${item.visual.shadow ? 'shadow-lg hover:shadow-xl' : ''}
-        ${isDragging ? 'cursor-grabbing scale-105' : 'cursor-grab'}
-      `}
-    >
-      {/* Magnet effect at top */}
-      <div 
-        className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-3 rounded-full"
-        style={{ backgroundColor: item.visual.magnetColor }}
-      />
-      
-      {/* File icon */}
-      <div className="flex justify-center mb-2">
-        {getFileIcon()}
+    <>
+      <div
+        onMouseDown={handleMouseDown}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setShowMenu(true);
+        }}
+        style={{
+          transform: `translate(${item.position.x}px, ${item.position.y}px) rotate(${item.position.rotation}deg) scale(${item.visual.scale})`,
+          zIndex: isDragging ? 9999 : item.position.zIndex,
+        }}
+        className={`
+          absolute w-28 p-3 bg-white rounded-lg cursor-move select-none
+          transition-shadow duration-200
+          ${item.visual.shadow ? 'shadow-lg hover:shadow-xl' : ''}
+          ${isDragging ? 'cursor-grabbing scale-105' : 'cursor-grab'}
+        `}
+      >
+        {/* Magnet effect at top */}
+        <div 
+          className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-3 rounded-full"
+          style={{ backgroundColor: item.visual.magnetColor }}
+        />
+        
+        {/* File icon */}
+        <div className="flex justify-center mb-2">
+          {getFileIcon()}
+        </div>
+        
+        {/* File name */}
+        <p className="text-xs text-center text-gray-700 truncate font-medium">
+          {item.fileName}
+        </p>
+        
+        {/* Tag indicator */}
+        {(item.tags.text || item.tags.color !== 'none') && (
+          <div 
+            className="absolute -bottom-2 right-0 px-2 py-0.5 rounded-full text-[10px] font-medium border"
+            style={{
+              backgroundColor: tagColor.bg,
+              color: tagColor.text,
+              borderColor: tagColor.border
+            }}
+          >
+            {item.tags.text || tagColor.label}
+          </div>
+        )}
+        
+        {/* Context Menu */}
+        {showMenu && (
+          <div className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-50 min-w-[120px]">
+            <button 
+              className="w-full px-3 py-1.5 text-left text-sm hover:bg-gray-100"
+              onClick={() => {
+                setShowMenu(false);
+                setShowTagEditor(true);
+              }}
+            >
+              编辑标签
+            </button>
+            <button 
+              className="w-full px-3 py-1.5 text-left text-sm hover:bg-gray-100"
+              onClick={() => setShowMenu(false)}
+            >
+              删除
+            </button>
+            <button 
+              className="w-full px-3 py-1.5 text-left text-sm hover:bg-gray-100"
+              onClick={() => setShowMenu(false)}
+            >
+              打开文件
+            </button>
+          </div>
+        )}
+        
+        {/* Click outside to close menu */}
+        {showMenu && (
+          <div 
+            className="fixed inset-0 z-40"
+            onClick={() => setShowMenu(false)}
+          />
+        )}
       </div>
       
-      {/* File name */}
-      <p className="text-xs text-center text-gray-700 truncate font-medium">
-        {item.fileName}
-      </p>
-      
-      {/* Tag indicator */}
-      {(item.tags.text || item.tags.color !== 'none') && (
-        <div 
-          className="absolute -bottom-2 right-0 px-2 py-0.5 rounded-full text-[10px] font-medium border"
-          style={{
-            backgroundColor: tagColor.bg,
-            color: tagColor.text,
-            borderColor: tagColor.border
-          }}
-        >
-          {item.tags.text || tagColor.label}
-        </div>
+      {/* Tag Editor Modal */}
+      {showTagEditor && (
+        <TagEditor 
+          item={item} 
+          onClose={() => setShowTagEditor(false)} 
+        />
       )}
-    </div>
+    </>
   );
 }
