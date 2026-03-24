@@ -1,8 +1,14 @@
 import { useAppStore } from '../../store';
 import { DropZone } from './DropZone';
+import { FridgeItemCard } from './FridgeItemCard';
 
 export function FridgeBoard() {
-  const { selectedTask } = useAppStore();
+  const { selectedTask, currentFridgeItems } = useAppStore();
+  
+  // Filter items for current task
+  const taskItems = currentFridgeItems.filter(item => 
+    item.filePath.includes(selectedTask?.fridgePath || '')
+  );
   
   return (
     <div className="h-full bg-gray-50 relative overflow-hidden flex flex-col">
@@ -16,7 +22,7 @@ export function FridgeBoard() {
         </h3>
         {selectedTask && (
           <p className="text-xs text-gray-400 mt-1">
-            拖拽文件到下方区域
+            {taskItems.length} 个文件
           </p>
         )}
       </div>
@@ -24,6 +30,11 @@ export function FridgeBoard() {
       {/* Board Area */}
       <div className="relative flex-1">
         <DropZone />
+        
+        {/* Render fridge items */}
+        {taskItems.map((item) => (
+          <FridgeItemCard key={item.id} item={item} />
+        ))}
       </div>
     </div>
   );
