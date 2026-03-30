@@ -12,7 +12,7 @@ from market import router as market_router
 # 创建应用
 app = FastAPI(
     title="KAS Cloud API",
-    description="Kimi Agent Studio 云端市场 API",
+    description="Klaw Agent Studio 云端市场 API",
     version="0.1.0"
 )
 

@@ -1,0 +1,135 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "anthropic/claude-sonnet-4-5",
+  "small_model": "anthropic/claude-haiku-4-5",
+  "default_agent": "build",
+  "instructions": [],
+  "agent": {
+    "build": {
+      "description": "Primary coding agent for development work",
+      "mode": "primary",
+      "model": "anthropic/claude-sonnet-4-5",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "read": true
+      }
+    },
+    "planner": {
+      "description": "Expert planning specialist for complex features and refactoring",
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-5",
+      "prompt": "You are an expert software planning specialist. Your job is to create detailed implementation plans for complex features and refactoring tasks.\n\nWhen given a task:\n1. Analyze the current codebase structure\n2. Identify dependencies and potential risks\n3. Break down the work into manageable phases\n4. Provide clear acceptance criteria for each phase\n5. Estimate complexity and suggest order of implementation\n\nAlways consider:\n- Security implications\n- Testing requirements\n- Performance impacts\n- Backward compatibility\n- Documentation needs",
+      "tools": {
+        "read": true,
+        "bash": true,
+        "write": false,
+        "edit": false
+      }
+    },
+    "code-reviewer": {
+      "description": "Expert code review specialist for quality, security, and maintainability",
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-5",
+      "prompt": "You are an expert code reviewer. Review code for:\n\n1. **Security issues** - SQL injection, XSS, hardcoded secrets, input validation\n2. **Code quality** - readability, maintainability, adherence to best practices\n3. **Performance** - unnecessary complexity, inefficient algorithms\n4. **Testing** - test coverage, edge cases\n5. **Architecture** - proper separation of concerns, design patterns\n\nFormat your review as:\n- 🔴 Critical issues (must fix)\n- 🟡 Warnings (should fix)\n- 🟢 Suggestions (nice to have)\n\nBe specific with line references and provide actionable feedback.",
+      "tools": {
+        "read": true,
+        "bash": true,
+        "write": false,
+        "edit": false
+      }
+    },
+    "security-reviewer": {
+      "description": "Security vulnerability detection and remediation specialist",
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-5",
+      "prompt": "You are a security specialist focused on identifying vulnerabilities.\n\nCheck for:\n1. **Secrets** - Hardcoded API keys, passwords, tokens\n2. **Injection** - SQL injection, command injection, XSS\n3. **Validation** - Missing input validation, type safety\n4. **Authentication** - Weak auth, session management\n5. **Authorization** - Missing access controls\n6. **Data exposure** - Sensitive data in logs/errors\n\nIf you find CRITICAL issues:\n1. STOP and report immediately\n2. Suggest immediate fixes\n3. Recommend secret rotation if needed",
+      "tools": {
+        "read": true,
+        "bash": true,
+        "write": true,
+        "edit": true
+      }
+    },
+    "tdd-guide": {
+      "description": "Test-Driven Development specialist with 80%+ coverage requirement",
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-5",
+      "prompt": "You are a TDD (Test-Driven Development) specialist.\n\nProcess:\n1. **RED** - Write test first (should FAIL)\n2. **GREEN** - Write minimal implementation (test PASSES)\n3. **REFACTOR** - Improve code while keeping tests green\n\nRequirements:\n- Minimum 80% test coverage\n- Test edge cases and error paths\n- Use descriptive test names\n- One assertion per test (ideally)\n- Mock external dependencies\n\nWhen fixing bugs: Write a failing test that reproduces the bug first.",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": true,
+        "bash": true
+      }
+    },
+    "python-reviewer": {
+      "description": "Expert Python code reviewer for idiomatic Python, type hints, and best practices",
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-5",
+      "prompt": "You are a Python code review specialist.\n\nCheck for:\n1. **PEP 8** - Style compliance\n2. **Type hints** - Proper typing, use of Optional, Union\n3. **Idioms** - Pythonic code (list comprehensions, context managers)\n4. **Error handling** - Proper exception handling, specific exceptions\n5. **Documentation** - Docstrings, type hints\n6. **Imports** - No circular imports, proper organization\n7. **Testing** - pytest patterns, fixtures, mocking\n\nFocus on: readability, maintainability, performance, security",
+      "tools": {
+        "read": true,
+        "bash": true,
+        "write": false,
+        "edit": false
+      }
+    },
+    "architect": {
+      "description": "Software architecture specialist for system design and scalability",
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-5",
+      "prompt": "You are a software architecture specialist.\n\nWhen making architectural decisions:\n1. Consider scalability and performance\n2. Evaluate trade-offs (complexity vs maintainability)\n3. Suggest proven patterns and best practices\n4. Consider data flow and state management\n5. Plan for future extensibility\n6. Address security at the architecture level\n\nProvide clear reasoning for your recommendations.",
+      "tools": {
+        "read": true,
+        "bash": true,
+        "write": false,
+        "edit": false
+      }
+    }
+  },
+  "command": {
+    "plan": {
+      "description": "Create a detailed implementation plan for complex features",
+      "template": "## Planning Task\n\nPlease create a detailed implementation plan for the following feature:\n\n$ARGUMENTS\n\n### Plan Requirements:\n1. Break down into phases\n2. Identify dependencies\n3. Assess risks\n4. Define acceptance criteria\n5. Suggest implementation order",
+      "agent": "planner",
+      "subtask": true
+    },
+    "code-review": {
+      "description": "Review code for quality, security, and maintainability",
+      "template": "## Code Review\n\nPlease review the following code/file(s):\n\n$ARGUMENTS\n\n### Review Checklist:\n- [ ] Security vulnerabilities\n- [ ] Code quality and readability\n- [ ] Performance issues\n- [ ] Test coverage\n- [ ] Architecture concerns",
+      "agent": "code-reviewer",
+      "subtask": true
+    },
+    "security": {
+      "description": "Run comprehensive security review",
+      "template": "## Security Review\n\nPlease perform a security review of:\n\n$ARGUMENTS\n\n### Security Checklist:\n- [ ] No hardcoded secrets\n- [ ] Input validation\n- [ ] SQL/command injection prevention\n- [ ] XSS prevention\n- [ ] Authentication/authorization\n- [ ] Error handling (no info leak)",
+      "agent": "security-reviewer",
+      "subtask": true
+    },
+    "tdd": {
+      "description": "Enforce TDD workflow with 80%+ test coverage",
+      "template": "## TDD Workflow\n\nImplement the following feature using TDD:\n\n$ARGUMENTS\n\n### TDD Process:\n1. Write failing test (RED)\n2. Write minimal implementation (GREEN)\n3. Refactor while keeping tests passing\n\nRequirements:\n- 80%+ test coverage\n- Test edge cases\n- Mock external dependencies",
+      "agent": "tdd-guide",
+      "subtask": true
+    },
+    "python-review": {
+      "description": "Python-specific code review",
+      "template": "## Python Code Review\n\nPlease review the following Python code:\n\n$ARGUMENTS\n\n### Python Review Focus:\n- PEP 8 compliance\n- Type hints\n- Pythonic idioms\n- Error handling\n- Documentation\n- Test coverage",
+      "agent": "python-reviewer",
+      "subtask": true
+    },
+    "architect": {
+      "description": "Get architectural guidance",
+      "template": "## Architecture Review\n\nPlease provide architectural guidance for:\n\n$ARGUMENTS\n\nConsider:\n- Scalability\n- Maintainability\n- Security\n- Performance\n- Best practices",
+      "agent": "architect",
+      "subtask": true
+    }
+  },
+  "permission": {
+    "skill": {
+      "*": "allow"
+    }
+  }
+}

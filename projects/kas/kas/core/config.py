@@ -26,11 +26,12 @@ CREDENTIALS_FILE = KAS_DIR / 'credentials.yaml'
 @dataclass
 class LLMConfig:
     """LLM 配置"""
-    provider: str = "deepseek"  # deepseek/kimi/openai
+    provider: str = "deepseek"  # deepseek/kimi/openai/zhipu
     model: str = "deepseek-chat"
     temperature: float = 0.7
     max_tokens: int = 2000
     base_url: Optional[str] = None
+    timeout_ms: int = 300000  # 默认超时 5 分钟
     # API Key 不存这里，存 credentials.yaml
 
 
@@ -190,6 +191,15 @@ class ConfigManager:
         """配置目录"""
         return KAS_DIR
     
+    def get_timeout(self) -> float:
+        """获取超时时间（秒）"""
+        # 优先从环境变量获取
+        timeout_ms = os.getenv('API_TIMEOUT_MS')
+        if timeout_ms:
+            return float(timeout_ms) / 1000  # 转换为秒
+        # 否则使用配置中的值
+        return self.config.llm.timeout_ms / 1000
+    
     # ========== API Key 管理 ==========
     
     def set_api_key(self, provider: str, api_key: str):
@@ -225,18 +235,23 @@ class ConfigManager:
         env_map = {
             'deepseek': 'DEEPSEEK_API_KEY',
             'kimi': 'KIMI_API_KEY',
-            'openai': 'OPENAI_API_KEY'
+            'openai': 'OPENAI_API_KEY',
+            'zhipu': 'ANTHROPIC_AUTH_TOKEN',  # 智谱 AI 使用 Anthropic 兼容接口
         }
         env_var = env_map.get(provider)
         if env_var:
             return os.environ.get(env_var)
+        
+        # 3. 通用环境变量检查
+        if provider == 'zhipu':
+            return os.environ.get('ANTHROPIC_API_KEY') or os.environ.get('ZHIPU_API_KEY')
         
         return None
     
     def list_configured_providers(self) -> list:
         """列出已配置 API Key 的提供商"""
         providers = []
-        for provider in ['deepseek', 'kimi', 'openai']:
+        for provider in ['deepseek', 'kimi', 'openai', 'zhipu']:
             if self.get_api_key(provider):
                 providers.append(provider)
         return providers
@@ -330,10 +345,24 @@ def setup_wizard():
     # 选择 LLM 提供商
     provider = Prompt.ask(
         "选择默认 LLM 提供商",
-        choices=["deepseek", "kimi", "openai"],
+        choices=["deepseek", "kimi", "openai", "zhipu"],
         default="deepseek"
     )
     config.llm.provider = provider
+    
+    # 设置 base_url（可选）
+    if provider == 'zhipu':
+        default_url = "https://open.bigmodel.cn/api/anthropic"
+        console.print(f"\n📝 智谱 AI 使用 Anthropic 兼容接口")
+    else:
+        default_url = ""
+    
+    base_url = Prompt.ask(
+        f"自定义 API 基础 URL (可选，留空使用默认)",
+        default=default_url
+    )
+    if base_url:
+        config.llm.base_url = base_url
     
     # 设置 API Key
     api_key = Prompt.ask(
@@ -367,6 +396,28 @@ def setup_wizard():
         if cloud_key:
             config.credentials['cloud_api_key'] = cloud_key
             console.print("✅ 云端 API Key 已保存", style="green")
+    
+    console.print("\n⚙️ 高级设置", style="bold blue")
+    
+    # 超时设置
+    timeout_choice = Prompt.ask(
+        "选择 API 超时时间",
+        choices=["standard", "long", "custom"],
+        default="long" if provider == "zhipu" else "standard"
+    )
+    
+    if timeout_choice == "long":
+        config.llm.timeout_ms = 3000000  # 50分钟，适合 Coding Plan
+    elif timeout_choice == "custom":
+        custom_timeout = int(Prompt.ask(
+            "自定义超时时间（毫秒）",
+            default="300000"
+        ))
+        config.llm.timeout_ms = custom_timeout
+    else:
+        config.llm.timeout_ms = 300000  # 5分钟
+    
+    console.print(f"⏱️ API 超时: {config.llm.timeout_ms / 1000} 秒", style="green")
     
     # 其他设置
     config.llm.temperature = float(Prompt.ask(
