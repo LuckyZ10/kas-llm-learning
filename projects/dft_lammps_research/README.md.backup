@@ -1,0 +1,205 @@
+# DFT-LAMMPS 多尺度材料研究平台
+
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> 端到端自主材料研究平台，整合 DFT、分子动力学、机器学习势和多尺度模拟。
+
+## 架构概览
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      应用层 (Workflows)                      │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────────┐│
+│  │  电池    │ │ 催化剂   │ │ 钙钛矿   │ │ 合金设计        ││
+│  │Battery   │ │Catalyst  │ │Perovskite│ │ Alloy           ││
+│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────────┬─────────┘│
+└───────┼────────────┼────────────┼────────────────┼──────────┘
+        │            │            │                │
+┌───────▼────────────▼────────────▼────────────────▼──────────┐
+│                    智能层 (Intelligence)                     │
+│  ┌──────────────┐ ┌──────────┐ ┌──────────────┐             │
+│  │ 主动学习     │ │ 文献智能 │ │ 多智能体协同 │             │
+│  │Active Learn  │ │Literature│ │ Multi-Agent  │             │
+│  └──────────────┘ └──────────┘ └──────────────┘             │
+└─────────────────────────────────────────────────────────────┘
+        │
+┌───────▼─────────────────────────────────────────────────────┐
+│                    平台层 (Platform)                         │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐                    │
+│  │ API服务  │ │ Web界面  │ │ HPC调度  │                    │
+│  │ API      │ │ Web UI   │ │Scheduler │                    │
+│  └──────────┘ └──────────┘ └──────────┘                    │
+└─────────────────────────────────────────────────────────────┘
+        │
+┌───────▼─────────────────────────────────────────────────────┐
+│                    模拟层 (Simulation)                       │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐                    │
+│  │ 相场模拟 │ │ 量子计算 │ │ RL优化   │                    │
+│  │Phase Field│ │ Quantum │ │    RL    │                    │
+│  └──────────┘ └──────────┘ └──────────┘                    │
+└─────────────────────────────────────────────────────────────┘
+        │
+┌───────▼─────────────────────────────────────────────────────┐
+│                    核心层 (Core)                             │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│  │   DFT    │ │    MD    │ │   ML势   │ │  工具库  │       │
+│  │  (VASP/  │ │ (LAMMPS) │ │(NEP/DP)  │ │  Common  │       │
+│  │  QE)     │ │          │ │          │ │          │       │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 目录结构
+
+```
+dft_lammps_research/
+├── core/                       # 核心计算引擎
+│   ├── dft/                   # DFT计算模块 (VASP, QE)
+│   ├── md/                    # 分子动力学 (LAMMPS接口)
+│   ├── ml/                    # 机器学习势 (NEP, DeepMD)
+│   ├── common/                # 共享工具库
+│   └── templates/             # 代码模板
+│
+├── workflows/                  # 应用工作流
+│   ├── battery/               # 电池材料筛选
+│   ├── catalyst/              # 催化剂设计
+│   ├── perovskite/            # 钙钛矿材料
+│   └── alloy/                 # 合金设计
+│
+├── platform/                   # 平台服务
+│   ├── api/                   # REST API平台
+│   ├── web/                   # Web用户界面
+│   ├── hpc/                   # HPC集群连接器
+│   └── docker/                # 容器化部署
+│
+├── intelligence/               # AI/智能模块
+│   ├── active_learning/       # 主动学习 (含v2)
+│   ├── literature/            # 文献智能分析
+│   ├── multi_agent/           # 多智能体协同
+│   └── auto_discovery/        # 自动科学发现
+│
+├── simulation/                 # 高级模拟方法
+│   ├── phase_field/           # 相场模拟
+│   ├── quantum/               # 量子-经典混合计算
+│   └── rl/                    # 强化学习优化
+│
+├── validation/                 # 实验验证
+│   ├── experimental_validation/ # 实验数据对比
+│   └── results/               # 验证结果
+│
+├── examples/                   # 示例代码
+│   ├── basic/                 # 基础示例
+│   ├── advanced/              # 高级示例
+│   ├── active_learning/       # 主动学习示例
+│   └── workflows/             # 完整工作流示例
+│
+├── tests/                      # 测试套件
+│   ├── unit/                  # 单元测试
+│   ├── integration/           # 集成测试
+│   ├── e2e/                   # 端到端测试
+│   ├── performance/           # 性能测试
+│   ├── regression/            # 回归测试
+│   └── benchmarks/            # 基准测试
+│
+├── docs/                       # 文档
+│   ├── api/                   # API文档
+│   ├── guides/                # 用户指南
+│   └── architecture/          # 架构文档
+│
+├── scripts/                    # 工具脚本和配置
+├── references/                 # 参考文献
+└── tutorials/                  # 教程
+```
+
+## 快速开始
+
+### 安装
+
+```bash
+# 克隆仓库
+git clone <repository-url>
+cd dft_lammps_research
+
+# 安装依赖
+pip install -r scripts/requirements.txt
+
+# 或者使用 Docker
+docker-compose -f platform/docker/docker-compose.yml up -d
+```
+
+### 运行示例
+
+```python
+# 基础DFT+MD工作流
+from examples.basic import simple_workflow
+
+workflow = simple_workflow.create_workflow()
+workflow.run()
+
+# 电池材料筛选
+from workflows.battery import battery_screening_pipeline
+
+pipeline = battery_screening_pipeline.BatteryScreeningPipeline()
+results = pipeline.screen_materials(candidates)
+```
+
+## 核心功能
+
+### 1. 多尺度耦合
+- **DFT → ML势**: 自动训练高精度机器学习势函数
+- **ML势 → MD**: 大规模分子动力学模拟
+- **MD → 相场**: 介观尺度相场模拟
+- **全链条**: 从原子到宏观的完整模拟
+
+### 2. 主动学习
+- 智能采样减少5-10倍训练数据
+- 不确定性量化驱动的数据选择
+- 自动工作流编排
+
+### 3. 高通量筛选
+- 自动化结构生成与评估
+- 并行计算支持
+- 结果可视化与分析
+
+### 4. 实验验证
+- XRD/电化学/光谱/TEM数据对比
+- 不确定性量化
+- 统计分析
+
+## 技术栈
+
+- **计算引擎**: VASP, Quantum ESPRESSO, LAMMPS
+- **ML势**: NEP, DeepMD-kit, MACE
+- **框架**: ASE, PyTorch, NumPy, SciPy
+- **API**: FastAPI, Celery, Redis
+- **前端**: React, TypeScript, Three.js
+- **部署**: Docker, Kubernetes
+
+## 文档
+
+- [用户指南](docs/guides/)
+- [API文档](docs/api/)
+- [架构设计](docs/architecture/)
+- [教程](tutorials/)
+
+## 贡献
+
+请参考 [CONTRIBUTING.md](docs/CONTRIBUTING.md) 了解如何参与项目。
+
+## 许可证
+
+MIT License - 详见 [LICENSE](LICENSE) 文件。
+
+## 引用
+
+如果您在研究中使用了本平台，请引用：
+
+```bibtex
+@software{dft_lammps_platform,
+  title={DFT-LAMMPS Multi-Scale Materials Research Platform},
+  author={DFT-LAMMPS Team},
+  year={2026},
+  url={https://github.com/...}
+}
+```

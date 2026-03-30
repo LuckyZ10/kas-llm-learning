@@ -1,0 +1,60 @@
+# 测试依赖
+# Testing Dependencies
+# =====================
+
+# 核心测试框架
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-xdist>=3.0.0
+pytest-timeout>=2.0.0
+pytest-asyncio>=0.20.0
+pytest-mock>=3.0.0
+pytest-randomly>=3.0.0
+
+# 性能测试
+pytest-benchmark>=4.0.0
+
+# 端到端测试
+playwright>=1.30.0
+
+# 覆盖率
+coverage>=7.0.0
+
+# 代码质量
+black>=23.0.0
+isort>=5.12.0
+flake8>=6.0.0
+mypy>=1.0.0
+pylint>=2.17.0
+
+# 安全扫描
+bandit>=1.7.0
+safety>=2.3.0
+pip-audit>=2.0.0
+
+# 文档构建
+mkdocs>=1.4.0
+mkdocs-material>=9.0.0
+mkdocstrings[python]>=0.20.0
+
+# 测试数据生成
+faker>=18.0.0
+hypothesis>=6.70.0
+
+# Mock数据库
+mongomock>=4.1.0
+fakeredis>=2.10.0
+
+# 响应模拟
+responses>=0.23.0
+
+# 性能监控
+psutil>=5.9.0
+memory-profiler>=0.60.0
+
+# 报告生成
+jinja2>=3.1.0
+
+# 类型检查
+types-PyYAML
+types-requests

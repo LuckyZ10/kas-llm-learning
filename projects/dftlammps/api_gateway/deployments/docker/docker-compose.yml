@@ -1,0 +1,230 @@
+version: '3.8'
+
+services:
+  # Redis - 缓存和消息代理
+  redis:
+    image: redis:7-alpine
+    container_name: dftlammps-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - dftlammps-network
+
+  # PostgreSQL - 主数据库
+  postgres:
+    image: postgres:15-alpine
+    container_name: dftlammps-postgres
+    environment:
+      POSTGRES_USER: dftlammps
+      POSTGRES_PASSWORD: dftlammps_secret
+      POSTGRES_DB: dftlammps
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dftlammps"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - dftlammps-network
+
+  # API Gateway - FastAPI服务
+  api:
+    build:
+      context: ../..
+      dockerfile: dftlammps/api_gateway/deployments/docker/Dockerfile.api
+    container_name: dftlammps-api
+    environment:
+      - DEBUG=false
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-production}
+      - DATABASE_URL=postgresql://dftlammps:dftlammps_secret@postgres:5432/dftlammps
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - api_logs:/app/logs
+      - uploaded_files:/app/uploads
+    command: uvicorn dftlammps.api_gateway.api.main:app --host 0.0.0.0 --port 8000 --workers 4
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - dftlammps-network
+    restart: unless-stopped
+
+  # Celery Worker - DFT计算队列
+  celery-worker-dft:
+    build:
+      context: ../..
+      dockerfile: dftlammps/api_gateway/deployments/docker/Dockerfile.worker
+    container_name: dftlammps-celery-dft
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+    depends_on:
+      - redis
+      - api
+    volumes:
+      - worker_logs:/app/logs
+      - shared_data:/app/data
+    command: celery -A dftlammps.api_gateway.tasks.celery_app worker -Q dft -n dft@%h --loglevel=info --concurrency=2
+    networks:
+      - dftlammps-network
+    restart: unless-stopped
+
+  # Celery Worker - MD模拟队列
+  celery-worker-md:
+    build:
+      context: ../..
+      dockerfile: dftlammps/api_gateway/deployments/docker/Dockerfile.worker
+    container_name: dftlammps-celery-md
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+    depends_on:
+      - redis
+      - api
+    volumes:
+      - worker_logs:/app/logs
+      - shared_data:/app/data
+    command: celery -A dftlammps.api_gateway.tasks.celery_app worker -Q md -n md@%h --loglevel=info --concurrency=4
+    networks:
+      - dftlammps-network
+    restart: unless-stopped
+
+  # Celery Worker - ML训练队列
+  celery-worker-ml:
+    build:
+      context: ../..
+      dockerfile: dftlammps/api_gateway/deployments/docker/Dockerfile.worker.gpu
+    container_name: dftlammps-celery-ml
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+      - NVIDIA_VISIBLE_DEVICES=all
+    runtime: nvidia
+    depends_on:
+      - redis
+      - api
+    volumes:
+      - worker_logs:/app/logs
+      - shared_data:/app/data
+      - ml_models:/app/models
+    command: celery -A dftlammps.api_gateway.tasks.celery_app worker -Q ml -n ml@%h --loglevel=info --concurrency=1
+    networks:
+      - dftlammps-network
+    restart: unless-stopped
+
+  # Celery Worker - 默认队列
+  celery-worker-default:
+    build:
+      context: ../..
+      dockerfile: dftlammps/api_gateway/deployments/docker/Dockerfile.worker
+    container_name: dftlammps-celery-default
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+    depends_on:
+      - redis
+      - api
+    volumes:
+      - worker_logs:/app/logs
+      - shared_data:/app/data
+    command: celery -A dftlammps.api_gateway.tasks.celery_app worker -Q default,screening,analysis -n default@%h --loglevel=info --concurrency=2
+    networks:
+      - dftlammps-network
+    restart: unless-stopped
+
+  # Celery Beat - 定时任务调度
+  celery-beat:
+    build:
+      context: ../..
+      dockerfile: dftlammps/api_gateway/deployments/docker/Dockerfile.worker
+    container_name: dftlammps-celery-beat
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+    depends_on:
+      - redis
+      - api
+    volumes:
+      - worker_logs:/app/logs
+      - ./celerybeat-schedule:/app/celerybeat-schedule
+    command: celery -A dftlammps.api_gateway.tasks.celery_app beat --loglevel=info
+    networks:
+      - dftlammps-network
+    restart: unless-stopped
+
+  # Flower - Celery监控
+  flower:
+    build:
+      context: ../..
+      dockerfile: dftlammps/api_gateway/deployments/docker/Dockerfile.worker
+    container_name: dftlammps-flower
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - api
+    command: celery -A dftlammps.api_gateway.tasks.celery_app flower --port=5555 --basic_auth=admin:admin123
+    networks:
+      - dftlammps-network
+    restart: unless-stopped
+
+  # Nginx - 反向代理和负载均衡
+  nginx:
+    image: nginx:alpine
+    container_name: dftlammps-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+    networks:
+      - dftlammps-network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  postgres_data:
+  api_logs:
+  worker_logs:
+  uploaded_files:
+  shared_data:
+  ml_models:
+
+networks:
+  dftlammps-network:
+    driver: bridge

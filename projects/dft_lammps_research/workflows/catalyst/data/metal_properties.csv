@@ -1,0 +1,18 @@
+Metal,Symbol,Atomic Number,Group,d-band Center (eV),Work Function (eV),Lattice Constant (Å),Crystal Structure,Mass (amu)
+Platinum,Pt,78,10,-2.25,5.65,3.92,FCC,195.08
+Palladium,Pd,46,10,-1.83,5.12,3.89,FCC,106.42
+Gold,Au,79,11,-3.56,5.10,4.08,FCC,196.97
+Silver,Ag,47,11,-4.30,4.26,4.09,FCC,107.87
+Copper,Cu,29,11,-2.67,4.94,3.61,FCC,63.55
+Nickel,Ni,28,10,-1.29,5.01,3.52,FCC,58.69
+Cobalt,Co,27,9,-1.17,5.00,3.55,HCP,58.93
+Iron,Fe,26,8,-0.92,4.50,2.87,BCC,55.85
+Manganese,Mn,25,7,-0.80,4.10,8.89,Complex,54.94
+Iridium,Ir,77,9,-2.98,5.27,3.84,FCC,192.22
+Ruthenium,Ru,44,8,-1.41,4.71,3.81,HCP,101.07
+Rhodium,Rh,45,9,-1.73,4.98,3.80,FCC,102.91
+Osmium,Os,76,8,-2.06,4.83,3.75,HCP,190.23
+Rhenium,Re,75,7,-2.12,4.72,2.76,HCP,186.21
+Chromium,Cr,24,6,-0.50,4.50,2.88,BCC,52.00
+Molybdenum,Mo,42,6,-1.40,4.30,3.15,BCC,95.96
+Tungsten,W,74,6,-1.80,4.32,3.16,BCC,183.84

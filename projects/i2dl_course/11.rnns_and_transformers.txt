@@ -1,0 +1,1381 @@
+RNNs and
+Transformers
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+Transfer Learning
+Daniel Cremers
+
+Introduction to Deep Learning
+
+2
+
+ResNet
+
+ResNet-152:
+60M parameters
+
+[He et al. CVPR’16] ResNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+3
+
+Transfer Learning
+• Training your own model can be difficult with limited
+data and other resources
+e.g.,
+• It is a laborious task to manually annotate your
+own training dataset
+• Why not reuse already pre-trained models?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+4
+
+Transfer Learning
+
+Daniel Cremers
+
+Distribution
+
+Distribution
+
+P1
+
+P2
+
+Large dataset
+
+Small dataset
+
+Use what has been
+learned for another
+setting
+Introduction to Deep Learning
+
+5
+
+Transfer Learning for Images
+
+[Zeiler al., ECCV’14] Visualizing and Understanding Convolutional Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+6
+
+Trained on
+ImageNet
+
+Transfer Learning
+
+Feature
+extraction
+
+[Donahue et al., ICML’14] DeCAF,
+[Razavian et al., CVPRW’14] CNN Features off-the-shelf
+Daniel Cremers
+
+Introduction to Deep Learning
+
+7
+
+Trained on
+ImageNet
+
+Transfer Learning
+Decision layers
+Parts of an object (wheel, window)
+Simple geometrical shapes (circles, etc)
+
+Edges
+[Donahue et al., ICML’14] DeCAF,
+[Razavian et al., CVPRW’14] CNN Features off-the-shelf
+Daniel Cremers
+
+Introduction to Deep Learning
+
+8
+
+Trained on
+ImageNet
+
+Transfer Learning
+TRAIN
+
+New dataset
+with C classes
+
+FROZEN
+
+[Donahue et al., ICML’14] DeCAF,
+[Razavian et al., CVPRW’14] CNN Features off-the-shelf
+Daniel Cremers
+
+Introduction to Deep Learning
+
+9
+
+Transfer Learning
+TRAIN
+
+If the dataset is big
+enough train more
+layers with a low
+learning rate
+
+Daniel Cremers
+
+FROZEN
+
+Introduction to Deep Learning
+
+10
+
+When Transfer Learning Makes Sense
+• When task T1 and T2 have the same input (e.g. an
+RGB image)
+• When you have more data for task T1 than for task T2
+• When the low-level features for T1 could be useful to
+learn T2
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+11
+
+Representation
+Learning
+Daniel Cremers
+
+Introduction to Deep Learning
+
+12
+
+Learning Good Features
+• Good features are essential for successful machine
+learning
+• (Supervised) deep learning depends on training data
+used: input/target labels
+• Change in inputs (noise, irregularities, etc.) can result
+in drastically different results
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+13
+
+Representation Learning
+• Allows for discovery of representations required for
+various tasks
+• Deep representation learning: model maps input 𝑋 to
+output 𝑌
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+14
+
+Deep Representation Learning
+• Intuitively, deep networks learn multiple levels of
+abstraction
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+15
+
+How to Learn Good Features?
+• Determine desired feature invariances
+
+• Teach machines to distinguish between similar and
+dissimilar things
+
+Daniel Cremers
+
+https://amitness.com/2020/03/illustrated-simclr/
+16
+Introduction to Deep Learning
+
+How to Learn Good Features?
+
+Daniel Cremers
+
+[Chen et al., ICML’20] SimCLR,
+https://amitness.com/2020/03/illustrated-simclr/
+Introduction to Deep Learning
+
+17
+
+Apply to Downstream Tasks
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[Chen et al., ICML’20] SimCLR,
+https://amitness.com/2020/03/illu
+strated-simclr/
+18
+
+Transfer & Representation Learning
+• Transfer learning can be done via representation
+learning
+• Effectiveness of representation learning often
+demonstrated by transfer learning performance (but
+also other factors, e.g., smoothness of the manifold)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+19
+
+Recurrent Neural
+Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+20
+
+Processing Sequences
+• Recurrent neural networks process sequence data
+
+• Input/output can be sequences
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+21
+
+RNNs are Flexible
+
+Classical neural networks for image classification
+Daniel Cremers
+
+Source: http://karpathy.github.io/2015/05/21/rnn-effectiveness/
+Introduction to Deep Learning
+
+22
+
+RNNs are Flexible
+
+Image captioning
+Daniel Cremers
+
+Source: http://karpathy.github.io/2015/05/21/rnn-effectiveness/
+Introduction to Deep Learning
+
+23
+
+RNNs are Flexible
+
+Language recognition
+Daniel Cremers
+
+Source: http://karpathy.github.io/2015/05/21/rnn-effectiveness/
+Introduction to Deep Learning
+
+24
+
+RNNs are Flexible
+
+Machine translation
+Daniel Cremers
+
+Source: http://karpathy.github.io/2015/05/21/rnn-effectiveness/
+Introduction to Deep Learning
+
+25
+
+RNNs are Flexible
+
+Event classification
+Daniel Cremers
+
+Source: http://karpathy.github.io/2015/05/21/rnn-effectiveness/
+Introduction to Deep Learning
+
+26
+
+RNNs are Flexible
+
+Event classification
+Daniel Cremers
+
+Source: http://karpathy.github.io/2015/05/21/rnn-effectiveness/
+Introduction to Deep Learning
+
+27
+
+Basic Structure of an RNN
+• Multi-layer RNN
+
+Outputs
+
+Hidden
+states
+
+Inputs
+Daniel Cremers
+
+Introduction to Deep Learning
+
+28
+
+Basic Structure of an RNN
+• Multi-layer RNN
+
+Outputs
+
+The hidden state
+will have its own
+internal dynamics
+
+Hidden
+states
+
+More expressive
+model!
+Daniel Cremers
+
+Inputs
+Introduction to Deep Learning
+
+29
+
+Basic Structure of an RNN
+• We want to have notion of “time” or “sequence”
+𝑨𝑡 = 𝜽𝑐 𝑨𝑡−1 + 𝜽𝑥 𝒙𝑡
+
+Hidden
+state
+
+Previous
+hidden
+state
+
+input
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Daniel Cremers
+
+Introduction to Deep Learning
+
+30
+
+Basic Structure of an RNN
+• We want to have notion of “time” or “sequence”
+𝑨𝑡 = 𝜽𝑐 𝑨𝑡−1 + 𝜽𝑥 𝒙𝑡
+
+Hidden
+state
+
+Parameters to be learned
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Daniel Cremers
+
+Introduction to Deep Learning
+
+31
+
+Basic Structure of an RNN
+• We want to have notion of “time” or “sequence”
+Output
+𝑨𝑡 = 𝜽𝑐 𝑨𝑡−1 + 𝜽𝑥 𝒙𝑡
+
+Hidden
+state
+
+𝒉𝑡 = 𝜽𝒉 𝑨𝑡
+
+Note: non-linearities
+ignored for now
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Daniel Cremers
+
+Introduction to Deep Learning
+
+32
+
+Basic Structure of an RNN
+• We want to have notion of “time” or “sequence”
+Output
+𝑨𝑡 = 𝜽𝑐 𝑨𝑡−1 + 𝜽𝑥 𝒙𝑡
+
+Hidden
+state
+
+𝒉𝑡 = 𝜽𝒉 𝑨𝑡
+Same parameters for each
+time step = generalization!
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+33
+
+Basic Structure of an RNN
+• Unrolling RNNs
+
+Same function for the hidden layers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Daniel Cremers
+
+Introduction to Deep Learning
+
+34
+
+Basic Structure of an RNN
+• Unrolling RNNs
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Daniel Cremers
+
+Introduction to Deep Learning
+
+35
+
+Basic Structure of an RNN
+• Unrolling RNNs as feedforward nets
+
+Weights are the same!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+36
+
+Backprop through an RNN
+• Unrolling RNNs as feedforward nets
+
+Chain rule
+
+All the way to 𝑡 = 0
+Add the derivatives at different times for each weight
+Daniel Cremers
+
+Introduction to Deep Learning
+
+37
+
+Long-term Dependencies
+
+I moved to Germany …
+
+so I speak German fluently.
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+38
+
+Long-term Dependencies
+• Simple recurrence
+
+𝑨𝑡 = 𝜽𝑐 𝑨𝑡−1 + 𝜽𝑥 𝒙𝑡
+
+• Let us forget the input
+
+𝑨𝑡 = 𝜽𝒄𝑡 𝑨0
+
+Same weights are
+multiplied over and over
+again
+Daniel Cremers
+
+Introduction to Deep Learning
+
+39
+
+Long-term Dependencies
+• Simple recurrence
+
+𝑨𝑡 = 𝜽𝒄𝑡 𝑨0
+
+What happens to small weights?
+
+Vanishing gradient
+What happens to large weights?
+Exploding gradient
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+40
+
+Long-term Dependencies
+• Simple recurrence
+
+𝑨𝑡 = 𝜽𝒄𝑡 𝑨0
+
+• If 𝜽 admits eigendecomposition
+
+𝜽 = 𝑸𝚲𝑸𝑇
+Matrix of
+eigenvectors
+Daniel Cremers
+
+Diagonal of this
+matrix are the
+eigenvalues
+
+Introduction to Deep Learning
+
+41
+
+Long-term Dependencies
+• Simple recurrence 𝑨𝑡 = 𝜽𝑡 𝑨0
+
+• If 𝜽 admits eigendecomposition
+
+𝜽 = 𝑸𝚲𝑸𝑇
+• Orthogonal 𝜽 allows us to simplify the recurrence
+
+𝑨𝑡 = 𝑸𝚲𝑡 𝑸𝑇 𝑨0
+Daniel Cremers
+
+Introduction to Deep Learning
+
+42
+
+Long-term Dependencies
+• Simple recurrence
+
+𝑨𝑡 = 𝑸𝚲t 𝑸𝑇 𝑨0
+
+What happens to eigenvalues with
+magnitude less than one?
+Vanishing gradient
+
+What happens to eigenvalues with
+magnitude larger than one?
+Exploding gradient
+Gradient
+Daniel Cremers
+
+Introduction to Deep Learning
+
+clipping
+
+43
+
+Long-term Dependencies
+• Simple recurrence
+
+𝑨𝑡 = 𝜽𝒄𝑡 𝑨0
+
+Let us just make a matrix with eigenvalues = 1
+Allow the cell to maintain its “state”
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+44
+
+Vanishing Gradient
+• 1. From the weights
+
+𝑨𝑡 = 𝜽𝒄𝑡 𝑨0
+
+• 2. From the activation functions (𝑡𝑎𝑛ℎ)
+
+Daniel Cremers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+45
+
+Vanishing Gradient
+• 1. From the weights
+
+𝑨𝑡 = 𝜽𝑡 𝑨0
+
+1
+• 2. From the activation functions (𝑡𝑎𝑛ℎ)
+
+Daniel Cremers
+
+?
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+46
+
+Long Short Term
+Memory
+[Hochreiter et al., Neural Computation’97] Long Short-Term Memory
+Daniel Cremers
+
+Introduction to Deep Learning
+
+47
+
+Long-Short Term Memory Units
+• Simple RNN has tanh as non-linearity
+
+Daniel Cremers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+48
+
+Long-Short Term Memory Units
+LSTM
+
+Daniel Cremers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+49
+
+Long-Short Term Memory Units
+• Key ingredients
+• Cell = transports the information through the unit
+
+Daniel Cremers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+50
+
+Long-Short Term Memory Units
+• Key ingredients
+• Cell = transports the information through the unit
+• Gate = remove or add information to the cell state
+
+Sigmoid
+Daniel Cremers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+51
+
+LSTM: Step by Step
+• Forget gate 𝒇𝑡 = 𝑠𝑖𝑔𝑚(𝜽𝑥𝑓 𝒙𝑡 + 𝜽ℎ𝑓 𝒉𝑡−1 + 𝒃𝑓 )
+Decides when to
+erase the cell state
+Sigmoid = output
+between 0 (forget)
+and 1 (keep)
+
+Daniel Cremers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+52
+
+LSTM: Step by Step
+• Input gate
+
+𝒊𝑡 = 𝑠𝑖𝑔𝑚(𝜽𝑥𝑖 𝒙𝑡 + 𝜽ℎ𝑖 𝒉𝑡−1 + 𝒃𝑖 )
+Decides which
+values will be
+updated
+
+New cell state,
+output from a
+tanh (−1,1)
+Daniel Cremers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+53
+
+LSTM: Step by Step
+• Element-wise operations
+
+𝑪𝑡 = 𝒇𝑡 ⊙𝑪𝑡−1 +𝒊𝑡 ⊙𝒈𝑡
+Previous
+states
+
+Daniel Cremers
+
+Current
+state
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+54
+
+LSTM: Step by Step
+• Output gate 𝒉𝑡 = 𝒐𝑡 ⊙ tanh 𝑪𝑡
+Decides which
+values will be
+outputted
+
+Output from a
+tanh (−1, 1)
+
+Daniel Cremers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+55
+
+LSTM: Step by Step
+• Forget gate 𝒇𝑡 = 𝑠𝑖𝑔𝑚(𝜽𝑥𝑓 𝒙𝑡 + 𝜽ℎ𝑓 𝒉𝑡−1 + 𝒃𝑓 )
+
+• Input gate
+𝒊𝑡 = 𝑠𝑖𝑔𝑚(𝜽𝑥𝑖 𝒙𝑡 + 𝜽ℎ𝑖 𝒉𝑡−1 + 𝒃𝑖 )
+• Output gate 𝒐𝑡 = 𝑠𝑖𝑔𝑚(𝜽𝑥𝑜 𝒙𝑡 + 𝜽ℎ𝑜 𝒉𝑡−1 + 𝒃𝑜 )
+• Cell update 𝒈𝑡 = 𝑡𝑎𝑛ℎ(𝜽𝑥𝑔 𝒙𝑡 + 𝜽ℎ𝑔 𝒉𝑡−1 + 𝒃𝑔 )
+• Cell
+
+𝑪𝑡 = 𝒇𝑡 ⊙𝑪𝑡−1 +𝒊𝑡 ⊙𝒈𝑡
+
+• Output
+
+𝒉𝑡 = 𝒐𝑡 ⊙ tanh 𝑪𝑡
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+56
+
+LSTM: Step by Step
+• Forget gate 𝒇𝑡 = 𝑠𝑖𝑔𝑚(𝜽𝑥𝑓 𝒙𝑡 + 𝜽ℎ𝑓 𝒉𝑡−1 + 𝒃𝑓 )
+
+• Input gate
+𝒊𝑡 = 𝑠𝑖𝑔𝑚(𝜽𝑥𝑖 𝒙𝑡 + 𝜽ℎ𝑖 𝒉𝑡−1 + 𝒃𝑖 )
+• Output gate 𝒐𝑡 = 𝑠𝑖𝑔𝑚(𝜽𝑥𝑜 𝒙𝑡 + 𝜽ℎ𝑜 𝒉𝑡−1 + 𝒃𝑜 )
+• Cell update 𝒈𝑡 = 𝑡𝑎𝑛ℎ(𝜽𝑥𝑔 𝒙𝑡 + 𝜽ℎ𝑔 𝒉𝑡−1 + 𝒃𝑔 )
+• Cell
+
+𝑪𝑡 = 𝒇𝑡 ⊙𝑪𝑡−1 +𝒊𝑡 ⊙𝒈𝑡
+
+• Output
+
+𝒉𝑡 = 𝒐𝑡 ⊙ tanh 𝑪𝑡
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Learned through
+backpropagation
+57
+
+LSTM
+• Highway for the gradient to flow
+
+Daniel Cremers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+58
+
+LSTM: Dimensions
+128
+128
+128
+• Cell update 𝒈𝑡 = 𝑡𝑎𝑛ℎ(𝜽𝑥𝑔 𝒙𝑡 + 𝜽ℎ𝑔 𝒉𝑡−1 + 𝒃𝑔 )
+
+128
+
+128
+
+When coding an
+LSTM, we have to
+define the size of the
+hidden state
+
+Dimensions need to
+match
+What operation do I need to do to my input to get
+a 128 vector representation?
+
+Daniel Cremers
+
+[Olah, https://colah.github.io ’15] Understanding LSTMs
+Introduction to Deep Learning
+
+59
+
+LSTM in code
+
+60
+
+Attention
+Daniel Cremers
+
+Introduction to Deep Learning
+
+61
+
+Attention is all you need
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+62
+
+Attention vs convolution
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+63
+
+Long-Term Dependencies
+
+I moved to Germany …
+
+so I speak German fluently.
+
+Source: https://colah.github.io/posts/2015-08-Understanding-LSTMs/
+Daniel Cremers
+
+Introduction to Deep Learning
+
+64
+
+Attention: Intuition
+Context
+
+I moved to Germany …
+Daniel Cremers
+
+so I speak German fluently
+
+Introduction to Deep Learning
+
+65
+
+Attention: Architecture
+• A decoder processes
+the information
+D
+
+• Decoders take as
+input:
+
+D
+
+D
+Context
+
+– Previous decoder
+hidden state
+– Previous output
+– Attention
+Daniel Cremers
+
+Introduction to Deep Learning
+
+66
+
+Transformers
+Daniel Cremers
+
+Introduction to Deep Learning
+
+67
+
+Deep Learning Revolution
+Deep Learning
+
+Deep Learning 2.0
+
+Main idea
+
+Convolution
+
+Attention
+
+Field invented
+
+Computer vision
+
+NLP
+
+Started
+
+NeurIPS 2012
+
+NeurIPS 2017
+
+Paper
+
+AlexNet
+
+Transformers
+
+Conquered vision
+
+Around 2014-2015
+
+Around 2020-2021
+
+Replaced
+(Augmented)
+
+Traditional ML/CV
+
+CNNs, RNNs
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+68
+
+Transformers
+
+Fully connected
+layer
+Masked MultiHead Attention
+on the “decoder”
+
+Multi-Head
+Attention on the
+“encoder”
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+69
+
+Multi-Head Attention
+Intuition: Take the query Q, find the most similar
+key K, and then find the value V that
+corresponds to the key.
+In other words, learn V, K, Q where:
+V – here is a bunch of interesting things.
+K – here is how we can index some things.
+Q – I would like to know this interesting thing.
+Loosely connected to Neural Turing Machines
+(Graves et al.).
+Daniel Cremers
+
+Introduction to Deep Learning
+
+70
+
+Multi-Head Attention
+Index the values
+via a differentiable
+operator.
+
+Multiply queries
+with keys
+
+Attention 𝑄, 𝐾, 𝑉 = softmax
+
+Get the values
+
+𝑄𝐾 𝑇
+𝑑𝑘
+
+𝑉
+
+To train them well, divide by 𝑑𝑘 , “probably” because for
+large values of the key’s dimension, the dot product grows
+large in magnitude, pushing the softmax function into regions
+where it has extremely small gradients.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+71
+
+Multi-Head Attention
+
+Q
+
+Adapted from Y. Kilcher
+Daniel Cremers
+
+Introduction to Deep Learning
+
+72
+
+Multi-Head Attention
+K1
+K2
+
+K5
+
+K4
+
+Daniel Cremers
+
+K3
+
+Q
+
+Introduction to Deep Learning
+
+73
+
+Multi-Head Attention
+K1
+
+Values
+V1
+
+K2
+
+K5
+
+K4
+
+Daniel Cremers
+
+K3
+
+Q
+
+V2
+V3
+V4
+
+V5
+
+Introduction to Deep Learning
+
+74
+
+Multi-Head Attention
+K1
+
+Values
+V1
+
+K2
+
+K5
+
+K4
+
+K3
+
+Q
+
+V2
+V3
+V4
+
+V5
+
+Essentially, dot product between (<Q,K1>), (<Q,K2>), (<Q,K3>),
+(<Q,K4>), (<Q,K5>).
+Daniel Cremers
+
+Introduction to Deep Learning
+
+75
+
+Multi-Head Attention
+K1
+
+Values
+V1
+
+K2
+
+K5
+
+K4
+
+softmax
+Daniel Cremers
+
+Q
+
+K3
+
+V2
+V3
+V4
+
+V5
+
+𝑄𝐾 𝑇
+𝑑𝑘
+
+Is simply inducing a distribution over the values.
+The larger a value is, the higher is its softmax value.
+Can be interpreted as a differentiable soft indexing.
+Introduction to Deep Learning
+
+76
+
+Multi-Head Attention
+K1
+
+Values
+V1
+
+K2
+
+K5
+
+K4
+
+softmax
+Daniel Cremers
+
+Q
+
+K3
+
+V2
+V3
+V4
+
+V5
+
+𝑄𝐾 𝑇
+𝑑𝑘
+
+Is simply inducing a distribution over the values.
+The larger a value is, the higher is its softmax value.
+Can be interpreted as a differentiable soft indexing.
+Introduction to Deep Learning
+
+77
+
+Multi-Head Attention
+K1
+
+Values
+V1
+
+K2
+
+K5
+
+K4
+
+softmax
+Daniel Cremers
+
+Q
+
+K3
+
+V2
+V3
+V4
+
+V5
+
+𝑄𝐾 𝑇
+𝑑𝑘
+
+Selecting the value V where
+the network needs to attend..
+Introduction to Deep Learning
+
+78
+
+Transformers – a closer look
+K parallel
+attention heads.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+79
+
+Transformers – a closer look
+Good old fullyconnected
+layers.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+80
+
+Transformers – a closer look
+N layers of
+attention
+followed by FC
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+81
+
+Transformers – a closer look
+Same as multi-head attention,
+but masked. Ensures that the
+predictions for position i can
+depend only on the known
+outputs at positions less than i.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+82
+
+Transformers – a closer look
+Multi-headed attention between
+encoder and the decoder.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+83
+
+Transformers – a closer look
+Projection and prediction.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+84
+
+What is missing from self-attention?
+• Convolution: a different linear transformation for each
+relative position. Allows you to distinguish what
+information came from where.
+• Self-attention: a weighted average.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+85
+
+Transformers – a closer look
+Uses fixed positional encoding
+based on trigonometric series, in
+order for the model to make use
+of the order of the sequence
+
+dimension
+
+𝑝𝑜𝑠
+100002𝑖/𝑑model
+𝑝𝑜𝑠
+𝑃𝐸(𝑝𝑜𝑠,2𝑖+1) = cos(
+)
+100002𝑖/𝑑model
+𝑃𝐸(𝑝𝑜𝑠,2𝑖) = sin
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+86
+
+Transformers – a final look
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+87
+
+Self-attention: complexity
+
+where n is the sequence length, d is the representation dimension,
+k is the convolutional kernel size, and r is the size of the neighborhood.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+88
+
+Self-attention: complexity
+
+where n is the sequence length, d is the representation dimension,
+k is the convolutional kernel size, and r is the size of the neighborhood.
+
+Considering that most sentences have a smaller dimension than the representation
+dimension (in the paper, it is 512), self-attention is very efficient.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+89
+
+Transformers – training tricks
+• ADAM optimizer with proportional learning rate:
+
+• Residual dropout
+• Label smoothing
+• Checkpoint averaging
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+90
+
+Transformers - results
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+91
+
+Transformers - summary
+• Significantly improved SOTA in machine translation
+• Launched a new deep-learning revolution in MLP
+• Building block of NLP models like BERT (Google) or
+GPT/ChatGPT (OpenAI)
+• BERT has been heavily used in Google Search
+• And eventually made its way to computer vision (and
+other related fields)*
+*Dosovitskiy et al. “An image is worth 16x16 words: Transformers for image recognition at scale”, ICLR 2020.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+92
+
+See you next time!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+93
+
+

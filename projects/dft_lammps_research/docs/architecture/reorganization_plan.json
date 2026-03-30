@@ -1,0 +1,242 @@
+{
+  "metadata": {
+    "created_at": "2026-03-12T08:35:36.224283",
+    "project": "dft_lammps_research",
+    "description": "Project structure reorganization plan"
+  },
+  "move_operations": [
+    {
+      "source": "core/dft_to_lammps_bridge.py",
+      "target": "core/dft/bridge.py",
+      "description": "DFT bridge module"
+    },
+    {
+      "source": "core/integrated_materials_workflow.py",
+      "target": "core/common/workflow_engine.py",
+      "description": "Integrated workflow engine"
+    },
+    {
+      "source": "core/common/checkpoint_manager.py",
+      "target": "core/common/checkpoint.py",
+      "description": "Checkpoint management"
+    },
+    {
+      "source": "core/common/parallel_optimizer.py",
+      "target": "core/common/parallel.py",
+      "description": "Parallel optimization utilities"
+    },
+    {
+      "source": "core/ml/nep_training_pipeline.py",
+      "target": "core/ml/nep/pipeline.py",
+      "description": "NEP training pipeline"
+    },
+    {
+      "source": "platform/monitoring_dashboard.py",
+      "target": "platform/web/monitoring/dashboard.py",
+      "description": "Monitoring dashboard"
+    },
+    {
+      "source": "platform/hpc/hpc_scheduler.py",
+      "target": "platform/hpc/scheduler.py",
+      "description": "HPC scheduler"
+    },
+    {
+      "source": "platform/api/api_platform",
+      "target": "platform/api/",
+      "description": "API platform (flatten)",
+      "is_dir": true
+    },
+    {
+      "source": "platform/web/v2",
+      "target": "platform/web/ui/",
+      "description": "Web UI v2",
+      "is_dir": true
+    },
+    {
+      "source": "intelligence/active_learning/v2",
+      "target": "intelligence/active_learning/",
+      "description": "Active learning v2 (flatten)",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "intelligence/literature/literature_survey",
+      "target": "intelligence/literature/",
+      "description": "Literature survey (flatten)",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "simulation/phase_field/v1",
+      "target": "simulation/phase_field/",
+      "description": "Phase field (flatten)",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "simulation/rl/rl_optimizer",
+      "target": "simulation/rl/optimizer/",
+      "description": "RL optimizer",
+      "is_dir": true
+    },
+    {
+      "source": "workflows/battery/solid_electrolyte",
+      "target": "workflows/battery/",
+      "description": "Battery workflow (flatten)",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "workflows/battery/battery_screening_pipeline.py",
+      "target": "workflows/battery/screening.py",
+      "description": "Battery screening pipeline"
+    },
+    {
+      "source": "workflows/battery/Li3PS4_workflow_example.py",
+      "target": "workflows/battery/examples/Li3PS4.py",
+      "description": "Li3PS4 example"
+    },
+    {
+      "source": "workflows/catalyst/catalyst",
+      "target": "workflows/catalyst/",
+      "description": "Catalyst workflow (flatten)",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "workflows/perovskite/perovskite",
+      "target": "workflows/perovskite/",
+      "description": "Perovskite workflow (flatten)",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "workflows/screening_examples.py",
+      "target": "workflows/examples/screening.py",
+      "description": "Screening examples"
+    },
+    {
+      "source": "applications",
+      "target": "workflows/applications/",
+      "description": "Application cases",
+      "is_dir": true
+    },
+    {
+      "source": "examples",
+      "target": "examples/legacy/",
+      "description": "Legacy examples",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "code_templates",
+      "target": "examples/templates/",
+      "description": "Code templates",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "tests",
+      "target": "tests/legacy/",
+      "description": "Legacy tests",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "benchmarks",
+      "target": "tests/benchmarks/",
+      "description": "Benchmarks",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "docs",
+      "target": "docs/project/",
+      "description": "Project docs",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "tutorials",
+      "target": "docs/tutorials/",
+      "description": "Tutorials",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "references",
+      "target": "docs/references/",
+      "description": "References",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "scripts",
+      "target": "scripts/tools/",
+      "description": "Tool scripts",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": "generate_demo_data.py",
+      "target": "scripts/generate_demo_data.py",
+      "description": "Demo data generator"
+    },
+    {
+      "source": "docker",
+      "target": "deploy/docker/",
+      "description": "Docker deployment",
+      "is_dir": true,
+      "merge": true
+    },
+    {
+      "source": ".github",
+      "target": "deploy/ci-cd/github/",
+      "description": "GitHub workflows",
+      "is_dir": true,
+      "merge": true
+    }
+  ],
+  "merge_operations": [],
+  "delete_operations": [
+    "example_basic/",
+    "example_advanced/",
+    "example_al/",
+    "example_ensemble/",
+    "example_monitoring/",
+    "high_throughput/",
+    "ml_potentials/",
+    "workflows/alloy/",
+    "nep_training/",
+    "validation_results/",
+    "test_reports/"
+  ],
+  "create_operations": [
+    "core/dft/parsers/",
+    "core/dft/calculators/",
+    "core/md/engines/",
+    "core/md/analysis/",
+    "core/ml/deepmd/",
+    "core/ml/mace/",
+    "core/common/utils/",
+    "core/common/models/",
+    "platform/api/gateway/",
+    "platform/api/auth/",
+    "platform/api/integrations/",
+    "platform/hpc/connectors/",
+    "platform/hpc/monitoring/",
+    "platform/web/ui/",
+    "platform/web/monitoring/",
+    "intelligence/multi_agent/agents/",
+    "intelligence/multi_agent/orchestration/",
+    "intelligence/auto_discovery/",
+    "simulation/quantum/circuits/",
+    "validation/experimental/",
+    "validation/theoretical/",
+    "examples/tutorials/",
+    "examples/templates/",
+    "docs/api/",
+    "docs/architecture/"
+  ],
+  "import_updates": []
+}

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatPet - 聊天宠物</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      width: 900px;
+      height: 600px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      display: flex;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 250px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-right: 1px solid #e9ecef;
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-area {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #fff;
+    }
+    .input-area {
+      padding: 15px 20px;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      gap: 10px;
+    }
+    .input-area input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      outline: none;
+      font-size: 14px;
+    }
+    .input-area button {
+      padding: 12px 25px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .input-area button:hover { background: #5a6fd6; }
+    
+    .message {
+      margin-bottom: 15px;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .message-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    .message-sender {
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .message-sender.pet {
+      color: #667eea;
+    }
+    .message-time {
+      font-size: 11px;
+      color: #999;
+    }
+    .message-content {
+      background: #f1f3f4;
+      padding: 10px 15px;
+      border-radius: 15px;
+      display: inline-block;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    .message.own .message-content {
+      background: #667eea;
+      color: white;
+    }
+    .message.own {
+      text-align: right;
+    }
+    .message.own .message-header {
+      justify-content: flex-end;
+    }
+    
+    .pet-panel {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .pet-avatar {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 50%;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .pet-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .pet-level {
+      font-size: 14px;
+      color: #667eea;
+      margin-bottom: 15px;
+    }
+    .pet-stats {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .stat-bar {
+      width: 100%;
+      height: 6px;
+      background: #e9ecef;
+      border-radius: 3px;
+      margin-top: 3px;
+    }
+    .stat-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+    .auto-reply-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      background: white;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .toggle-switch {
+      width: 40px;
+      height: 20px;
+      background: #ddd;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .toggle-switch.active {
+      background: #667eea;
+    }
+    .toggle-switch::after {
+      content: '';
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: left 0.3s;
+    }
+    .toggle-switch.active::after {
+      left: 22px;
+    }
+    
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      width: 350px;
+      text-align: center;
+    }
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h2>🐾 欢迎来到 ChatPet</h2>
+      <input type="text" id="nicknameInput" placeholder="你的昵称" maxlength="20">
+      <input type="text" id="petNameInput" placeholder="给你的宠物起个名字" maxlength="20">
+      <button onclick="register()">进入聊天室</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="sidebar">
+      <div class="pet-panel">
+        <div class="pet-avatar">🐱</div>
+        <div class="pet-name" id="petName">加载中...</div>
+        <div class="pet-level">等级 <span id="petLevel">1</span> | EXP <span id="petExp">0</span></div>
+        
+        <div class="pet-stats">
+          <div class="stat-row">
+            <span>活泼</span>
+            <span id="statActive">50</span>
+          </div>
+          <div class="stat-bar"><div class="stat-fill" id="barActive" style="width: 50%"></div></div>
+          
+          <div class="stat-row">
+            <span>温柔</span>
+            <span id="statGentle">50</span>
+          </div>
+          <div class="stat-bar"><div class="stat-fill" id="barGentle" style="width: 50%"></div></div>
+          
+          <div class="stat-row">
+            <span>幽默</span>
+            <span id="statHumor">50</span>
+          </div>
+          <div class="stat-bar"><div class="stat-fill" id="barHumor" style="width: 50%"></div></div>
+          
+          <div class="stat-row">
+            <span>毒舌</span>
+            <span id="statSarcasm">20</span>
+          </div>
+          <div class="stat-bar"><div class="stat-fill" id="barSarcasm" style="width: 20%"></div></div>
+        </div>
+        
+        <div class="auto-reply-toggle">
+          <span>🤖 自动回复</span>
+          <div class="toggle-switch" id="autoReplyToggle" onclick="toggleAutoReply()"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="main">
+      <div class="chat-area" id="chatArea"></div>
+      <div class="input-area">
+        <input type="text" id="messageInput" placeholder="输入消息..." onkeypress="if(event.key==='Enter')sendMessage()">
+        <button onclick="sendMessage()">发送</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let ws = null;
+    let userId = null;
+    let petId = null;
+    let autoReplyEnabled = false;
+
+    function connect() {
+      ws = new WebSocket('ws://localhost:8080');
+      
+      ws.onopen = () => {
+        console.log('Connected to server');
+      };
+      
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        handleMessage(msg);
+      };
+      
+      ws.onclose = () => {
+        console.log('Disconnected');
+        setTimeout(connect, 3000);
+      };
+    }
+
+    function handleMessage(msg) {
+      switch (msg.type) {
+        case 'registered':
+          userId = msg.userId;
+          petId = msg.petId;
+          document.getElementById('loginOverlay').classList.add('hidden');
+          ws.send(JSON.stringify({ type: 'join_room', roomId: 'lobby' }));
+          ws.send(JSON.stringify({ type: 'get_pet_status' }));
+          break;
+          
+        case 'message':
+          addMessage(msg);
+          break;
+          
+        case 'pet_status':
+          updatePetDisplay(msg.pet);
+          break;
+          
+        case 'history':
+          loadHistory(msg.messages);
+          break;
+          
+        case 'level_up':
+          showLevelUpNotification(msg.pet);
+          break;
+          
+        case 'auto_reply_updated':
+          autoReplyEnabled = msg.enabled;
+          document.getElementById('autoReplyToggle').classList.toggle('active', autoReplyEnabled);
+          break;
+      }
+    }
+
+    function register() {
+      const nickname = document.getElementById('nicknameInput').value.trim();
+      const petName = document.getElementById('petNameInput').value.trim();
+      
+      if (!nickname || !petName) {
+        alert('请填写昵称和宠物名字');
+        return;
+      }
+      
+      ws.send(JSON.stringify({
+        type: 'register',
+        nickname,
+        petName
+      }));
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const content = input.value.trim();
+      
+      if (!content || !ws) return;
+      
+      ws.send(JSON.stringify({
+        type: 'chat',
+        content
+      }));
+      
+      input.value = '';
+    }
+
+    function addMessage(msg, skipScroll = false) {
+      const chatArea = document.getElementById('chatArea');
+      const isOwn = msg.senderId === userId;
+      
+      const div = document.createElement('div');
+      div.className = `message ${isOwn ? 'own' : ''}`;
+      div.innerHTML = `
+        <div class="message-header">
+          <span class="message-sender ${msg.isPet ? 'pet' : ''}">${msg.senderName}</span>
+          <span class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</span>
+        </div>
+        <div class="message-content">${escapeHtml(msg.content)}</div>
+      `;
+      
+      chatArea.appendChild(div);
+      if (!skipScroll) {
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+    }
+
+    function updatePetDisplay(pet) {
+      if (!pet) return;
+      
+      document.getElementById('petName').textContent = pet.name;
+      document.getElementById('petLevel').textContent = pet.level;
+      document.getElementById('petExp').textContent = pet.exp;
+      
+      document.getElementById('statActive').textContent = pet.personality.active;
+      document.getElementById('barActive').style.width = pet.personality.active + '%';
+      
+      document.getElementById('statGentle').textContent = pet.personality.gentle;
+      document.getElementById('barGentle').style.width = pet.personality.gentle + '%';
+      
+      document.getElementById('statHumor').textContent = pet.personality.humor;
+      document.getElementById('barHumor').style.width = pet.personality.humor + '%';
+      
+      document.getElementById('statSarcasm').textContent = pet.personality.sarcasm;
+      document.getElementById('barSarcasm').style.width = pet.personality.sarcasm + '%';
+      
+      autoReplyEnabled = pet.isAutoReply;
+      document.getElementById('autoReplyToggle').classList.toggle('active', autoReplyEnabled);
+    }
+
+    function toggleAutoReply() {
+      if (!ws) return;
+      
+      ws.send(JSON.stringify({
+        type: 'toggle_auto_reply',
+        enabled: !autoReplyEnabled
+      }));
+    }
+    
+    function loadHistory(messages) {
+      const chatArea = document.getElementById('chatArea');
+      chatArea.innerHTML = '';
+      messages.forEach(msg => addMessage(msg, true));
+    }
+    
+    function showLevelUpNotification(pet) {
+      const div = document.createElement('div');
+      div.style.cssText = 'text-align: center; padding: 10px; background: linear-gradient(90deg, #f093fb, #f5576c); color: white; border-radius: 20px; margin: 10px 0; animation: fadeIn 0.5s;';
+      div.innerHTML = `🎉 <b>${pet.name}</b> 升级到等级 <b>${pet.level}</b>！`;
+      document.getElementById('chatArea').appendChild(div);
+      document.getElementById('chatArea').scrollTop = chatArea.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // 定期刷新宠物状态
+    setInterval(() => {
+      if (ws && userId) {
+        ws.send(JSON.stringify({ type: 'get_pet_status' }));
+      }
+    }, 5000);
+
+    connect();
+  </script>
+</body>
+</html>

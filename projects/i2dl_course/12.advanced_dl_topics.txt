@@ -1,0 +1,1793 @@
+Advanced DL Topics
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+Attention
+Index the values
+via a differentiable
+operator.
+
+Multiply queries
+with keys
+
+Attention 𝑄, 𝐾, 𝑉 = softmax
+
+Get the values
+
+𝑄𝐾 𝑇
+𝑑𝑘
+
+𝑉
+
+To train them well, divide by 𝑑𝑘 , “probably” because for
+large values of the key’s dimension, the dot product grows
+large in magnitude, pushing the softmax function into regions
+where it has extremely small gradients.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+2
+
+Transformers
+
+Attention Is All You Need [Vaswani et al. 17]
+https://arxiv.org/pdf/1706.03762.pdf
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+3
+
+Graph Neural
+Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+4
+
+A graph
+• Node: a concept
+• Edge: a connection between concepts
+
+Nodes
+
+Edges
+Daniel Cremers
+
+Introduction to Deep Learning
+
+5
+
+Deep learning on graphs
+• Generalizations of neural networks that can operate on
+graph-structured domains:
+–
+–
+–
+–
+–
+
+Scarselli et al. “The Graph Neural Network Model”, IEEE Trans. Neur. Net 2009.
+Defferrard et al. “Convolutional Neural Networks on Graphs with Fast Localized Spectral
+Filtering”, NeurIPS 2016
+Kipf&Welling, “Semi-Supervised Classification with Graph Convolutional Networks”, ICLR
+2017.
+Gilmer et al. “Neural Message Passing for Quantum Chemistry”. ICML 2017
+Koke&Cremers “HoloNets: Spectral Convolutions do extend to Directed Graphs”, ICLR
+2024.
+
+• Key challenges:
+– Variable sized inputs (number of nodes and edges)
+– Need invariance to node permutations
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+6
+
+General Idea 1: Message passing
+Graph with optional node and edge feature vectors
+
+Graph with optional node
+and edge feature vectors
+
+Information propagation across
+the graph for several iterations
+
+Graph with updated contextaware node and (possibly
+edge) feature vector(s)
+
+Figure credit: https://tkipf.github.io/graph-convolutional-networks/
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+7
+
+General Idea 1: Message passing
+Graph with optional node and edge feature vectors
+
+Graph with optional node
+and edge feature vectors
+
+Information propagation across
+the graph for several iterations
+
+Graph with updated contextaware node and (possibly
+edge) feature vector(s)
+
+Figure credit: https://tkipf.github.io/graph-convolutional-networks/
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+8
+
+Message Passing Networks
+• We can divide the propagation process in two steps:
+‘node to edge’ and ‘edge to node’ updates.
+
+Initial Graph
+
+‘Node to Edge’ Update
+
+‘Edge to Node’ Update
+Node embeddings
+Edge embeddings
+
+Battaglia et al. “Relational inductive biases, deep learning, and graph networks”. 2018
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+9
+
+‘Node to edge’ updates
+• At every message passing step
+
+Embedding of node i in
+the previous message
+passing step
+
+Daniel Cremers
+
+, first do:
+
+Embedding of
+edge (i,j) in the
+previous message
+passing step
+
+Introduction to Deep Learning
+
+Embedding of node
+j in the previous
+message passing
+step
+
+10
+
+‘Node to edge’ updates
+• At every message passing step
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+, first do:
+
+11
+
+‘Node to edge’ updates
+• At every message passing step
+
+, first do:
+
+Learnable function (e.g.
+MLP) with shared
+weights across the
+entire graph
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+12
+
+‘Edge to node’ updates
+• After a round of edge updates, each edge
+embedding contains information about its pair of
+incident nodes
+• Then, edge embeddings are used to update nodes:
+message
+
+Order invariant
+operation (e.g.
+sum, mean, max)
+Daniel Cremers
+
+Neighbors of
+node i
+
+message
+
+Introduction to Deep Learning
+
+message
+
+13
+
+‘Edge to node’ updates
+• After a round of edge updates, each edge
+embedding contains information about its pair of
+incident nodes
+• Then, edge embeddings are used to update nodes:
+The aggregation
+provides each node
+embedding with
+contextual information
+about its neighbors
+
+Learnable function (e.g. MLP) with shared
+weights across the entire graph
+Daniel Cremers
+
+Introduction to Deep Learning
+
+14
+
+General Idea 2: Spectral Approach
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+How to extend Convolutions to Graphs?
+
+Only applies to
+undirected graphs!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+General Idea 3:
+Holomorophic Functional Calculus
+• Key idea: Extend spectral convolutions to graphs by
+making use of
+– complex analysis
+– holomorphic functions & the Cauchy integral formula
+– tools from spectral theory
+
+[Koke & Cremers “HoloNets: Spectral Convolutions do extend to Directed Graphs”, ICLR 2024]
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+General Idea 3:
+Holomorophic Functional Calculus
+
+[Koke & Cremers “HoloNets: Spectral Convolutions do extend to Directed Graphs”, ICLR 2024]
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+GNN Applications
+• Node or edge classification
+– identifying anomalies such as spam, fraud
+– Relationship discovery for social networks, search
+networks
+
+https://gm-neurips-2020.github.io/master-deck.pdf
+Daniel Cremers
+
+Introduction to Deep Learning
+
+30
+
+GNN Applications
+• Scene graph generation
+
+[Xu et al. ‘17] Scene Graph Generation by Iterative Message Passing
+Daniel Cremers
+
+Introduction to Deep Learning
+
+31
+
+GNN Applications
+• 3D Mesh Classification
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+32
+
+GNN Applications
+• 3D mesh generation
+
+Daniel Cremers
+
+[Dai and Niessner, “Scan2Mesh: From Unstructured Range Scans to 3D Meshes”, CVPR 2019]
+33
+Introduction to Deep Learning
+
+GNN Applications
+• Modeling epidemiology
+– Spatio-temporal graph
+
+https://gm-neurips-2020.github.io/master-deck.pdf
+Daniel Cremers
+
+Introduction to Deep Learning
+
+34
+
+GNN Applications
+• Traffic forecasting
+
+https://www.deepmind.com/blog/traffic-prediction-with-advanced-graph-neural-networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+35
+
+Generative Models
+Daniel Cremers
+
+Introduction to Deep Learning
+
+36
+
+Generative Models
+
+Daniel Cremers
+
+Generated Images
+
+Real Images
+
+• Given training data, how to generate new samples
+from the same distribution
+
+Source: https://openai.com/blog/generative-models/
+Introduction to Deep Learning
+
+37
+
+Generative Models
+Implicit Density
+
+Explicit Density
+Tractable Density
+
+Approximate Density
+
+Markov Chain
+
+Direct
+
+GSN
+
+GAN
+
+Fully Visible Belief Nets
+
+Variational
+
+Markov Chain
+
+Variational Autoencoder
+
+Boltzmann Machine
+
+Denoising Diffusion Probabilistic Models (DDPM)
+Figure copyright and adapted from Ian Goodfellow, Tutorial on Generative Adversarial Networks, 2017
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+38
+
+Autoencoders
+Daniel Cremers
+
+Introduction to Deep Learning
+
+39
+
+Autoencoders
+• Can be used as a basic generative models
+• Unsupervised approach for learning a lowerdimensional feature representation from unlabeled
+training data
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+40
+
+Autoencoders
+• From an input image
+to a feature
+representation
+(bottleneck layer)
+
+• Encoder: a CNN in
+our case
+
+Input Image
+
+Conv
+Daniel Cremers
+
+Introduction to Deep Learning
+
+41
+
+Autoencoder: training
+Reconstruction
+Loss (like L1, L2)
+
+Input Image
+
+Output Image
+
+Conv
+Daniel Cremers
+
+Transpose Conv
+
+Introduction to Deep Learning
+
+42
+
+Autoencoder: training
+
+Input x
+
+Reconstruction x’
+
+Input images
+
+Reconstructed images
+
+Latent space z
+dim (z) < dim (x)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+43
+
+Autoencoder: training
+
+Input x
+
+Reconstruction x’
+
+• No labels
+required
+• We can use
+unlabeled data
+to first get its
+structure
+
+Latent space z
+dim (z) < dim (x)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+44
+
+Autoencoder
+
+Conv
+Daniel Cremers
+
+Transposed conv
+
+Introduction to Deep Learning
+
+45
+
+Decoder as Generative Model
+Reconstruction
+Loss (often L2)
+
+Test time:
+-> reconstruction from
+‘random’ vector
+
+Latent space 𝑧
+dim 𝑧 < dim(𝑥)
+Daniel Cremers
+
+Output Image
+
+Introduction to Deep Learning
+
+46
+
+Why using autoencoders?
+• Use 1: pre-training, as mentioned before
+– Image → same image reconstructed
+– Use the encoder as “feature extractor”
+
+• Use 2: Use them to get pixel-wise predictions
+– Image → semantic segmentation
+– Low-resolution image → High-resolution image
+– Image → Depth map
+Daniel Cremers
+
+Introduction to Deep Learning
+
+47
+
+Variational
+Autoencoders
+Daniel Cremers
+
+Introduction to Deep Learning
+
+48
+
+Autoencoders
+• Encode the input into a representation (bottleneck)
+and reconstruct it with the decoder
+Encoder
+
+Decoder
+
+𝑥෤
+
+𝑥
+𝑧
+
+Conv
+Daniel Cremers
+
+Transpose Conv
+
+Introduction to Deep Learning
+
+49
+
+Autoencoders
+• Encode the input into a representation (bottleneck)
+and reconstruct it with the decoder
+
+Latent space learned
+by autoencoder on MNIST
+
+Source: https://bit.ly/37ctFMS
+Daniel Cremers
+
+Introduction to Deep Learning
+
+50
+
+Variational Autoencoder
+
+𝑥
+
+𝑞𝜙 𝑧 𝑥
+
+𝑝𝜃 𝑥෤ 𝑧)
+
+Encoder
+
+Decoder
+
+𝜙
+
+𝜃
+
+𝑥෤
+
+𝑧
+
+Conv
+Daniel Cremers
+
+Transpose Conv
+
+Introduction to Deep Learning
+
+51
+
+Variational Autoencoder
+Goal: Sample from the latent distribution to generate new outputs!
+
+𝑥
+
+𝜃
+
+𝜙
+
+𝑥෤
+
+𝑧
+
+Conv
+Daniel Cremers
+
+Transpose Conv
+
+Introduction to Deep Learning
+
+52
+
+Variational Autoencoder
+• Latent space is now a distribution
+• Specifically it is a Gaussian
+Encoder
+
+Decoder
+𝜇𝑧|𝑥
+
+𝑥
+
+Sample
+
+𝜙
+Σ𝑧|𝑥
+
+𝜃
+
+𝑥෤
+
+𝑧
+
+𝑧|𝑥 ∼ 𝒩(𝜇𝑧|𝑥 , Σ𝑧|𝑥 )
+Daniel Cremers
+
+Introduction to Deep Learning
+
+53
+
+Variational Autoencoder
+• Latent space is now a distribution
+• Specifically it is a Gaussian
+Encoder
+𝜇𝑧|𝑥
+
+𝑥
+
+𝜙
+
+𝑧|𝑥 ∼ 𝒩(𝜇𝑧|𝑥 , Σ𝑧|𝑥 )
+Σ𝑧|𝑥
+
+Daniel Cremers
+
+Mean
+
+Diagonal covariance
+
+Introduction to Deep Learning
+
+54
+
+Variational Autoencoder
+• Training: loss makes sure the latent space is close to a
+Gaussian and the reconstructed output is close to the
+input
+Encoder
+
+Decoder
+
+𝜇𝑧|𝑥
+
+𝑥
+
+Sample
+
+𝜙
+Σ𝑧|𝑥
+
+𝜃
+
+𝑥෤
+
+𝑧
+
+𝑧|𝑥 ∼ 𝒩(𝜇𝑧|𝑥 , Σ𝑧|𝑥 )
+Daniel Cremers
+
+Introduction to Deep Learning
+
+55
+
+Variational Autoencoder
+• Test: Sample from the latent space
+Decoder
+𝜇𝑧|𝑥
+Sample
+Σ𝑧|𝑥
+
+𝜃
+
+𝑥෤
+
+𝑧
+
+𝑧|𝑥 ∼ 𝒩(𝜇𝑧|𝑥 , Σ𝑧|𝑥 )
+Daniel Cremers
+
+Introduction to Deep Learning
+
+56
+
+Autoencoder vs VAE
+https://camo.githubusercontent.com/159ce00b17959f1638b6c6fcfb78408492aba497/687474703a2f2f6b766672616e732e636f6d2f636f6e74656e742f696d616765732f323031362f30382f6d6e6973742e6a7067
+
+Autoencoder
+
+Variational Autoencoder
+
+Ground Truth
+
+Source: https://github.com/kvfrans/variational-autoencoder
+Daniel Cremers
+
+Introduction to Deep Learning
+
+57
+
+Generating data
+
+Degree of smile
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Head pose
+
+58
+
+Autoencoder Overview
+• Autoencoders (AE)
+– Reconstruct input
+– Unsupervised learning
+
+• Variational Autoencoders (VAE)
+– Probability distribution in latent space (e.g., Gaussian)
+– Interpretable latent space (head pose, smile)
+– Sample from model to generate output
+Daniel Cremers
+
+Introduction to Deep Learning
+
+59
+
+Generative Adversarial
+Networks (GANs)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+60
+
+Generative Adversarial Networks (GANs)
+
+Source: https://github.com/hindupuravinash/the-gan-zoo
+Daniel Cremers
+
+Introduction to Deep Learning
+
+61
+
+Autoencoder
+
+Conv
+Daniel Cremers
+
+Transposed conv
+
+Introduction to Deep Learning
+
+62
+
+Decoder as Generative Model
+Reconstruction
+Loss (often L2)
+
+Test time:
+-> reconstruction from
+‘random’ vector
+
+Latent space 𝑧
+dim 𝑧 < dim(𝑥)
+Daniel Cremers
+
+Output Image
+
+Introduction to Deep Learning
+
+63
+
+Decoder as Generative Model
+Reconstruction Loss
+Often L2, i.e., sum of squared dist.
+-> L2 distributes error equally
+-> mean is opt.
+-> res. Is blurry
+“Test time”:
+-> reconstruction from
+‘random’ vector
+
+Latent space z
+dim (z) < dim (x)
+Daniel Cremers
+
+Instead of L2, can we
+“learn” a loss function?
+
+Introduction to Deep Learning
+
+64
+
+Generative Adversarial Networks (GANs)
+
+𝐷
+
+𝑧
+
+𝐺
+𝐺(𝑧)
+𝐷(𝐺(𝑧))
+
+[Goodfellow et al., NIPS‘14] Generative Adversarial Networks (slide from McGuinness)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+65
+
+Generative Adversarial Networks (GANs)
+𝑥
+𝐷(𝑥)
+𝐷
+
+𝑧
+
+𝐺
+𝐺(𝑧)
+𝐷(𝐺(𝑧))
+
+[Goodfellow et al., NIPS‘14] Generative Adversarial Networks (slide from McGuinness)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+66
+
+Generative Adversarial Networks (GANs)
+
+real data
+
+Daniel Cremers
+
+fake data
+
+[Goodfellow, NIPS‘16] Tutorial: Generative Adversarial Networks
+Introduction to Deep Learning
+
+67
+
+GANs: Loss Functions
+• Discriminator loss
+𝐽𝐷 =−
+
+1
+1
+𝔼𝐱∼𝑝𝑑𝑎𝑡𝑎 log 𝐷 𝒙 − 𝔼𝒛 log 1 − 𝐷 𝐺 𝒛
+2
+2
+
+• Generator loss
+
+binary cross entropy
+
+𝐽(𝐺) = −𝐽 𝐷
+
+• Minimax Game:
+– G minimizes probability that D is correct
+– Equilibrium is saddle point of discriminator loss
+• D provides supervision (i.e., gradients) for G
+[Goodfellow et al., NIPS‘14] Generative Adversarial Networks
+Introduction to Deep Learning
+Daniel Cremers
+
+68
+
+GAN Applications
+Daniel Cremers
+
+Introduction to Deep Learning
+
+69
+
+BigGAN: HD Image Generation
+
+[Brock et al., ICLR‘18] BigGAN : Large Scale GAN Training for High Fidelity Natural Image Synthesis
+Daniel Cremers
+
+Introduction to Deep Learning
+
+70
+
+StyleGAN: Face Image Generation
+
+[Karras et al., ‘18] StyleGAN : A Style-Based Generator Architecture for Generative Adversarial Networks
+[Karras et al., ‘19] StyleGAN2 : Analyzing and Improving the Image Quality of StyleGAN
+Introduction to Deep Learning
+Daniel Cremers
+
+71
+
+Cycle GAN: Unpaired Image-to-Image Translation
+
+[Zhu et al., ICCV‘17] Cycle GAN : Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks
+72
+Introduction to Deep Learning
+Daniel Cremers
+
+SPADE: GAN-Based Image Editing
+
+[Park et al., CVPR‘19] SPADE : Semantic Image Synthesis with Spatially-Adaptive Normalization
+Introduction to Deep Learning
+Daniel Cremers
+
+73
+
+Texturify: 3D Texture Generation
+
+[Siddiqui et al., ECCV‘22]
+Daniel Cremers
+
+𝑧0
+
+Introduction to Deep Learning
+
+𝑧1
+
+𝑧2
+
+74
+
+Diffusion
+Daniel Cremers
+
+Introduction to Deep Learning
+
+75
+
+Diffusion – Search Interest
+
+Source: Google Trends
+Daniel Cremers
+
+Introduction to Deep Learning
+
+76
+
+Diffusion Models
+• Class of generative models
+
+• Achieved state-of-the-art image generation (DALLE2, Imagen, StableDiffusion)
+• What is diffusion?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+77
+
+Diffusion Process
+• Gradually add noise to input image 𝑥0 in a series of 𝑇
+time steps
+• Neural network trained to recover original data
+
+Daniel Cremers
+
+[Ho et al. ’20] Denoising Diffusion Probabilistic Models
+
+Introduction to Deep Learning
+
+78
+
+Forward Diffusion
+• Markov chain of 𝑇 steps
+– Each step depends only on previous
+
+• Adds noise to 𝑥0 sampled from real distribution 𝑞 𝑥
+𝑞 𝑥𝑡 𝑥𝑡−1 = 𝒩(𝑥𝑡 ; 𝝁𝑡 = 1 − 𝛽𝑡 𝑥𝑡−1 , 𝚺𝑡 = 𝛽𝑡 𝐈)
+mean
+
+Daniel Cremers
+
+variance
+
+identity matrix
+
+[Ho et al. ’20] Denoising Diffusion Probabilistic Models
+
+Introduction to Deep Learning
+
+79
+
+Forward Diffusion
+• Go from 𝑥0 to 𝑥𝑇 :
+
+𝑇
+
+𝑞 𝑥1:𝑇 𝑥0 = ෑ 𝑞(𝑥𝑡 |𝑥𝑡−1 )
+𝑡=1
+
+• Efficiency?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+80
+
+Reparameterization
+• Define 𝛼𝑡 = 1 − 𝛽𝑡 , 𝛼𝑡 = ς𝑡𝑠=0 𝛼𝑠 , 𝜖0 , … , 𝜖𝑡−1 ~𝒩(𝟎, 𝐈)
+𝑥𝑡 =
+
+1 − 𝛽𝑡 𝑥𝑡−1 + 𝛽𝑡 𝜖𝑡−1
+
+= 𝛼𝑡 𝑥𝑡−1 + 1 − 𝛼𝑡 𝜖𝑡−1
+= 𝛼𝑡 𝛼𝑡−1 𝑥𝑡−2 + 1 − 𝛼𝑡 𝛼𝑡−1 𝜖𝑡−2
+=
+
+𝛼𝑡 𝑥0 + 1 − 𝛼𝑡 𝜖0
+
+𝑥𝑡 ~𝑞 𝑥𝑡 𝑥0 = 𝒩(𝑥𝑡 ; 𝛼𝑡 𝑥0 , 1 − 𝛼𝑡 𝐈)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+81
+
+Reverse Diffusion
+• 𝑥𝑇→∞ becomes a Gaussian distribution
+
+• Reverse distribution 𝑞(𝑥𝑡−1 |𝑥𝑡 )
+– Sample 𝑥𝑇 ~𝒩 𝟎, 𝐈 and run reverse process
+– Generates a novel data point from original distribution
+
+• How to model reverse process?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+82
+
+Approximate Reverse Process
+• Approximate 𝑞(𝑥𝑡−1 |𝑥𝑡 ) with parameterized model 𝑝𝜃
+(e.g., deep network)
+𝑝𝜃 𝑥𝑡−1 𝑥𝑡 = 𝒩(𝑥𝑡−1 ; 𝜇𝜃 𝑥𝑡 , 𝑡 , Σ𝜃 𝑥𝑡 , 𝑡 )
+𝑇
+
+𝑝𝜃 (𝑥0:𝑇 ) = 𝑝𝜃 (𝑥𝑇 ) ෑ 𝑝𝜃 𝑥𝑡−1 𝑥𝑡
+𝑡=1
+
+Daniel Cremers
+
+[Ho et al. ’20] Denoising Diffusion Probabilistic Models
+
+Introduction to Deep Learning
+
+83
+
+Training a Diffusion Model
+• Optimize negative log-likelihood of training data
+
+𝐿𝑉𝐿𝐵
+= 𝔼𝑞 [𝐷𝐾𝐿 𝑞(𝑥𝑇 |𝑥0 ||𝑝𝜃 (𝑥𝑇 )
+
+𝐿𝑇
+
+𝑇
+
++ ෍ 𝐷𝐾𝐿 𝑞 𝑥𝑡−1 𝑥𝑡 , 𝑥0 ||𝑝𝜃 𝑥𝑡−1 𝑥𝑡
+
+− log 𝑝𝜃 (𝑥0 |𝑥1 )]
+
+𝑡=2
+𝐿𝑡−1
+
+𝐿0
+
+• Nice derivations: https://lilianweng.github.io/posts/2021-0711-diffusion-models
+Daniel Cremers
+
+Introduction to Deep Learning
+
+84
+
+Training a Diffusion Model
+• 𝐿𝑡−1 = 𝐷𝐾𝐿 𝑞 𝑥𝑡−1 𝑥𝑡 , 𝑥0 ||𝑝𝜃 𝑥𝑡−1 𝑥𝑡
+• Comparing two Gaussian distributions
+• 𝐿𝑡−1 ∝ 𝜇෥𝑡 𝑥𝑡 , 𝑥0 − 𝜇𝜃 (𝑥𝑡 , 𝑡) 2
+
+• Predicts diffusion posterior mean
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+85
+
+Diffusion Model Architecture
+• Input and output dimensions must match
+
+• Highly flexible to architecture design
+• Commonly implemented with U-Net architectures
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+86
+
+Applications for Diffusion Models
+• Text-to-image
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+87
+
+Applications for Diffusion Models
+• Image inpainting & outpainting
+
+Daniel Cremers
+
+https://github.com/lkwq007/stablediffusion-infinity
+Introduction to Deep Learning
+
+88
+
+Applications for Diffusion Models
+• Text-to-3D Neural Radiance Fields
+
+https://dreamfusion3d.github.io/
+Daniel Cremers
+
+Introduction to Deep Learning
+
+89
+
+Realistic 3D Human Motion Generation
+with Anisotropic Diffusion
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+90
+
+3D Human Motion Prediction
+Input: body joint positions up to time T
+Past
+
+Daniel Cremers
+
+Output: body joint positions from time T
+Future
+
+Introduction to Deep Learning
+
+91
+
+3D Human Motion Prediction
+Input: body joint positions up to time T
+Past
+
+Daniel Cremers
+
+Output: body joint positions from time T
+Future
+
+Introduction to Deep Learning
+
+92
+
+3D Human Motion Prediction
+Input: body joint positions up to time T
+Past
+
+Daniel Cremers
+
+Output: body joint positions from time T
+Future
+
+Introduction to Deep Learning
+
+93
+
+3D Human Motion Prediction
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+94
+
+Anisotropies in Latent Space
+Principal Component Analysis of latent space:
+
+95
+
+Recap: Isotropic Diffusion
+Isotropic
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+96
+
+Isotropic vs. Anisotropic Diffusion
+Isotropic:
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+97
+
+Isotropic vs. Anisotropic Diffusion
+Isotropic:
+
+Ours:
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+98
+
+Isotropic vs. Anisotropic Diffusion
+Ours:
+A: adjacency matrix of the skeleton graph
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+99
+
+Comparison to Baselines
+GT
+
+DiverseSampling
+
+CoMusion
+
+Ours
+
+Diverse yet realistic
+Daniel Cremers
+
+Introduction to Deep Learning
+
+100
+
+Comparison to Baselines
+GT
+
+DiverseSampling
+
+CoMusion
+
+Ours
+
+Future coherent with past motion
+Daniel Cremers
+
+Introduction to Deep Learning
+
+101
+
+Reinforcement
+Learning
+Daniel Cremers
+
+Introduction to Deep Learning
+
+102
+
+Learning Paradigms in ML
+Supervised
+Learning
+E.g., classification,
+regression
+Labeled data
+Find mapping from
+input to label
+
+Daniel Cremers
+
+Unsupervised
+Learning
+E.g., clustering,
+anomaly detection
+Unlabeled data
+Find structure in data
+
+Introduction to Deep Learning
+
+Reinforcement
+Learning
+Sequential data
+Learning by
+interaction with
+the environment
+
+103
+
+In a Nutshell
+• RL-agent is trained using the
+“carrot and stick“ approach
+• Good behavior is
+encouraged by rewards
+• Bad behavior is discouraged
+by punishment
+Source: quora.com
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+104
+
+Agent and Environment
+Action, at
+
+Agent
+
+Environment
+
+Observation, ot
+Reward, rt
+Daniel Cremers
+
+Introduction to Deep Learning
+
+105
+
+Characteristics of RL
+• Sequential, non i.i.d. data (time matters)
+
+• Actions have an effect on the environment
+-> Change future input
+• No supervisor, target is approximated by the reward
+signal
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+106
+
+History and State
+• The agent makes decisions based on the history h of
+observations, actions and rewards up to time-step t
+ℎ𝑡 = 𝑜1 , 𝑎1 , 𝑟1 , … , 𝑎𝑡−1 , 𝑟𝑡−1 , 𝑜𝑡
+
+• The state s contains all the necessary information
+from h -> s is a function of h
+𝑠𝑡 = 𝑓 ℎ𝑡
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Source: UCL Reinforcement Learning
+
+107
+
+Markov Assumption
+• Problem: History grows linearly over time
+• Solution: Markov Assumption
+• A state St is Markov if and only if:
+ℙ 𝑠𝑡+1 |𝑠𝑡 = ℙ 𝑠𝑡+1 |𝑠1 , … 𝑠𝑡
+• “The future is independent of the past given the
+present“
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Source: UCL Reinforcement Learning
+
+108
+
+Agent and Environment
+• Reward and next state
+are functions of
+current observation ot
+and action at only
+
+Action, at
+
+Agent
+
+Environment
+
+Observation, ot
+
+Reward, rt
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+109
+
+Mathematical Formulation
+• The RL problem is a Markov Decision Process (MDP)
+defined by: 𝒮, 𝒜, ℛ, ℙ, 𝛾
+𝒮 : Set of possible states
+𝒜 : Set of possible actions
+ℛ : Distribution of reward given (state, action) pair
+ℙ : Transition probability of a (state, action) pair
+𝛾 : Discount factor (discounts future rewards)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Source: Stanford cs231n
+
+110
+
+Components of an RL Agent
+• Policy 𝜋 : Behavior of the agent
+-> Mapping from state to action: 𝑎 = 𝜋(𝑠)
+
+• Value-, Q-Function: How good is a state or (state,
+action) pair
+-> Expected future reward
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Source: UCL Reinforcement Learning
+
+111
+
+Taxonomy of RL Algorithms
+RL Algorithms
+
+Policy Optimization
+
+Policy Gradient
+
+Model-Free RL
+
+Model-Based RL
+
+Q-Learning
+
+Learn the Model
+
+Given the Model
+
+DQN
+
+World Models
+
+C51
+
+I2A
+
+QR-DQN
+
+MBMF
+
+HER
+
+MBVE
+
+Alpha Zero
+
+DDPG
+A2C / A3C
+TD3
+
+PPO
+SAC
+TRPO
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Source: spinningup.openai.com
+
+112
+
+RL Milestones: Playing Atari
+
+• Mnih et al. 2013, first appearance of DQN
+• Successfully learned to play different Atari games
+like Pong, Breakout, Space Invaders, Seaquest and
+Beam Rider
+
+[Mnih et al., NIPS’13] Playing Atari with Deep Reinforcement Learning
+Daniel Cremers
+
+Introduction to Deep Learning
+
+113
+
+RL Milestones: AlphaZero (StarCraft)
+•
+•
+•
+•
+
+Model: Transformer network with a LSTM core
+Trained on 200 years of StarCraft play for 14 days
+16 Google v3 TPUs
+December 2018:
+Beats MaNa, a
+professional StarCraft
+player (world rank 13)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+114
+
+I2DL Summary
+Daniel Cremers
+
+Introduction to Deep Learning
+
+115
+
+Machine Learning Basics
+• Unsupervised vs
+Supervised Learning
+
+• Data splitting
+
+• Linear vs logistic
+regression
+Daniel Cremers
+
+Introduction to Deep Learning
+
+116
+
+Intro to Neural Networks
+• Backpropagation
+
+• Activation functions
+
+• Loss functions
+– Comparison & effects
+Daniel Cremers
+
+Introduction to Deep Learning
+
+117
+
+Training Neural Networks
+• Gradient Descent/ SGD • Regularization
+
+• Parameter
+& interpretation
+
+Source: http://ruder.io/optimizing-gradient-descent/,
+https://srdas.github.io/DLBook/ImprovingModelGeneralization.html, http://cs231n.github.io/neuralnetworks-3/
+Introduction to Deep Learning
+Daniel Cremers
+
+search
+
+118
+
+Typology of Neural Networks
+• CNNs
+
+• Autoencoder
+
+𝑁+2⋅𝑃−𝐹
++1
+𝑆
+𝑁+2⋅𝑃−𝐹
+×
++1
+𝑆
+
+• RNNs
+
+• GANs
+real or fake
+pair?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+119
+
+Other DL Courses
+Daniel Cremers
+
+Introduction to Deep Learning
+
+120
+
+Deep Learning at TUM
+DL for
+Medical
+Applicat.
+
+DL in
+Robotics
+(Bäuml)
+
+Intro to
+Deep
+Learning
+
+DL for
+Physics
+(Thuerey)
+
+3D
+Computer
+Vision
+(Cremers)
+Daniel Cremers
+
+(Menze)
+
+Machine
+Learning
+(Günneman)
+
+ADL for
+Computer
+Vision
+
+ML for 3D
+Geometry
+(Dai)
+
+(Niessner)
+Introduction to Deep Learning
+
+121
+
+Next Dates and Exam
+• Guest Lecture by Ben Poole!
+– Monday July 17th at 7pm (CEST)
+– Join via Live Stream:
+https://www.youtube.com/watch?v=xk-TibnYEDA
+
+• Exam
+– There will NOT be a retake exam
+– Neither cheat sheet nor calculator during the exam
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+122
+
+Good Luck
+in the Exam ☺
+Daniel Cremers
+
+Introduction to Deep Learning
+
+123
+
+References for Further Reading
+• https://towardsdatascience.com/intuitivelyunderstanding-variational-autoencoders-1bfe67eb5daf
+• https://phillipi.github.io/pix2pix/
+• http://cs231n.stanford.edu/slides/2017/cs231n_2017_le
+cture13.pdf
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+128
+
+

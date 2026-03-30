@@ -1,0 +1,63 @@
+{
+  "qmmm": {
+    "vasp": {
+      "executable": "vasp_std",
+      "encut": 400,
+      "kpts": [1, 1, 1],
+      "xc": "PBE",
+      "ismear": 0,
+      "sigma": 0.05,
+      "ediff": 1e-6,
+      "nelm": 100,
+      "lreal": "Auto"
+    },
+    "lammps": {
+      "executable": "lmp",
+      "units": "real",
+      "atom_style": "charge",
+      "boundary": "p p p"
+    },
+    "coupling": {
+      "embedding": "electrostatic",
+      "cutoff_qm": 10.0,
+      "cutoff_mm": 12.0,
+      "link_atom_type": "H",
+      "buffer_zone": 2.0
+    }
+  },
+  "coarse_graining": {
+    "method": "centroid",
+    "n_beads": null,
+    "use_ml": false,
+    "encoder_hidden": [128, 64, 32],
+    "force_weight": 0.1,
+    "iterative_training": true,
+    "n_iterations": 3
+  },
+  "gnn": {
+    "architecture": "cggnn",
+    "hidden_dim": 64,
+    "n_layers": 4,
+    "cutoff": 10.0,
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "n_epochs": 100,
+    "early_stopping_patience": 10
+  },
+  "validation": {
+    "energy_tolerance": 1e-4,
+    "force_tolerance": 1e-2,
+    "structure_tolerance": 0.1,
+    "check_energy_conservation": true,
+    "check_force_consistency": true,
+    "check_thermodynamic_consistency": true
+  },
+  "multiscale": {
+    "scales": ["qm", "atomistic", "cg", "continuum"],
+    "coupling_methods": {
+      "qm_to_atomistic": "qm_mm",
+      "atomistic_to_cg": "ml_mapping",
+      "cg_to_continuum": "finite_element"
+    }
+  }
+}

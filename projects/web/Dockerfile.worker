@@ -1,0 +1,46 @@
+# Celery Worker Dockerfile
+FROM python:3.11-slim
+
+# Install system dependencies for scientific computing
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    gfortran \
+    libblas-dev \
+    liblapack-dev \
+    libpq-dev \
+    libopenmpi-dev \
+    openmpi-bin \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install LAMMPS (optional, for full functionality)
+# RUN apt-get update && apt-get install -y lammps
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements
+COPY requirements.txt .
+COPY web/requirements.web.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.web.txt
+
+# Copy application code
+COPY dftlammps/ ./dftlammps/
+COPY setup.py .
+COPY pyproject.toml .
+COPY README.md .
+
+# Install the package
+RUN pip install -e .
+
+# Create results directory
+RUN mkdir -p /app/results
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+
+# Run Celery worker
+CMD ["celery", "-A", "dftlammps.web.task_queue", "worker", "--loglevel=info", "--concurrency=4"]

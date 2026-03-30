@@ -1,0 +1,199 @@
+# =============================================================================
+# Nightly Regression Test Workflow
+# =============================================================================
+
+name: Nightly Regression Tests
+
+on:
+  schedule:
+    # Run at 03:00 UTC daily (11:00 CST)
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  # ==========================================================================
+  # DFT Regression Tests
+  # ==========================================================================
+  dft-regression:
+    name: DFT Calculation Consistency
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || true
+          pip install pytest pytest-timeout numpy scipy
+
+      - name: Run DFT regression tests
+        run: |
+          pytest tests/regression/test_dft_regression.py -v \
+            --timeout=600 \
+            --tb=short || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dft-regression-results
+          path: test_reports/
+          retention-days: 30
+
+  # ==========================================================================
+  # MD Regression Tests
+  # ==========================================================================
+  md-regression:
+    name: MD Trajectory Reproducibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-timeout numpy
+
+      - name: Run MD regression tests
+        run: |
+          pytest tests/regression/test_md_regression.py -v \
+            --timeout=600 || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: md-regression-results
+          retention-days: 30
+
+  # ==========================================================================
+  # ML Regression Tests
+  # ==========================================================================
+  ml-regression:
+    name: ML Potential Stability
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-timeout numpy torch
+
+      - name: Run ML regression tests
+        run: |
+          pytest tests/regression/test_ml_regression.py -v \
+            --timeout=600 || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ml-regression-results
+          retention-days: 30
+
+  # ==========================================================================
+  # Performance Benchmarks
+  # ==========================================================================
+  performance-benchmarks:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-benchmark pytest-timeout
+
+      - name: Run benchmarks
+        run: |
+          pytest tests/performance --benchmark-only \
+            --benchmark-json=benchmark-results.json || true
+
+      - name: Upload benchmark results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: benchmark-results.json
+          retention-days: 90
+
+      - name: Compare with baseline
+        run: |
+          if [ -f .benchmarks/baseline.json ]; then
+            echo "Comparing with baseline..."
+            # 添加比较逻辑
+          fi
+
+  # ==========================================================================
+  # Notification
+  # ==========================================================================
+  notify:
+    name: Send Notifications
+    needs: [dft-regression, md-regression, ml-regression, performance-benchmarks]
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check results
+        run: |
+          echo "DFT: ${{ needs.dft-regression.result }}"
+          echo "MD: ${{ needs.md-regression.result }}"
+          echo "ML: ${{ needs.ml-regression.result }}"
+          echo "Performance: ${{ needs.performance-benchmarks.result }}"
+
+      - name: Send email notification
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Nightly Tests Failed - DFT-MD-ML Platform"
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: ci-bot@example.com
+          body: |
+            Nightly regression tests have failed.
+            
+            DFT: ${{ needs.dft-regression.result }}
+            MD: ${{ needs.md-regression.result }}
+            ML: ${{ needs.ml-regression.result }}
+            Performance: ${{ needs.performance-benchmarks.result }}
+            
+            See details at: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

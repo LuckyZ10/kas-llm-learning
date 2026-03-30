@@ -1,0 +1,22 @@
+&CONTROL
+    calculation = 'scf'
+    pseudo_dir = './'
+&END
+&SYSTEM
+    ecutwfc = 50
+    ecutrho = 400
+&END
+&ELECTRONS
+    conv_thr = 1e-08
+&END
+&ENVIRON
+    environ_type = 'input'
+    env_static_permittivity = 78.4
+    env_optical_permittivity = 1.78
+    env_surface_tension = 0.0001
+    env_pressure = 0.0
+    env_temperature = 300.0
+    env_periodicity = '2D'
+    env_axis = 3
+    env_epsilon_mode = 'linear'
+&END

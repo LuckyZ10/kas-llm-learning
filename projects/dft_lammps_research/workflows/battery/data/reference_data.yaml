@@ -1,0 +1,113 @@
+# 固态电解质筛选示例：实验参考数据
+# 数据来源：文献报道的实验测量值
+
+reference_data:
+  # Li3PS4 家族
+  Li3PS4:
+    crystal_structure: "orthorhombic β-Li3PS4"
+    space_group: "Pnma"
+    experimental_conductivity_300K: 3.0e-5  # S/cm
+    experimental_conductivity_500K: 2.5e-3  # S/cm
+    experimental_Ea: 0.25  # eV
+    bulk_modulus: 25.0  # GPa
+    band_gap: 3.2  # eV
+    references:
+      - "Homma et al., Solid State Ionics 182 (2011) 53-56"
+      - "Liu et al., J. Am. Chem. Soc. 135 (2013) 975-978"
+
+  # Li7P3S11 高电导率相
+  Li7P3S11:
+    crystal_structure: "orthorhombic"
+    space_group: "Pnma"
+    experimental_conductivity_300K: 1.7e-3  # S/cm - 玻璃陶瓷
+    experimental_conductivity_500K: 8.0e-2  # S/cm
+    experimental_Ea: 0.18  # eV
+    bulk_modulus: 22.0  # GPa
+    band_gap: 2.8  # eV
+    references:
+      - "Kanno et al., J. Electrochem. Soc. 158 (2011) A50"
+      - "Mizuno et al., Dalton Trans. 42 (2013) 13197"
+
+  # Li6PS5Cl 氩银矿型
+  Li6PS5Cl:
+    crystal_structure: "cubic argyrodite"
+    space_group: "F-43m"
+    experimental_conductivity_300K: 1.5e-4  # S/cm
+    experimental_conductivity_500K: 1.2e-2  # S/cm
+    experimental_Ea: 0.22  # eV
+    bulk_modulus: 30.0  # GPa
+    band_gap: 3.0  # eV
+    references:
+      - "Rao et al., J. Mater. Chem. A 3 (2015) 10807"
+      - "Kraft et al., Chem. Mater. 29 (2017) 8494"
+
+  # Li10GeP2S12 LGPS
+  Li10GeP2S12:
+    crystal_structure: "tetragonal"
+    space_group: "I41/acd"
+    experimental_conductivity_300K: 1.2e-2  # S/cm - 史上最高!
+    experimental_conductivity_500K: 1.0e-1  # S/cm
+    experimental_Ea: 0.25  # eV
+    bulk_modulus: 28.0  # GPa
+    band_gap: 2.9  # eV
+    references:
+      - "Kamaya et al., Nat. Mater. 10 (2011) 682"
+      - "Kato et al., Energy Environ. Sci. 9 (2016) 3515"
+
+  # Li4GeS4
+  Li4GeS4:
+    crystal_structure: "orthorhombic"
+    space_group: "Pnma"
+    experimental_conductivity_300K: 5.0e-7  # S/cm
+    experimental_conductivity_500K: 1.0e-4  # S/cm
+    experimental_Ea: 0.45  # eV
+    bulk_modulus: 35.0  # GPa
+    band_gap: 3.5  # eV
+    references:
+      - "Kaib et al., J. Solid State Chem. 184 (2011) 3026"
+
+  # Li7Sn3S11
+  Li7Sn3S11:
+    crystal_structure: "hexagonal"
+    space_group: "P63/mcm"
+    experimental_conductivity_300K: 4.0e-4  # S/cm
+    experimental_conductivity_500K: 2.0e-2  # S/cm
+    experimental_Ea: 0.28  # eV
+    bulk_modulus: 24.0  # GPa
+    band_gap: 2.5  # eV
+    references:
+      - "Kato et al., J. Power Sources 324 (2016) 60"
+
+# 目标性能指标
+target_performance:
+  room_temperature_conductivity: 1.0e-4  # S/cm
+  maximum_activation_energy: 0.30  # eV
+  minimum_bulk_modulus: 15.0  # GPa
+  minimum_band_gap: 2.0  # eV (vs Li/Li+)
+
+# 评价标准
+evaluation_criteria:
+  excellent:
+    conductivity_range: [1.0e-4, 1.0e-1]  # S/cm
+    Ea_range: [0, 0.25]  # eV
+    description: "满足所有商业应用要求"
+  
+  very_good:
+    conductivity_range: [1.0e-5, 1.0e-4]  # S/cm
+    Ea_range: [0.25, 0.30]  # eV
+    description: "大部分应用可以接受"
+  
+  good:
+    conductivity_range: [1.0e-6, 1.0e-5]  # S/cm
+    Ea_range: [0.30, 0.35]  # eV
+    description: "需要较高工作温度"
+  
+  moderate:
+    conductivity_range: [1.0e-7, 1.0e-6]  # S/cm
+    Ea_range: [0.35, 0.45]  # eV
+    description: "仅适用于高温应用"
+  
+  poor:
+    conductivity_range: [0, 1.0e-7]  # S/cm
+    Ea_range: [0.45, 1.0]  # eV
+    description: "不适合作为固态电解质"

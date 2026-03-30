@@ -1,0 +1,174 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: dftlammps-postgres
+    environment:
+      POSTGRES_USER: dftlammps
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dftlammps_secure_pass}
+      POSTGRES_DB: dftlammps
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dftlammps"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dftlammps-network
+
+  # MongoDB (optional, for flexible document storage)
+  mongodb:
+    image: mongo:7-jammy
+    container_name: dftlammps-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-mongodb_secure_pass}
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dftlammps-network
+
+  # Redis (Task Queue and Caching)
+  redis:
+    image: redis:7-alpine
+    container_name: dftlammps-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dftlammps-network
+
+  # FastAPI Backend
+  api:
+    build:
+      context: ..
+      dockerfile: web/Dockerfile.api
+    container_name: dftlammps-api
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - DATABASE_URL=postgresql://dftlammps:${POSTGRES_PASSWORD:-dftlammps_secure_pass}@postgres:5432/dftlammps
+      - MONGODB_URL=mongodb://admin:${MONGODB_PASSWORD:-mongodb_secure_pass}@mongodb:27017/
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your-secret-key-change-in-production}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:-admin123}
+      - UPLOAD_DIR=/app/uploads
+      - RESULTS_DIR=/app/results
+      - STATIC_DIR=/app/static
+    volumes:
+      - uploads_data:/app/uploads
+      - results_data:/app/results
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - dftlammps-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Celery Worker (for background tasks)
+  worker:
+    build:
+      context: ..
+      dockerfile: web/Dockerfile.worker
+    container_name: dftlammps-worker
+    environment:
+      - DATABASE_URL=postgresql://dftlammps:${POSTGRES_PASSWORD:-dftlammps_secure_pass}@postgres:5432/dftlammps
+      - MONGODB_URL=mongodb://admin:${MONGODB_PASSWORD:-mongodb_secure_pass}@mongodb:27017/
+      - REDIS_URL=redis://redis:6379/0
+      - RESULTS_DIR=/app/results
+    volumes:
+      - results_data:/app/results
+    depends_on:
+      - redis
+      - postgres
+      - mongodb
+    networks:
+      - dftlammps-network
+    command: celery -A dftlammps.web.task_queue worker --loglevel=info --queues=default,dft,ml,md,analysis
+
+  # Celery Beat (for scheduled tasks)
+  beat:
+    build:
+      context: ..
+      dockerfile: web/Dockerfile.worker
+    container_name: dftlammps-beat
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - dftlammps-network
+    command: celery -A dftlammps.web.task_queue beat --loglevel=info
+
+  # Flower (Celery monitoring)
+  flower:
+    build:
+      context: ..
+      dockerfile: web/Dockerfile.worker
+    container_name: dftlammps-flower
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+    networks:
+      - dftlammps-network
+    command: celery -A dftlammps.web.task_queue flower --port=5555
+
+  # Nginx (Reverse Proxy and Static File Serving)
+  nginx:
+    image: nginx:alpine
+    container_name: dftlammps-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../web/frontend/build:/usr/share/nginx/html:ro
+      - uploads_data:/app/uploads:ro
+      - results_data:/app/results:ro
+    depends_on:
+      - api
+    networks:
+      - dftlammps-network
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
+  uploads_data:
+  results_data:
+
+networks:
+  dftlammps-network:
+    driver: bridge

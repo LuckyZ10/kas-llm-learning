@@ -1,0 +1,155 @@
+# 电催化剂设计配置文件
+# Electrocatalyst Design Configuration
+
+# 反应类型: orr (氧还原), oer (氧析出), both (双功能)
+reaction: "both"
+
+# 催化剂金属
+metals:
+  - "Pt"
+  - "Pd"
+  - "Au"
+  - "Ag"
+  - "Cu"
+  - "Ni"
+  - "Co"
+  - "Fe"
+  - "Mn"
+  - "Ir"
+  - "Ru"
+  - "Rh"
+  - "Os"
+  - "Re"
+  - "Cr"
+  - "Mo"
+  - "W"
+
+# 合金元素 (用于合金催化剂设计)
+alloying_elements:
+  - "Ni"
+  - "Co"
+  - "Fe"
+  - "Cu"
+  - "Mn"
+  - "Cr"
+  - "Mo"
+  - "W"
+  - "V"
+  - "Ti"
+
+# 表面晶面
+surface_facets:
+  - "111"  # 密排面, 最稳定
+  - "100"  # 开放面, 通常活性更高
+  - "110"  # 台阶面, 高活性
+
+# 表面模型参数
+slab_thickness: 6.0        # Å
+vacuum_thickness: 15.0     # Å
+fix_bottom_layers: 2       # 固定底层原子层数
+supercell_size: [3, 3, 4]  # 超胞大小
+
+# DFT计算参数
+dft_functional: "PBE"
+dft_encut: 500             # eV
+dft_kpoints: [6, 6, 1]     # 表面计算k点
+dft_npar: 4
+dft_encut_adsorption: 400  # eV, 吸附能计算
+
+# 吸附物种
+adsorbates:
+  - "O"
+  - "OH"
+  - "OOH"
+  - "H"
+  - "H2O"
+  - "O2"
+
+# 吸附位点类型
+adsorption_sites:
+  - "fcc"
+  - "hcp"
+  - "bridge"
+  - "top"
+  - "hollow"
+
+# 参考电极
+reference_potential: 0.0   # V vs SHE
+temperature: 298.15        # K
+ph: 0                      # pH值 (0 = 酸性, 14 = 碱性)
+
+# 理论电位 (V vs RHE)
+orr_onset_potential: 1.23   # 平衡电位
+oer_onset_potential: 1.23   # 平衡电位
+
+# 反应条件
+orr_conditions:
+  ph: 0
+  temperature: 298.15
+  
+oer_conditions:
+  ph: 0
+  temperature: 298.15
+
+# 溶剂化修正 (eV)
+solvation_corrections:
+  OH: 0.35   # 文献报道的OH*溶剂化修正
+  O: 0.05
+  OOH: 0.40
+  H: 0.0
+  H2O: 0.0
+
+# Scaling relation参数
+scaling_relations:
+  OOH_OH_offset: 3.2   # ΔG_OOH = ΔG_OH + 3.2 ± 0.2 eV
+  OOH_OH_error: 0.2
+  O_OH_slope: 0.5      # ΔG_O vs ΔG_OH 斜率
+
+# 零点能修正 (eV, 来自文献)
+zero_point_energies:
+  O: 0.07
+  OH: 0.35
+  OOH: 0.42
+  H2O: 0.56
+  H2: 0.27
+
+# 熵修正 (eV @ 298K, 来自文献)
+entropy_corrections:
+  O: 0.08
+  OH: 0.20
+  OOH: 0.25
+  H2O: 0.67
+  H2: 0.41
+  O2: 0.64
+
+# 工作目录
+work_dir: "./catalyst_design_results"
+
+# 输出选项
+generate_volcano_plots: true
+generate_activity_map: true
+generate_alloy_phase_diagram: false
+generate_microkinetic_model: false
+
+# 性能阈值 (V)
+performance_thresholds:
+  orr_overpotential_target: 0.40    # 优秀ORR催化剂
+  oer_overpotential_target: 0.40    # 优秀OER催化剂
+  bifunctional_total_target: 0.80   # 优秀双功能催化剂
+
+# 筛选标准
+screening_criteria:
+  min_orr_onset: 0.80    # V vs RHE
+  min_oer_onset: 1.60    # V vs RHE
+  max_overpotential: 0.80 # V
+
+# 并行计算
+max_parallel: 4
+save_intermediate: true
+
+# 可视化选项
+plot_options:
+  figure_dpi: 300
+  publication_dpi: 600
+  colormap: "RdYlGn_r"
+  marker_size: 100

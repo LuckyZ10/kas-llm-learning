@@ -1,0 +1,1324 @@
+Scaling Optimization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+Lecture 4 Recap
+Daniel Cremers
+
+Introduction to Deep Learning
+
+2
+
+Neural Network
+
+Source: http://cs231n.github.io/neural-networks-1/
+I2DL:
+Niessner
+DanielProf.
+Cremers
+
+Introduction to Deep Learning
+
+3
+
+Compute Graphs → Neural Networks
+Input layer
+
+Output layer
+
+Goal: We want to compute gradients of
+the loss function 𝐿 w.r.t. all weights 𝑤
+𝐿 = ෍ 𝐿𝑖
+
+𝑥0
+𝑦0
+
+𝑦ො1
+
+𝑦1
+
+…
+
+𝑦ො0
+
+𝑖
+
+𝐿: sum over loss per sample, e.g.
+L2 loss ⟶ simply sum up squares:
+𝐿𝑖 = 𝑦ො𝑖 − 𝑦𝑖 2
+⟶ use chain rule to compute partials
+
+𝑥𝑘
+
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො𝑖
+=
+⋅
+𝜕𝑤𝑖,𝑘 𝜕𝑦ො𝑖 𝜕𝑤𝑖,𝑘
+
+𝑦ො𝑖 = 𝐴(𝑏𝑖 + ෍ 𝑥𝑘 𝑤𝑖,𝑘 )
+𝑘
+
+Activation bias
+function
+Daniel Cremers
+
+We want to compute gradients w.r.t.
+all weights 𝑾 AND all biases 𝑏
+
+Introduction to Deep Learning
+
+4
+
+Summary
+• We have
+– (Directional) compute graph
+– Structure graph into layers
+– Compute partial derivatives w.r.t.
+weights (unknowns)
+
+• Next
+– Find weights based on gradients
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+𝜕𝑓
+𝜕𝑤0,0,0
+…
+…
+𝜕𝑓
+𝛻𝑾 𝑓 𝒙,𝒚 (𝑾) =
+𝜕𝑤𝑙,𝑚,𝑛
+…
+…
+𝜕𝑓
+𝜕𝑏𝑙,𝑚
+Gradient step:
+𝑾′ = 𝑾 − 𝛼𝛻𝑾 𝑓 𝒙,𝒚 (𝑾)
+
+5
+
+Optimization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+6
+
+Gradient Descent
+𝑥 ∗ = arg min 𝑓(𝑥)
+
+Initialization
+
+Optimum
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+7
+
+Gradient Descent
+𝑥 ∗ = arg min 𝑓(𝑥)
+
+Initialization
+
+Follow the slope
+of the
+DERIVATIVE
+Optimum
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+8
+
+Gradient Descent
+• From derivative to gradient
+ⅆ𝑓 𝑥
+ⅆ𝑥
+
+𝛻𝑥 𝑓 𝑥
+
+Direction of
+greatest increase
+of the function
+
+• Gradient steps in direction of negative gradient
+𝛻𝑥 𝑓(𝑥)
+𝑥 ′ = 𝑥 − 𝛼𝛻𝑥 𝑓 𝑥
+Learning rate
+Daniel Cremers
+
+𝑥
+
+Introduction to Deep Learning
+
+9
+
+Gradient Descent
+• From derivative to gradient
+ⅆ𝑓 𝑥
+ⅆ𝑥
+
+Direction of
+greatest increase
+of the function
+
+𝛻𝑥 𝑓 𝑥
+
+• Gradient steps in direction of negative gradient
+−𝛻𝑥 𝑓(𝑥)
+
+𝑥 ′ = 𝑥 − 𝛼𝛻𝑥 𝑓 𝑥
+SMALL Learning rate
+Daniel Cremers
+
+𝑥
+
+Introduction to Deep Learning
+
+10
+
+Gradient Descent
+• From derivative to gradient
+ⅆ𝑓 𝑥
+ⅆ𝑥
+
+Direction of
+greatest increase
+of the function
+
+𝛻𝑥 𝑓 𝑥
+
+• Gradient steps in direction of negative gradient
+𝛻𝑥 𝑓(𝑥)
+
+𝑥
+
+𝑥 ′ = 𝑥 − 𝛼𝛻𝑥 𝑓 𝑥
+LARGE Learning rate
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+11
+
+Gradient Descent
+𝒙∗ = arg min 𝑓(𝒙)
+No guarantee to reach
+the global optimum
+
+Initialization
+
+Local optimum
+Daniel Cremers
+
+Global optimum
+Introduction to Deep Learning
+
+12
+
+Convergence of Gradient Descent
+• Convex function: all local minima are global minima
+f(x)
+
+f(x) is convex iff the line between any two points lies above or on the graph.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+13
+
+Convergence of Gradient Descent
+• Neural networks are non-convex
+– many (different) local minima
+– no (practical) way to say which one is globally optimal
+Initialization
+
+Local optimum
+Daniel Cremers
+
+Global optimum
+Introduction to Deep Learning
+
+14
+
+Convergence of Gradient Descent
+
+Overshooting, oscillation,
+algorithm diverges
+
+Slow convergence
+
+Source: https://builtin.com/data-science/gradient-descent
+Daniel Cremers
+
+Introduction to Deep Learning
+
+15
+
+Convergence of Gradient Descent
+
+Daniel Cremers
+
+Source: A. Geron
+Introduction to Deep Learning
+
+16
+
+Gradient Descent: Multiple Dimensions
+
+Source: builtin.com/data-science/gradient-descent
+
+Various ways to visualize…
+Daniel Cremers
+
+Introduction to Deep Learning
+
+17
+
+Gradient Descent: Multiple Dimensions
+
+Source: http://blog.datumbox.com/wp-content/uploads/2013/10/gradient-descent.png
+Daniel Cremers
+
+Introduction to Deep Learning
+
+18
+
+Gradient Descent for Neural Networks
+Loss function
+𝐿𝑖 = 𝑦ො𝑖 − 𝑦𝑖 2
+ℎ0
+𝑥0
+𝑥1
+𝑥2
+
+ℎ1
+
+𝑦ො0
+
+𝑦0
+
+ℎ2
+
+𝑦ො1
+
+𝑦1
+
+ℎ3
+
+𝜕𝑓
+𝜕𝑤0,0,0
+…
+…
+𝜕𝑓
+𝛻𝑾,𝒃 𝑓 𝒙,𝒚 (𝑾) =
+𝜕𝑤𝑙,𝑚,𝑛
+…
+…
+𝜕𝑓
+𝜕𝑏𝑙,𝑚
+
+𝑦ො𝑖 = 𝐴(𝑏1,𝑖 + ෍ ℎ𝑗 𝑤1,𝑖,𝑗 )
+𝑗
+
+ℎ𝑗 = 𝐴(𝑏0,𝑗 + ෍ 𝑥𝑘 𝑤0,𝑗,𝑘 )
+Daniel Cremers
+
+𝑘
+
+Introduction to Deep Learning
+
+Just simple:
+𝐴 𝑥 = max(0, 𝑥)
+19
+
+Gradient Descent: Single Training Sample
+• Given a loss function 𝐿 and a single training sample
+{𝒙𝑖 , 𝒚𝑖 }
+• Find best model parameters 𝜽 = 𝑾, 𝒃
+• Cost 𝐿𝑖 𝜽, 𝒙𝑖 , 𝒚𝑖
+– 𝜽 = arg min 𝐿𝑖 (𝒙𝑖 , 𝒚𝑖 )
+
+• Gradient Descent:
+– Initialize 𝜽1 with ‘random’ values (more on that later)
+– 𝜽𝑘+1 = 𝜽𝑘 − 𝛼𝛻𝜽 𝐿𝑖 (𝜽𝑘 , 𝒙𝑖 , 𝒚𝑖 )
+– Iterate until convergence: 𝜽𝑘+1 − 𝜽𝑘 < 𝜖
+Daniel Cremers
+
+Introduction to Deep Learning
+
+20
+
+Gradient Descent: Single Training Sample
+• 𝜽𝑘+1 = 𝜽𝑘 − 𝛼𝛻𝜽 𝐿𝑖 (𝜽𝑘 , 𝒙𝑖 , 𝒚𝑖 )
+Training sample
+Loss Function
+Gradient w.r.t. 𝜽
+Learning rate
+
+Weights, biases after
+update step
+Weights, biases at step k
+(current model)
+
+• 𝛻𝜽 𝐿𝑖 𝜽𝑘 , 𝒙𝑖 , 𝒚𝒊 computed via backpropagation
+
+• Typically: ⅆim 𝛻𝜽 𝐿𝑖 𝜽𝑘 , 𝒙𝑖 , 𝒚𝑖
+Daniel Cremers
+
+= ⅆim 𝜽 ≫ 1 𝑚𝑖𝑙𝑙𝑖𝑜𝑛
+
+Introduction to Deep Learning
+
+21
+
+Gradient Descent: Multiple Training Samples
+• Given a loss function 𝐿 and multiple (𝑛) training
+samples {𝒙𝑖 , 𝒚𝑖 }
+• Find best model parameters 𝜽 = 𝑾, 𝒃
+
+•
+
+1 𝑛
+Cost 𝐿 = σ𝑖=1 𝐿𝑖 (𝜽, 𝒙𝑖 , 𝒚𝑖 )
+𝑛
+
+– 𝜽 = arg min 𝐿
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+22
+
+Gradient Descent: Multiple Training Samples
+• Update step for multiple samples
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼𝛻𝜽 𝐿 𝜽𝑘 , 𝒙 1..𝑛 , 𝒚 1..𝑛
+
+• Gradient is average / sum over residuals
+𝛻𝜽 𝐿 𝜽𝑘 , 𝒙 1..𝑛 , 𝒚 1..𝑛
+
+1
+𝑛
+
+= σ𝑛𝑖=1 𝛻𝜽 𝐿𝑖 𝜽𝑘 , 𝒙𝑖 , 𝒚𝒊
+Reminder: this comes from backprop.
+
+• Often people are lazy and just write: 𝛻𝐿 = σ𝑛𝑖=1 𝛻𝜽 𝐿𝑖
+1
+
+− omitting is not ‘wrong’, it just means rescaling the
+𝑛
+learning rate
+Daniel Cremers
+
+Introduction to Deep Learning
+
+23
+
+Side Note: Optimal Learning Rate
+Can compute optimal learning rate 𝛼 using Line Search
+(optimal for a given set)
+1. Compute gradient:
+
+1 𝑛
+𝛻𝜽 𝐿 = σ𝑖=1 𝛻𝜽 𝐿𝑖
+𝑛
+
+2. Optimize for optimal step 𝛼:
+arg min 𝐿(𝜽𝑘 − 𝛼 𝛻𝜽 𝐿)
+𝛼
+
+3.
+
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼𝛻𝜽 𝐿
+
+Daniel Cremers
+
+Not that practical for DL since
+it requires many evaluations.
+
+Introduction to Deep Learning
+
+24
+
+Gradient Descent on Train Set
+• Given large train set with 𝑛 training samples {𝒙𝑖 , 𝒚𝑖 }
+– Let’s say 1 million labeled images
+– Let’s say our network has 500k parameters
+
+• Gradient has 500k dimensions
+• 𝑛 = 1 𝑚𝑖𝑙𝑙𝑖𝑜𝑛
+→ Extremely expensive to compute
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+25
+
+Stochastic Gradient Descent (SGD)
+• If we have 𝑛 training samples, we need to compute
+the gradient for all of them which is 𝑂(𝑛)
+• If we consider the problem as empirical risk
+minimization, we can express the total loss over the
+training data as the expectation of all the samples
+𝑛
+1
+෍ 𝐿𝑖 𝜽, 𝒙𝒊 , 𝒚𝒊
+𝑛
+𝑖=1
+
+Daniel Cremers
+
+= 𝔼𝑖~ 1,…,𝑛 𝐿𝑖 𝜽, 𝒙𝒊 , 𝒚𝒊
+
+Introduction to Deep Learning
+
+26
+
+Stochastic Gradient Descent (SGD)
+• The expectation can be approximated with a small
+subset of the data
+𝔼𝑖~ 1,…,𝑛 𝐿𝑖 𝜽, 𝒙𝒊 , 𝒚𝒊
+
+1
+≈
+𝐿𝑗 𝜽, 𝒙𝒋 , 𝒚𝒋
+෍
+𝑆
+𝑗∈𝑆
+
+with S ⊆ 1, … , 𝑛
+
+Minibatch
+choose subset of trainset 𝑚 ≪ 𝑛
+𝐵𝑖 = { 𝒙𝟏 , 𝒚𝟏 , 𝒙𝟐 , 𝒚𝟐 , … , 𝒙𝒎 , 𝒚𝒎 }
+{𝐵1 , 𝐵2 , … , 𝐵𝑛/𝑚 }
+Daniel Cremers
+
+Introduction to Deep Learning
+
+27
+
+Stochastic Gradient Descent (SGD)
+• Minibatch size is hyperparameter
+– Typically power of 2 → 8, 16, 32, 64, 128…
+– Smaller batch size means greater variance in the
+gradients
+→ noisy updates
+
+– Mostly limited by GPU memory (in backward pass)
+– E.g.,
+• Train set has n = 220 (about 1 million) images
+• With batch size m = 64: 𝐵1 … 𝑛/𝑚 = 𝐵1 … 16,384 minibatches
+(Epoch = complete pass through training set)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+28
+
+Stochastic Gradient Descent (SGD)
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼𝛻𝜽 𝐿(𝜽𝑘 , 𝒙{1..𝑚} , 𝒚{1..𝑚} )
+
+1 𝑚
+𝛻𝜽 𝐿 = σ𝑖=1 𝛻𝜽 𝐿𝑖
+𝑚
+
+𝑘 now refers to 𝑘-th iteration
+
+𝑚 training samples in the current minibatch
+Gradient for the 𝑘-th minibatch
+
+Note the terminology: iteration vs epoch
+Daniel Cremers
+
+Introduction to Deep Learning
+
+29
+
+Convergence of SGD
+Suppose we want to minimize the function 𝐹 𝜃 with
+the stochastic approximation
+𝜃 𝑘+1 = 𝜃 𝑘 − 𝛼𝑘 𝐻 𝜃 𝑘 , 𝑋
+where 𝛼1 , 𝛼2 … 𝛼𝑛 is a sequence of positive step-sizes
+and 𝐻 𝜃 𝑘 , 𝑋 is the unbiased estimate of 𝛻F 𝜃 𝑘 , i.e.
+𝔼 𝐻 𝜃𝑘 , 𝑋
+
+= 𝛻F 𝜃 𝑘
+
+Robbins, H. and Monro, S. “A Stochastic Approximation Method" 1951.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+30
+
+Convergence of SGD
+𝜃 𝑘+1 = 𝜃 𝑘 − 𝛼𝑘 𝐻 𝜃 𝑘 , 𝑋
+
+converges to a local (global) minimum if the following
+conditions are met:
+1)
+2)
+3)
+4)
+
+𝛼𝑛 ≥ 0, ∀ 𝑛 ≥ 0
+σ∞
+𝑛=1 𝛼𝑛 = ∞
+2
+σ∞
+𝛼
+<∞
+𝑛
+𝑛=1
+𝐹 𝜃 is strictly convex
+𝛼
+
+The proposed sequence by Robbins and Monro is 𝛼𝑛 ∝ 𝑛 , 𝑓𝑜𝑟 𝑛 > 0
+Daniel Cremers
+
+Introduction to Deep Learning
+
+31
+
+Problems of SGD
+• Gradient is scaled equally across all dimensions
+→ i.e., cannot independently scale directions
+→ need to have conservative min learning rate to avoid
+divergence
+→ Slower than ‘necessary’
+
+• Finding good learning rate is an art by itself
+→ More next lecture
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+32
+
+Gradient Descent with Momentum
+
+We’re making many steps
+back and forth along this
+dimension. Would love to
+track that this is averaging
+out over time.
+
+Daniel Cremers
+
+Source: A. Ng
+
+Would love to go faster here…
+I.e., accumulated gradients over
+time
+
+Introduction to Deep Learning
+
+33
+
+Gradient Descent with Momentum
+𝒗𝑘+1 = 𝛽 ⋅ 𝒗𝑘 − 𝛼 ⋅ 𝛻𝜽 𝐿(𝜽𝑘 )
+accumulation rate
+(‘friction’, momentum)
+
+velocity
+
+learning rate
+
+Gradient of current minibatch
+
+𝜽𝑘+1 = 𝜽𝑘 + 𝒗𝑘+1
+weights of model
+
+velocity
+
+Exponentially-weighted average of gradient
+Important: velocity 𝒗𝑘 is vector-valued!
+[Sutskever et al., ICML’13] On the importance of initialization and momentum in deep learning
+Introduction to Deep Learning
+Daniel Cremers
+
+34
+
+Gradient Descent with Momentum
+Step will be largest when a sequence of
+gradients all point to the same direction
+Hyperparameters are 𝛼, 𝛽
+𝛽 is often set to 0.9
+
+𝜽𝑘 + 𝒗𝑘+1
+Daniel Cremers
+
+Source: I. Goodfellow
+
+Introduction to Deep Learning
+
+𝜽𝑘+1 =
+
+35
+
+Gradient Descent with Momentum
+• Can it overcome local minima?
+
+𝜽𝑘+1 = 𝜽𝑘 + 𝒗𝑘+1
+Daniel Cremers
+
+Introduction to Deep Learning
+
+36
+
+Nesterov Momentum
+• Look-ahead momentum
+
+෩𝑘+1 = 𝜽𝑘 + 𝛽 ⋅ 𝒗𝑘
+𝜽
+෩𝑘+1 )
+𝒗𝑘+1 = 𝛽 ⋅ 𝒗𝑘 − 𝛼 ⋅ 𝛻𝜽 𝐿(𝜽
+𝜽𝑘+1 = 𝜽𝑘 + 𝒗𝑘+1
+Nesterov, Yurii E. "A method for solving the convex programming problem with convergence rate O (1/k^ 2)." Dokl. akad. nauk Sssr. Vol. 269.
+1983.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+37
+
+Nesterov Momentum
+
+Source: G. Hinton
+
+Daniel Cremers
+
+෩𝑘+1 = 𝜽𝑘 + 𝛽 ⋅ 𝒗𝑘
+𝜽
+෩𝑘+1 )
+𝒗𝑘+1 = 𝛽 ⋅ 𝒗𝑘 − 𝛼 ⋅ 𝛻𝜽 𝐿(𝜽
+𝜽𝑘+1 = 𝜽𝑘 + 𝒗𝑘+1
+
+Introduction to Deep Learning
+
+38
+
+Large gradients
+
+Root Mean Squared Prop (RMSProp)
+
+Small gradients
+Source: Andrew. Ng
+
+• RMSProp divides the learning rate by an
+exponentially-decaying average of squared gradients.
+Hinton et al. "Lecture 6.5-rmsprop: Divide the gradient by a running average of its recent magnitude." COURSERA: Neural
+networks for machine learning 4.2 (2012): 26-31.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+39
+
+RMSProp
+𝒔𝑘+1 = 𝛽 ⋅ 𝒔𝑘 + (1 − 𝛽)[𝛻𝜽 𝐿 ∘ 𝛻𝜽 𝐿]
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼 ⋅
+
+𝛻𝜽 𝐿
+
+Element-wise multiplication
+
+𝒔𝑘+1 + 𝜖
+Element-wise division
+
+Hyperparameters: 𝛼, 𝛽, 𝜖
+Typically 10−8
+
+Needs tuning!
+Daniel Cremers
+
+Often 0.9
+Introduction to Deep Learning
+
+40
+
+Y-Direction
+Large gradients
+
+RMSProp
+
+Source: A. Ng
+
+X-direction Small gradients
+
+(Uncentered) variance of gradients
+→ second momentum
+
+We’re dividing by square gradients:
+- Division in Y-Direction will be
+large
+- Division in X-Direction will be
+small
+Daniel Cremers
+
+𝒔𝑘+1 = 𝛽 ⋅ 𝒔𝑘 + (1 − 𝛽)[𝛻𝜽 𝐿 ∘ 𝛻𝜽 𝐿]
+
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼 ⋅
+
+𝛻𝜽 𝐿
+𝒔𝑘+1 + 𝜖
+
+Can increase learning rate!
+
+Introduction to Deep Learning
+
+41
+
+RMSProp
+• Dampening the oscillations for high-variance
+directions
+• Can use faster learning rate because it is less likely to
+diverge
+→ Speed up learning speed
+→ Second moment
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+42
+
+Adaptive Moment Estimation (Adam)
+Idea : Combine Momentum and RMSProp
+𝒎𝑘+1 = 𝛽1 ⋅ 𝒎𝑘 + 1 − 𝛽1 𝛻𝜽 𝐿 𝜽𝑘
+
+First momentum:
+mean of gradients
+
+𝒗𝑘+1 = 𝛽2 ⋅ 𝒗𝑘 + (1 − 𝛽2 )[𝛻𝜽 𝐿 𝜽𝑘 ∘ 𝛻𝜽 𝐿 𝜽𝑘 ]
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼 ⋅
+
+𝒎𝑘+1
+
+𝒗𝑘+1 +𝜖
+
+Note : This is not the
+update rule of
+Second momentum:
+Adam
+variance of gradients
+
+Q. What happens at 𝑘 = 0?
+A. We need bias correction as 𝒎0 = 0 and 𝒗0 = 0
+[Kingma et al., ICLR’15] Adam: A method for stochastic optimization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+43
+
+Adam : Bias Corrected
+• Combines Momentum and RMSProp
+𝒎𝑘+1 = 𝛽1 ⋅ 𝒎𝑘 + 1 − 𝛽1 𝛻𝜽 𝐿 𝜽𝑘
+
+𝒗𝑘+1 = 𝛽2 ⋅ 𝒗𝑘 + (1 − 𝛽2 )[𝛻𝜽 𝐿 𝜽𝑘 ∘ 𝛻𝜽 𝐿 𝜽𝑘
+
+• 𝒎𝑘 and 𝒗𝑘 are initialized with zero
+→ bias towards zero
+→ Need bias-corrected moment updates
+Update rule of Adam
+ෝ 𝑘+1 =
+𝒎
+
+Daniel Cremers
+
+𝒎𝑘+1
+1 − 𝛽1 𝑘+1
+
+ෝ𝑘+1 =
+𝒗
+
+𝒗𝑘+1
+1 − 𝛽2 𝑘+1
+
+Introduction to Deep Learning
+
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼 ⋅
+
+ෝ 𝑘+1
+𝒎
+ෝ𝑘+1 +𝜖
+𝒗
+
+44
+
+Adam
+• Exponentially-decaying mean and variance of
+gradients (combines first and second order
+momentum)
+• Hyperparameters: 𝛼, 𝛽1 , 𝛽2 , 𝜖
+Needs tuning!
+
+Often 0.9
+Often 0.999
+
+𝒎𝑘+1 = 𝛽1 ⋅ 𝒎𝑘 + 1 − 𝛽1 𝛻𝜽 𝐿 𝜽𝑘
+𝒗𝑘+1 = 𝛽2 ⋅ 𝒗𝑘 + 1 − 𝛽2 𝛻𝜽 𝐿 𝜽𝑘 ∘ 𝛻𝜽 𝐿 𝜽𝑘
+
+Typically 10−8
+
+ෝ 𝑘+1 =
+𝒎
+𝑘+1
+
+Defaults in PyTorch
+
+Daniel Cremers
+
+𝜽
+
+Introduction to Deep Learning
+
+𝒎𝑘+1
+1−𝛽1 𝑘+1
+𝑘
+
+=𝜽 −𝛼⋅
+
+ෝ𝑘+1 =
+𝒗
+ෝ 𝑘+1
+𝒎
+
+𝒗𝑘+1
+1−𝛽2 𝑘+1
+
+ෝ𝑘+1 + 𝜖
+𝒗
+45
+
+There are a few others…
+•
+•
+•
+•
+•
+•
+•
+•
+•
+
+‘Vanilla’ SGD
+Momentum
+RMSProp
+Adagrad
+Adadelta
+AdaMax
+Nada
+AMSGrad
+ProxProp
+
+Daniel Cremers
+
+Adam is mostly method
+of choice for neural networks!
+It’s actually fun to play around with SGD
+updates.
+It’s easy and you get pretty immediate
+feedback
+Introduction to Deep Learning
+
+47
+
+Convergence
+
+Daniel Cremers
+
+Source: http://ruder.io/optimizing-gradient-descent/
+Introduction to Deep Learning
+
+48
+
+Convergence
+
+Daniel Cremers
+
+Source: http://ruder.io/optimizing-gradient-descent/
+Introduction to Deep Learning
+
+49
+
+Convergence
+
+Daniel Cremers
+
+Source: https://github.com/Jaewan-Yun/optimizer-visualization
+Introduction to Deep Learning
+
+50
+
+Jacobian and Hessian
+• Derivative
+
+𝒇: ℝ → ℝ
+
+ⅆ𝑓 𝑥
+ⅆ𝑥
+
+• Gradient
+
+𝒇: ℝ𝑚 → ℝ
+
+𝛻𝒙 𝑓 𝒙 ∈ ℝ𝑚
+
+• Jacobian
+
+𝒇: ℝ𝑚 → ℝ𝑛
+
+𝐉 ∈ ℝ𝑛 × 𝑚
+
+• Hessian
+
+𝑚
+
+𝒇: ℝ
+
+→ℝ
+
+𝐇 ∈ ℝ
+
+𝑚×𝑚
+
+𝛻𝒙 𝑓 =
+
+𝜕𝑓 𝒙
+𝜕𝑓 𝒙
+,...,
+𝜕𝑥1
+𝜕𝑥m
+𝐉=
+
+𝜕fi 𝒙
+𝜕𝑥𝑗
+
+𝑖𝑗
+
+𝜕𝑓 𝒙
+𝐇=
+𝜕𝑥i 𝜕𝑥j
+
+𝑖𝑗
+
+second derivatives
+Daniel Cremers
+
+Introduction to Deep Learning
+
+51
+
+Newton’s Method
+• Approximate our function by a second-order Taylor
+series expansion
+𝐿 𝜽 ≈ 𝐿 𝜽0 + 𝜽 − 𝜽0 𝑇 𝜵𝜽 𝐿 𝜽0 +
+
+1
+𝜽 − 𝜽0 𝑇 𝐇 𝜽 − 𝜽0
+2
+
+First derivative
+
+At optimum:
+
+Daniel Cremers
+
+ⅆ𝐿 𝜽
+│𝜽∗ = 0
+ⅆ𝜽
+
+Second derivative (curvature)
+
+⟺ 𝜽∗ = 𝜽0 − 𝐇 −1 𝛻𝜽 𝐿 𝜽
+
+Introduction to Deep Learning
+
+More info:
+https://en.wikipedia.org/wiki/Taylor_series
+52
+
+Newton’s Method
+• Iteratively step to minimum of parabolic fit:
+𝜽k+1 = 𝜽k − 𝐇 −1 𝛻𝜽 𝐿 𝜽𝒌
+
+We got rid of the learning rate!
+
+SGD
+Daniel Cremers
+
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼𝛻𝜽 𝐿 𝜽𝑘 , 𝐱 𝒊 , 𝐲𝒊
+
+Introduction to Deep Learning
+
+53
+
+Newton’s Method
+• Differentiate and equate to zero
+𝜽∗ = 𝜽0 − 𝐇 −1 𝛻𝜽 𝐿 𝜽
+
+Parameters of a
+network (millions)
+
+Daniel Cremers
+
+Number of
+elements in the
+Hessian
+
+Introduction to Deep Learning
+
+Update step
+
+Computational
+complexity of ‘inversion’
+per iteration
+
+54
+
+Newton’s Method
+• Gradient Descent (green)
+
+• Newton’s method exploits
+the curvature to take a
+more direct route
+
+Source: https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+55
+
+Newton’s Method
+𝐽 𝜽 = 𝐲 − 𝐗𝛉 𝑇 𝐲 − 𝐗𝛉
+
+Can you apply Newton’s
+method for linear regression?
+What do you get as a result?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+56
+
+BFGS and L-BFGS
+• Broyden-Fletcher-Goldfarb-Shanno algorithm
+• Belongs to the family of quasi-Newton methods
+• Have an approximation of the inverse of the Hessian
+𝜽∗ = 𝜽0 − 𝐇 −1 𝛻𝜽 𝐿 𝜽
+
+• BFGS
+• Limited memory: L-BFGS
+Daniel Cremers
+
+Introduction to Deep Learning
+
+57
+
+Gauss-Newton
+• 𝑥𝑘+1 = 𝑥𝑘 − 𝐻𝑓 𝑥𝑘 −1 𝛻𝑓(𝑥𝑘 )
+– ‘true’ 2nd derivatives are often hard to obtain (e.g.,
+numerics)
+
+– 𝐻𝑓 ≈ 2𝐽𝐹𝑇 𝐽𝐹
+
+• Gauss-Newton (GN):
+
+𝑥𝑘+1 = 𝑥𝑘 − [2𝐽𝐹 𝑥𝑘 𝑇 𝐽𝐹 𝑥𝑘 ]−1 𝛻𝑓(𝑥𝑘 )
+
+• Solve linear system (again, inverting a matrix is
+unstable):
+2 𝐽𝐹 𝑥𝑘 𝑇 𝐽𝐹 𝑥𝑘
+
+𝑥𝑘 − 𝑥𝑘+1 = 𝛻𝑓(𝑥𝑘 )
+
+Solve for delta vector
+Daniel Cremers
+
+Introduction to Deep Learning
+
+58
+
+Levenberg
+• Levenberg
+– “damped” version of Gauss-Newton:
+
+Tikhonov
+regularization
+
+𝐽𝐹 𝑥𝑘 𝑇 𝐽𝐹 𝑥𝑘 + 𝜆 ⋅ 𝐼 ⋅ 𝑥𝑘 − 𝑥𝑘+1 = 𝛻𝑓(𝑥𝑘 )
+– “Interpolation” between Gauss-Newton (small 𝜆) and Gradient
+Descent (large 𝜆)
+– The damping factor 𝜆 is adjusted in each iteration ensuring:
+𝑓 𝑥𝑘 > 𝑓(𝑥𝑘+1 )
+• if the equation is not fulfilled increase 𝜆
+• → trust region
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+59
+
+Levenberg-Marquardt
+• Levenberg-Marquardt (LM)
+𝐽𝐹 𝑥𝑘 𝑇 𝐽𝐹 𝑥𝑘 + 𝜆 ⋅ ⅆ𝑖𝑎𝑔(𝐽𝐹 𝑥𝑘 𝑇 𝐽𝐹 𝑥𝑘 ) ⋅ 𝑥𝑘 − 𝑥𝑘+1
+= 𝛻𝑓(𝑥𝑘 )
+– Instead of a plain Gradient Descent for large 𝜆, scale each
+component of the gradient according to the curvature.
+• Avoids slow convergence in components with a small
+gradient
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+60
+
+Which, What, and When?
+• Standard: Adam
+
+• Fallback option: SGD with momentum
+• Newton, L-BFGS, GN, LM only if you can do full
+batch updates (doesn’t work well for minibatches)
+This practically never happens for DL
+Theoretically, it would be nice though due to fast
+convergence
+Daniel Cremers
+
+Introduction to Deep Learning
+
+61
+
+General Optimization
+• Linear Systems (Ax = b)
+– LU, QR, Cholesky, Jacobi, Gauss-Seidel, CG, PCG, etc.
+
+• Non-linear differentiable problems:
+– Gradient Descent, SGD
+– Newton, Gauss-Newton, LM, (L)BFGS
+
+← first order
+← second order
+
+• Others
+– Genetic algorithms, MCMC, Metropolis-Hastings, graph
+cut methods,…
+– Constrained and non-smooth problems (Lagrange,
+ADMM, primal-dual, proximal methods, etc.)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+62
+
+Proximal Backpropagation
+Deep learning problem:
+
+Equivalent constrained optimization problem:
+
+linear transformation
+
+output of layer l
+
+Frerix, Möllenhoff, Möller, Cremers,„Proximal Backpropagation“, ICLR 2018
+Daniel Cremers
+
+Introduction to Deep Learning
+
+63
+
+Proximal Backpropagation
+Quadratic decoupling with weights
+
+:
+
+Alternatingly compute (layer by layer) gradient steps on network
+activations
+and proximal steps on the weights .
+Frerix, Möllenhoff, Möller, Cremers,„Proximal Backpropagation“, ICLR 2018
+Daniel Cremers
+
+Introduction to Deep Learning
+
+64
+
+Proximal Backpropagation
+
+Frerix, Möllenhoff, Möller, Cremers,„Proximal Backpropagation“, ICLR 2018
+Daniel Cremers
+
+Introduction to Deep Learning
+
+65
+
+Proximal Backpropagation
+
++ less epochs
+
++ smoother convergence
+
++ higher validation accuracy
+
+- no better runtime
+
+Frerix, Möllenhoff, Möller, Cremers,„Proximal Backpropagation“, ICLR 2018
+Daniel Cremers
+
+Introduction to Deep Learning
+
+66
+
+Next Lecture
+• This week:
+– Check exercises
+– Check office hours
+
+• Next lecture
+– Training Neural networks
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+67
+
+Some References to SGD Updates
+• Goodfellow et al. “Deep Learning” (2016),
+– Chapter 8: Optimization
+
+• Bishop “Pattern Recognition and Machine Learning”
+(2006),
+– Chapter 5.2: Network training (gradient descent)
+– Chapter 5.4: The Hessian Matrix (second order methods)
+
+• https://ruder.io/optimizing-gradient-descent/index.html
+• PyTorch Documetation (with further readings)
+– https://pytorch.org/docs/stable/optim.html
+Daniel Cremers
+
+Introduction to Deep Learning
+
+68
+
+

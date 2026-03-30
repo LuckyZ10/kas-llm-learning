@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 text-center py-5">
+        <h1 class="display-4 mb-3">智能文献综述系统</h1>
+        <p class="lead text-muted">自动跟踪研究前沿，提取关键方法，生成结构化综述</p>
+    </div>
+</div>
+
+<!-- 统计卡片 -->
+<div class="row mb-5">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h3 class="mb-0">{{ stats.total_papers }}</h3>
+                <p class="mb-0"><i class="fas fa-file-alt me-2"></i>文献总数</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card blue">
+            <div class="card-body">
+                <h3 class="mb-0">4</h3>
+                <p class="mb-0"><i class="fas fa-database me-2"></i>数据源</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card green">
+            <div class="card-body">
+                <h3 class="mb-0">10+</h3>
+                <p class="mb-0"><i class="fas fa-brain me-2"></i>分析方法</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card orange">
+            <div class="card-body">
+                <h3 class="mb-0">∞</h3>
+                <p class="mb-0"><i class="fas fa-sync me-2"></i>实时监控</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 功能模块 -->
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon bg-primary text-white mx-auto">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h5>文献抓取</h5>
+                <p class="text-muted">从arXiv、PubMed、CrossRef、Semantic Scholar多源抓取文献，自动解析元数据</p>
+                <a href="/search" class="btn btn-primary">开始搜索</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon bg-success text-white mx-auto">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h5>智能分析</h5>
+                <p class="text-muted">主题建模、趋势分析、方法提取、知识图谱构建</p>
+                <a href="/analysis" class="btn btn-success">开始分析</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon bg-info text-white mx-auto">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h5>综述生成</h5>
+                <p class="text-muted">自动生成结构化综述报告，支持Markdown和HTML格式导出</p>
+                <a href="/review" class="btn btn-info">生成综述</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon bg-warning text-white mx-auto">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h5>实时预警</h5>
+                <p class="text-muted">关键词订阅、新论文推送、引用提醒、研究动态周报</p>
+                <a href="/alerts" class="btn btn-warning">设置预警</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="feature-icon bg-secondary text-white mx-auto">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <h5>知识图谱</h5>
+                <p class="text-muted">可视化概念关系网络，发现研究热点和知识关联</p>
+                <a href="/knowledge_graph" class="btn btn-secondary">查看图谱</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 数据源 -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-database me-2"></i>支持的数据源</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for source in stats.sources %}
+                    <div class="col-md-3 text-center py-3">
+                        <h6 class="text-primary">{{ source }}</h6>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

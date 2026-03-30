@@ -1,0 +1,44 @@
+# Battery Screening Pipeline Configuration
+# 固态电解质高通量筛选配置文件
+
+# API设置
+mp_api_key: null  # 如果为null，将从环境变量MP_API_KEY读取
+
+# 筛选目标
+target_ion: "Li"  # 可选: "Li", "Na", "K", "Mg", "Ca"
+max_elements: 4
+
+# 结构筛选条件
+max_natoms: 100
+min_gap: 2.0  # eV, 最小带隙(电子绝缘性)
+max_ehull: 0.1  # eV/atom, 最大能量高于凸包(热力学稳定性)
+
+# 计算设置
+dft_code: "vasp"
+ml_potential: null
+
+# MD模拟参数
+md_temperatures:
+  - 300
+  - 500
+  - 700
+  - 900
+md_timestep: 1.0  # fs
+md_nsteps_equil: 50000
+md_nsteps_prod: 500000
+
+# 工作流设置
+max_parallel: 10
+use_ml_acceleration: true
+
+# 路径设置
+work_dir: "./battery_screening"
+db_path: "./battery_screening/db"
+dft_results_path: "./battery_screening/dft_results"
+md_results_path: "./battery_screening/md_results"
+models_path: "./battery_screening/models"
+
+# 筛选阈值
+min_ionic_conductivity: 1.0e-5  # S/cm
+max_migration_barrier: 0.5  # eV
+min_bulk_modulus: 10.0  # GPa

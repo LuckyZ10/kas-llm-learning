@@ -1,0 +1,1926 @@
+CNN Architectures
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+Convolutions on RGB Images
+32 × 32 × 3 image (pixels 𝑥)
+
+5 × 5 × 3 filter (weights 𝑤)
+
+activation map
+(also feature map)
+
+Convolve
+
+5
+3
+
+5
+32
+
+3
+
+Daniel Cremers
+
+28
+
+32
+slide over all spatial locations 𝑥𝑖
+and compute all output 𝑧𝑖 ;
+w/o padding, there are
+1
+28 × 28 locations
+Introduction to Deep Learning
+
+28
+
+2
+
+Convolution Layer
+32 × 32 × 3 image
+
+5 × 5 × 3 filter
+
+activation maps
+
+Convolve
+
+5
+3
+
+5
+
+Let’s apply a different filter
+with different weights!
+
+3
+
+28
+
+11
+
+32
+Daniel Cremers
+
+28
+
+32
+
+Introduction to Deep Learning
+
+3
+
+Convolution Layer
+32 × 32 × 3 image
+
+Convolution “Layer”
+
+activation maps
+
+Convolve
+32
+
+28
+
+Let’s apply **five** filters,
+each with different weights!
+32
+3
+
+Daniel Cremers
+
+28
+5
+
+Introduction to Deep Learning
+
+4
+
+Convolution Layers: Dimensions
+
+Filter width
+of F
+
+Filter height
+of F
+
+Input height of N
+
+Input width of N
+Input: 𝑁 × 𝑁
+Filter: 𝐹 × 𝐹
+Stride: 𝑆
+𝑁−𝐹
+𝑁−𝐹
+Output: ( 𝑆 + 1) × ( 𝑆 + 1)
+𝑁 = 7, 𝐹 = 3, 𝑆 = 1:
+𝑁 = 7, 𝐹 = 3, 𝑆 = 2:
+𝑁 = 7, 𝐹 = 3, 𝑆 = 3:
+
+7−3
++1= 5
+1
+7−3
++1= 3
+2
+7−3
++ 1 = 2.3333
+3
+
+Fractions are illegal
+Daniel Cremers
+
+Introduction to Deep Learning
+
+5
+
+Convolution Layers: Padding
+Image 7x7 + zero padding
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+Daniel Cremers
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+0
+
+Types of convolutions:
+
+• Valid convolution: using
+no padding
+• Same convolution:
+output=input size
+Set padding to 𝑃 =
+
+Introduction to Deep Learning
+
+𝐹−1
+2
+6
+
+CNN Learned Filters
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+7
+
+CNN Prototype
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Slide by Karpathy
+8
+
+Classic Architectures
+Daniel Cremers
+
+Introduction to Deep Learning
+
+9
+
+LeNet
+• Digit recognition: 10 classes
+
+Input: 32×32 grayscale images
+This one: Labeled as class “7”
+[LeCun et al. ’98] LeNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+10
+
+LeNet
+• Digit recognition: 10 classes
+
+• Valid convolution: size shrinks
+• How many conv filters are there in the first layer?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+11
+
+LeNet
+• Digit recognition: 10 classes
+
+• At that time average pooling was used, now max
+pooling is much more common
+Daniel Cremers
+
+Introduction to Deep Learning
+
+12
+
+LeNet
+• Digit recognition: 10 classes
+
+• Again valid convolutions, how many filters?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+13
+
+LeNet
+• Digit recognition: 10 classes
+
+• Use of tanh/sigmoid activations → not common now!
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+14
+
+LeNet
+• Digit recognition: 10 classes
+
+• Conv -> Pool -> Conv -> Pool -> Conv -> FC
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+15
+
+LeNet
+• Digit recognition: 10 classes
+
+60k parameters
+
+• Conv -> Pool -> Conv -> Pool -> Conv -> FC
+• As we go deeper: Width, Height
+Number of Filters
+Daniel Cremers
+
+Introduction to Deep Learning
+
+16
+
+Deep Neural Clustering
+
+•
+•
+
+Today MNIST is considered an easy classification problem.
+It can be solved (almost perfectly) without supervision as a clustering
+problem, where clustering is performed not in input space (a), but in the
+latent space of a deep network (b,c).
+Aljalbout, Golkov, Siddiqui, Strobel, Cremers, “Clustering with Deep Learning: Taxonomy and New Methods”, arxiv 2018.
+
+Haeusser, Golkov, Aljalbout, Cremers, “Associative Deep Clustering: Training a Classification Network with no Labels”, GCPR 2018.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+17
+
+Test Benchmarks
+• ImageNet Dataset:
+ImageNet Large Scale Visual Recognition Competition (ILSVRC)
+
+[Russakovsky et al., IJCV’15] “ImageNet Large Scale Visual Recognition Challenge.“
+Daniel Cremers
+
+Introduction to Deep Learning
+
+18
+
+Common Performance Metrics
+• Top-1 score: check if a sample’s top class (i.e. the one
+with highest probability) is the same as its target label
+• Top-5 score: check if your label is in your 5 first
+predictions (i.e. predictions with 5 highest
+probabilities)
+• → Top-5 error: percentage of test samples for which
+the correct class was not in the top 5 predicted
+classes
+Daniel Cremers
+
+Introduction to Deep Learning
+
+19
+
+AlexNet
+• Cut ImageNet error down in half
+
+Non-CNN
+
+CNN
+Daniel Cremers
+
+Introduction to Deep Learning
+
+20
+
+AlexNet
+
+[Krizhevsky et al. NIPS’12] AlexNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+21
+
+AlexNet
+
+• First filter with stride 4 to reduce size significantly
+• 96 filters
+[Krizhevsky et al. NIPS’12] AlexNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+22
+
+AlexNet
+
+•• Use
+Use of
+of same
+same convolutions
+convolutions
+•• As
+As with
+with LeNet:
+LeNet, Width,
+Width, Height
+height
+
+Number of Filters
+filters
+[Krizhevsky et al. NIPS’12] AlexNet
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+23
+
+AlexNet
+
+[Krizhevsky et al. NIPS’12] AlexNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+24
+
+AlexNet
+
+• Softmax for 1000 classes
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[Krizhevsky et al. NIPS’12] AlexNet
+25
+
+AlexNet
+• Similar to LeNet but much bigger (~1000 times)
+
+• Use of ReLU instead of tanh/sigmoid
+
+60M parameters
+
+[Krizhevsky et al. NIPS’12] AlexNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+26
+
+VGGNet
+• Striving for simplicity
+
+• CONV = 3x3 filters with stride 1, same convolutions
+• MAXPOOL = 2x2 filters with stride 2
+
+[Simonyan and Zisserman ICLR’15] VGGNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+27
+
+VGGNet
+
+Conv=3x3,s=1,same
+Maxpool=2x2,s=2
+
+• 2 consecutive convolutional layers, each one with 64
+filters
+• What is the output size?
+[Simonyan and Zisserman ICLR’15] VGGNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+28
+
+VGGNet
+
+Conv=3x3,s=1,same
+Maxpool=2x2,s=2
+
+[Simonyan and Zisserman ICLR’15] VGGNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+29
+
+VGGNet
+
+Conv=3x3,s=1,same
+Maxpool=2x2,s=2
+
+[Simonyan and Zisserman ICLR’15] VGGNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+30
+
+VGGNet
+
+Conv=3x3,s=1,same
+Maxpool=2x2,s=2
+
+• Number of filters is multiplied by 2
+
+[Simonyan and Zisserman ICLR’15] VGGNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+31
+
+VGGNet
+
+Conv=3x3,s=1,same
+Maxpool=2x2,s=2
+
+[Simonyan and Zisserman ICLR’15] VGGNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+32
+
+VGGNet
+• Conv -> Pool -> Conv -> Pool -> Conv -> FC
+• As we go deeper: Width, Height
+Number of Filters
+• Called VGG-16: 16 layers that have weights
+138M parameters
+• Large but simplicity makes it appealing
+[Simonyan and Zisserman ICLR’15] VGGNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+33
+
+VGGNet
+• A lot of architectures
+were analyzed
+
+[Simonyan and Zisserman 2014]
+Daniel Cremers
+
+Introduction to Deep Learning
+
+34
+
+Skip Connections
+Daniel Cremers
+
+Introduction to Deep Learning
+
+35
+
+The Problem of Depth
+• As we add more and more layers, training becomes
+harder
+• Vanishing and exploding gradients
+
+• How can we train very deep nets?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+36
+
+Residual Block
+• Two layers
+
+𝑥 𝐿−1
+
+Input
+
+𝑥𝐿
+
+𝑥 𝐿+1
+
+𝑊 𝐿 𝑥 𝐿−1 + 𝑏 𝐿
+
+𝑥 𝐿 = 𝑓(𝑊 𝐿 𝑥 𝐿−1 + 𝑏 𝐿 )
+
+Linear
+
+Non-linearity
+
+𝑥 𝐿+1 = 𝑓(𝑊 𝐿+1 𝑥 𝐿 + 𝑏 𝐿+1 )
+Daniel Cremers
+
+Introduction to Deep Learning
+
+37
+
+Residual Block
+• Two layers
+
+𝑥 𝐿−1
+
+𝑥𝐿
+
+𝑥 𝐿+1
+
+Skip connection
+Input
+
+Linear
+
+Linear
+
+Main path
+Daniel Cremers
+
+Introduction to Deep Learning
+
+38
+
+Residual Block
+• Two layers
+
+𝑥 𝐿−1
+
+𝑥𝐿
+
+𝑥 𝐿+1
+
+𝑥 𝐿+1 = 𝑓(𝑊 𝐿+1 𝑥 𝐿 + 𝑏 𝐿+1 + 𝑥 𝐿−1 )
+Input
+
+Linear
+
+Linear
+
+𝑥 𝐿+1 = 𝑓(𝑊 𝐿+1 𝑥 𝐿 + 𝑏 𝐿+1 )
+Daniel Cremers
+
+Introduction to Deep Learning
+
+39
+
+Residual Block
+• Two layers
+
+𝑥 𝐿−1
+
+𝑥𝐿
+
++𝑥
+
+𝐿+1
+
+• Usually use a same convolution since we need same
+dimensions
+• Otherwise we need to convert the dimensions with a
+matrix of learned weights or zero padding
+Daniel Cremers
+
+Introduction to Deep Learning
+
+40
+
+ResNet Block
+Plain Net
+
+Residual Net
+
+𝑥
+
+𝑥
+
+Weight Layer
+Any two
+stacked layers
+
+𝑅𝑒𝐿𝑈
+Weight Layer
+𝐻(𝑥)
+
+𝑅𝑒𝐿𝑈
+
+Weight Layer
+𝑅𝑒𝐿𝑈
+
+𝐹(𝑥)
+
+Identity
+𝑥
+
+Weight Layer
+𝐹 𝑥 +𝑥
+
++
+𝑅𝑒𝐿𝑈
+[He et al. CVPR’16] ResNet
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+41
+
+ResNet
+
+• Xavier/2 initialization
+ResNet-152:
+60M parameters
+• SGD + Momentum (0.9)
+• Learning rate 0.1, divided by 10 when plateau
+• Mini-batch size 256
+• Weight decay of 1e-5
+• No dropout
+
+[He et al. CVPR’16] ResNet
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+42
+
+ResNet
+• Without ResNet, if we make the network deeper, at
+some point performance starts to degrade:
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+43
+
+ResNet
+• With Residual Blocks, performance gets better with
+deeper network:
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+44
+
+Why do ResNets Work?
+
+NN
+
+𝑥 𝐿−1
+
+𝑥𝐿
+
++𝑥
+
+𝐿+1
+
+• How is this block really affecting me?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+45
+
+Why do ResNets Work?
+
+NN
+
+𝑥 𝐿−1
+
+𝑥𝐿
+
++𝑥
+
+𝐿+1
+
+𝑥 𝐿+1 = 𝑓(𝑊 𝐿+1 𝑥 𝐿 + 𝑏 𝐿+1 + 𝑥 𝐿−1 )
+~zero
+~zero
+𝑥 𝐿+1 = 𝑓(𝑥 𝐿−1 )
+Daniel Cremers
+
+Introduction to Deep Learning
+
+46
+
+Why do ResNets Work?
+
+NN
+
+𝑥 𝐿−1
+
+𝑥𝐿
+
++𝑥
+
+𝐿+1
+
+• We kept the same values and added a non-linearity
+
+𝑥 𝐿+1 = 𝑓(𝑥 𝐿−1 )
+Daniel Cremers
+
+Introduction to Deep Learning
+
+47
+
+Why do ResNets Work?
+
+NN
+
+𝑥 𝐿−1
+
+𝑥𝐿
+
++𝑥
+
+𝐿+1
+
+• The identity is easy for the residual block to learn
+• Guaranteed it will not hurt performance, can only
+improve
+Daniel Cremers
+
+Introduction to Deep Learning
+
+48
+
+1x1 Convolutions
+Daniel Cremers
+
+Introduction to Deep Learning
+
+49
+
+3
+
+2
+
+-5
+
+3
+
+4
+
+3
+
+2
+
+1
+
+-3
+
+1
+
+0
+
+3
+
+3
+
+5
+
+-2
+
+0
+
+1
+
+4
+
+4
+
+5
+
+6
+
+7
+
+9
+
+-1
+
+0
+
+-1
+
+0
+
+-1
+
+5
+
+-1
+
+0
+
+-1
+
+0
+
+Daniel Cremers
+
+Output 3x3
+
+-5
+
+Kernel 3x3
+
+Image 5x5
+
+Recall: Convolutions on Images
+
+6
+
+5 ⋅ 3 + −1 ⋅ 3 + −1 ⋅ 2 + −1 ⋅ 0 + −1 ⋅ 4 =
+15 − 9 = 6
+
+Introduction to Deep Learning
+
+50
+
+-5
+
+3
+
+2
+
+-5
+
+3
+
+4
+
+3
+
+2
+
+1
+
+-3
+
+1
+
+0
+
+3
+
+3
+
+5
+
+-2
+
+0
+
+1
+
+4
+
+4
+
+5
+
+6
+
+7
+
+9
+
+-1
+
+Kernel 1x1
+
+Image 5x5
+
+1x1 Convolution
+
+2
+
+Daniel Cremers
+
+What is the output size?
+
+Introduction to Deep Learning
+
+51
+
+-5
+
+3
+
+2
+
+-5
+
+3
+
+4
+
+3
+
+2
+
+1
+
+-3
+
+1
+
+0
+
+3
+
+3
+
+5
+
+-2
+
+0
+
+1
+
+4
+
+4
+
+5
+
+6
+
+7
+
+9
+
+-1
+
+Kernel 1x1
+
+Image 5x5
+
+1x1 Convolution
+
+2
+
+Daniel Cremers
+
+-10
+
+−5 ∗ 2 = −10
+
+Introduction to Deep Learning
+
+52
+
+-5
+
+3
+
+2
+
+-5
+
+3
+
+-10
+
+6
+
+4
+
+-10
+
+6
+
+4
+
+3
+
+2
+
+1
+
+-3
+
+8
+
+6
+
+4
+
+2
+
+-6
+
+1
+
+0
+
+3
+
+3
+
+5
+
+2
+
+0
+
+6
+
+6
+
+10
+
+-2
+
+0
+
+1
+
+4
+
+4
+
+-4
+
+0
+
+2
+
+8
+
+8
+
+5
+
+6
+
+7
+
+9
+
+-1
+
+10
+
+12
+
+14
+
+18
+
+-2
+
+Kernel 1x1
+
+Image 5x5
+
+1x1 Convolution
+
+2
+
+Daniel Cremers
+
+−1 ∗ 2 = −2
+
+Introduction to Deep Learning
+
+53
+
+Image 5x5
+
+1x1 Convolution
+-5
+
+3
+
+2
+
+-5
+
+3
+
+-10
+
+6
+
+4
+
+-10
+
+6
+
+4
+
+3
+
+2
+
+1
+
+-3
+
+8
+
+6
+
+4
+
+2
+
+-6
+
+1
+
+0
+
+3
+
+3
+
+5
+
+2
+
+0
+
+6
+
+6
+
+10
+
+-2
+
+0
+
+1
+
+4
+
+4
+
+-4
+
+0
+
+2
+
+8
+
+8
+
+5
+
+6
+
+7
+
+9
+
+-1
+
+10
+
+12
+
+14
+
+18
+
+-2
+
+• 1x1 kernel: keeps the dimensions and scales input
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+54
+
+1x1 Convolution
+32
+
+1 output
+
+32
+3
+
+• Same as having a 3 neuron fully connected layer
+Daniel Cremers
+
+Introduction to Deep Learning
+
+55
+
+1x1 Convolution
+
+[Li et al. 2013]
+
+32
+
+5 𝑓𝑖𝑙𝑡𝑒𝑟𝑠 1𝑥1𝑥3
+
+32
+
+32
+
+32
+
+5
+
+3
+
+• As always we use more convolutional filters
+Daniel Cremers
+
+Introduction to Deep Learning
+
+56
+
+Using 1x1 Convolutions
+• Use it to shrink the number of channels
+• Further adds a non-linearity → one can learn more
+complex functions
+
+32
+
+200
+Daniel Cremers
+
+32
+32 Conv 1x1x200
++ ReLU
+32
+
+32
+
+32
+Introduction to Deep Learning
+
+57
+
+Inception Layer
+Daniel Cremers
+
+Introduction to Deep Learning
+
+58
+
+Inception Layer
+• Tired of choosing filter sizes?
+
+• Use them all!
+
+• All same convolutions
+• 3x3 max pooling is with stride 1
+Daniel Cremers
+
+Introduction to Deep Learning
+
+59
+
+Inception Layer
+• Possible size of the
+output
+
+28 × 28 × 416
+
+28 × 28 × 64
+
+28 × 28 × 128
+
+28 × 28 × 32
+
+28 × 28 × 192
+
+28 × 28 × 192
+
+• Not sustainable!
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+60
+
+Inception Layer: Computational Cost
+32
+92 Conv 5x5x200
++ ReLU
+
+200
+
+32
+
+32
+
+92
+
+32
+
+Multiplications: 5x5x200 x 32x32x92 ~ 470 million
+1 value of the output volume
+Daniel Cremers
+
+Introduction to Deep Learning
+
+61
+
+Inception Layer: Computational Cost
+32
+
+32
+
+92 Conv 5x5
++ ReLU
+
+16 Conv 1x1
++ ReLU
+
+200
+
+32
+
+32
+
+32
+
+92
+
+16
+
+Multiplications: 1x1x200x32x32x16
+
+32
+
+5x5x16x32x32x92
+
+~ 40 million
+
+Reduction of multiplications by 1/10
+Daniel Cremers
+
+Introduction to Deep Learning
+
+62
+
+Inception Layer
+
+[Szegedy et al CVPR’15] GoogLeNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+63
+
+Inception Layer: Dimensions
+We do not want max pool
+result to take up almost all
+the output
+
+28 × 28 × 256
+
+28 × 28 × 128
+
+28 × 28 × 32
+
+28 × 28 × 32
+
+28 × 28 × 96
+
+28 × 28 × 16
+
+28 × 28 × 192
+
+28 × 28 × 64
+
+28 × 28 × 192
+
+[Szegedy et al CVPR’15] GoogLeNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+64
+
+GoogLeNet: Using the Inception Layer
+Inception block
+
+Extra max pool layers to
+reduce dimensionality
+[Szegedy et al CVPR’15] GoogLeNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+65
+
+Xception Net
+• “Extreme version of Inception”: applying (modified)
+Depthwise Separable Convolutions instead of normal
+convolutions
+• 36 conv layers, structured into several modules with
+skip connections
+• outperforms Inception Net V3
+
+[Chollet CVPR’17] Xception
+Daniel Cremers
+
+Introduction to Deep Learning
+
+66
+
+Depth-wise separable convolutions
+
+Normal convolutions act on all channels.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+67
+
+Depth-wise separable convolutions
+
+Filters are applied only at certain depths of the features.
+Normal convolutions have groups set to 1, the convolutions
+used in this image have groups set to 3.
+classtorch.nn.Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, groups=3)
+classtorch.nn.ConvTranspose2d(in_channels, out_channels, kernel_size, stride=1, padding=0, groups=3)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+68
+
+Depth-wise separable convolutions
+
+But the depth size is always the same!
+classtorch.nn.Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, groups=3)
+classtorch.nn.ConvTranspose2d(in_channels, out_channels, kernel_size, stride=1, padding=0, groups=3)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+69
+
+Depth-wise separable convolutions
+
+Solution:
+1x1 convs!
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+70
+
+But why?
+Original convolution
+256 kernels of size 5x5x3
+Multiplications:
+256x5x5x3 x (8x8 locations) = 1.228.800
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+71
+
+But why?
+Original convolution
+256 kernels of size 5x5x3
+Multiplications:
+256x5x5x3 x (8x8 locations) = 1.228.800
+Depth-wise convolution
+3 kernels of size 5x5x1
+Multiplications:
+5x5x3 x (8x8 locations) = 4800
+1x1 convolution
+256 kernels of size 1x1x3
+
+Less
+computation!
+
+Multiplications:
+256x1x1x3x (8x8 locations) = 49152
+Daniel Cremers
+
+Introduction to Deep Learning
+
+72
+
+ImageNet Benchmark
+30
+
+28,2
+
+ImageNet Classification top-5-error (%)
+
+Shallow
+
+152 Layers
+
+160
+
+Revolution of Depth
+
+25,8
+25
+
+140
+120
+
+8 Layers
+
+20
+
+100
+
+16,4
+
+8 Layers
+
+15
+
+80
+
+11,7
+
+19 Layers 22 Layers
+
+10
+
+7,3
+
+6,66
+
+60
+
+36 Layers
+
+40
+
+5,5
+3,57
+
+5
+
+2,99
+
+2,25
+
+20
+
+0
+
+0
+ILSVRC
+2010
+
+Daniel Cremers
+
+ILSVRC
+2011
+
+AlexNet
+(ILSVRC
+2012)
+
+ZF
+(ILSVRC
+2013)
+
+VGG
+(ILSVRC
+2014)
+
+GoogLeNet
+(ILSVRC
+2014)
+
+Xception
+(2016)
+
+Introduction to Deep Learning
+
+ResNet
+(ILSVRC
+2015)
+
+TrimpsSoushen
+(ILSVRC
+2016)
+
+SENet
+(ILSVRC
+2017)
+73
+
+Fully Convolutional
+Network
+Daniel Cremers
+
+Introduction to Deep Learning
+
+74
+
+Classification Network
+
+“tabby
+cat”
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+75
+
+FCN: Becoming Fully Convolutional
+
+Convert fully connected layers to convolutional layers!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+76
+
+FCN: Becoming Fully Convolutional
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+77
+
+FCN: Upsampling Output
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+78
+
+Semantic Segmentation (FCN)
+
+How do we go back
+to the input size?
+[Long and Shelhamer. 15] FCN
+Daniel Cremers
+
+Introduction to Deep Learning
+
+79
+
+Types of Upsampling
+• 1. Interpolation
+?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+80
+
+Types of Upsampling
+• 1. Interpolation
+
+Nearest neighbor interpolation
+Daniel Cremers
+
+Original image
+
+Bilinear interpolation
+Introduction to Deep Learning
+
+Bicubic interpolation
+Image: Michael Guerzhoy
+
+81
+
+Types of Upsampling
+• 1. Interpolation
+Few artifacts
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+82
+
+Types of Upsampling
+• 2. Transposed conv
+
++ CONVS
+
+efficient
+
+Daniel Cremers
+
+[A. Dosovitskiy, TPAMI 2017] “Learning to Generate Chairs, Tables and Cars with Convolutional Networks“
+83
+Introduction to Deep Learning
+
+Types of Upsampling
+• 2. Transposed convolution
+
+Output 5x5
+
+− Unpooling
+− Convolution filter (learned)
+− Also called up-convolution
+(never deconvolution)
+Input 3x3
+Daniel Cremers
+
+Introduction to Deep Learning
+
+84
+
+Refined Outputs
+• If one does a cascade of unpooling + conv
+operations, we get to the encoder-decoder
+architecture
+• Even more refined: Autoencoders with skip
+connections (aka U-Net)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+85
+
+U-Net
+
+U-Net architecture: Each blue box is a multichannel feature map. Number of channels
+denoted at the top of the box . Dimensions at the top of the box. White boxes are the
+copied feature maps.
+Daniel Cremers
+
+Introduction to Deep Learning [Ronneberger et al. MICCAI’15] U-Net 86
+
+U-Net: Encoder
+Left side: Contraction Path (Encoder)
+• Captures context of the image
+• Follows typical architecture of a CNN:
+– Repeated application of 2 unpadded 3x3 convolutions
+– Each followed by ReLU activation
+– 2x2 maxpooling operation with stride 2 for downsampling
+– At each downsampling step, # of channels is doubled
+
+→ as before: Height, Width ,
+
+Depth:
+[Ronneberger et al. MICCAI’15] U-Net
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+87
+
+U-Net: Decoder
+Right Side: Expansion Path (Decoder):
+• Upsampling to recover spatial locations for assigning
+class labels to each pixel
+– 2x2 up-convolution that halves number of input channels
+– Skip Connections: outputs of up-convolutions are concatenated
+with feature maps from encoder
+– Followed by 2 ordinary 3x3 convs
+– final layer: 1x1 conv to map 64 channels to # classes
+
+• Height, Width:
+
+,
+
+Depth:
+[Ronneberger et al. MICCAI’15] U-Net
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+88
+
+See you next time!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+89
+
+References
+We highly recommend to read through these papers!
+• AlexNet [Krizhevsky et al. 2012]
+• VGGNet [Simonyan & Zisserman 2014]
+• ResNet [He et al. 2015]
+• GoogLeNet [Szegedy et al. 2014]
+• Xception [Chollet 2016]
+• Fast R-CNN [Girshick 2015]
+• U-Net [Ronneberger et al. 2015]
+• EfficientNet [Tan & Le 2019]
+Daniel Cremers
+
+Introduction to Deep Learning
+
+90
+
+

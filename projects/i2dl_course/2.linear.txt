@@ -1,0 +1,1705 @@
+Machine Learning
+Basics
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+AI vs ML vs DL
+Artificial Intelligence
+
+Machine Learning
+
+Deep
+Learning
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+2
+
+A Simple Task:
+Image Classification
+Daniel Cremers
+
+Introduction to Deep Learning
+
+3
+
+Image Classification
+
+Task
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+4
+
+Image Classification
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+5
+
+Image Classification
+
+Occlusions
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+6
+
+Image Classification
+
+Background clutter
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+7
+
+Pose
+Daniel Cremers
+
+Illumination
+Introduction to Deep Learning
+
+Appearance
+8
+
+Image Classification
+
+Representation
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+9
+
+A Simple Classifier
+Daniel Cremers
+
+Introduction to Deep Learning
+
+10
+
+Nearest Neighbor
+
+?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+11
+
+Nearest Neighbor
+NN classifier = dog
+
+Daniel Cremers
+
+distance
+
+Introduction to Deep Learning
+
+12
+
+Nearest Neighbor
+k-NN classifier = cat
+
+Daniel Cremers
+
+distance
+
+Introduction to Deep Learning
+
+13
+
+Nearest Neighbor
+The Data
+
+NN Classifier
+
+5NN Classifier
+
+How does the NN classifier perform on training data?
+What classifier is more likely to perform best on test data?
+
+What are we actually learning?
+Daniel Cremers
+
+14
+Introduction Source:
+to Deephttps://commons.wikimedia.org/wiki/File:Data3classes.png
+Learning
+
+Nearest Neighbor
+L1 distance : |𝑥 − 𝑐|
+• Hyperparameters
+
+L2 distance : ||𝑥 − 𝑐||2
+No. of Neighbors: 𝑘
+
+• These parameters are problem dependent.
+• How do we choose these hyperparameters?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+15
+
+Machine Learning for
+Classification
+Daniel Cremers
+
+Introduction to Deep Learning
+
+16
+
+Machine Learning
+• How can we learn to perform image classification?
+
+Task
+
+Experience
+
+Image
+classification
+
+Data
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+17
+
+Machine Learning
+• 𝑀𝜃 𝐼 = {DOG, CAT}
+CAT
+Model
+
+Image
+
+Class Label
+DOG
+
+Model Params
+
+DOG
+
+CAT
+
+Daniel Cremers
+
+CAT
+
+DOG
+
+Introduction to Deep Learning
+
+18
+
+Machine Learning
+• 𝑀𝜃 𝐼 = {DOG, CAT}
+
+Given 𝒊 images with train labels
+CAT
+
+Model
+
+Image
+
+Class Label
+DOG
+
+Model Params
+
+𝜃 ∗ = argmin σ𝑖 D(𝑀𝜃 𝐼𝑖
+𝜃
+“Distance” function
+Daniel Cremers
+
+DOG
+
+CAT
+
+− 𝑌𝑖 )
+CAT
+
+DOG
+
+Introduction to Deep Learning
+
+19
+
+{DOG, CAT}
+
+Basic Recipe for Machine Learning
+• Split your data
+
+60%
+
+20%
+
+20%
+
+train
+
+validation
+
+test
+
+Find model params 𝜃
+
+Other splits are also possible (e.g., 80%/10%/10%)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+20
+
+Basic Recipe for Machine Learning
+• Split your data
+
+60%
+
+20%
+
+20%
+
+train
+
+validation
+
+test
+
+Find your hyperparameters
+
+Other splits are also possible (e.g., 80%/10%/10%)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+21
+
+Basic Recipe for Machine Learning
+• Split your data
+
+60%
+
+20%
+
+20%
+
+train
+
+validation
+
+test
+
+Find your hyperparameters
+Test set is only used once!
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+22
+
+Machine Learning
+• How can we learn to perform image classification?
+
+Task
+Image
+classification
+
+Experience
+Performance
+measure
+
+Data
+
+Accuracy
+Daniel Cremers
+
+Introduction to Deep Learning
+
+23
+
+Machine Learning
+Unsupervised learning
+
+Supervised learning
+
+•
+
+Daniel Cremers
+
+Labels or target classes
+
+Introduction to Deep Learning
+
+24
+
+Machine Learning
+Unsupervised learning
+
+Supervised learning
+CAT
+
+DOG
+
+DOG
+
+CAT
+
+Daniel Cremers
+
+CAT
+
+DOG
+
+Introduction to Deep Learning
+
+25
+
+Machine Learning
+Unsupervised learning
+•
+
+No label or target class
+
+•
+
+Find out properties of
+the structure of the
+data
+
+•
+
+Clustering (k-means,
+PCA, etc.)
+
+Daniel Cremers
+
+Supervised learning
+CAT
+
+DOG
+
+DOG
+
+CAT
+CAT
+
+DOG
+
+Introduction to Deep Learning
+
+26
+
+Machine Learning
+Unsupervised learning
+
+Supervised learning
+CAT
+
+DOG
+
+DOG
+
+CAT
+
+Daniel Cremers
+
+CAT
+
+DOG
+
+Introduction to Deep Learning
+
+27
+
+Machine Learning
+Unsupervised learning
+
+Supervised learning
+CAT
+
+DOG
+
+DOG
+
+CAT
+
+Daniel Cremers
+
+CAT
+
+DOG
+
+Introduction to Deep Learning
+
+28
+
+Machine Learning
+Unsupervised learning
+
+Supervised learning
+
+Reinforcement learning
+Agents
+Daniel Cremers
+
+interaction
+Introduction to Deep Learning
+
+Environment
+29
+
+Machine Learning
+Unsupervised learning
+
+Supervised learning
+
+Reinforcement learning
+Agents
+Daniel Cremers
+
+reward
+Introduction to Deep Learning
+
+Environment
+30
+
+Machine Learning
+Unsupervised learning
+
+Supervised learning
+
+Reinforcement learning
+Agents
+Daniel Cremers
+
+reward
+Introduction to Deep Learning
+
+Environment
+31
+
+Linear Decision Boundaries
+Let’s start with a simple linear Model!
+
+What are the pros
+and cons for using
+linear decision
+boundaries?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+32
+
+Linear Regression
+Daniel Cremers
+
+Introduction to Deep Learning
+
+33
+
+Linear Regression
+•
+
+Supervised learning
+
+•
+
+Find a linear model that explains a target 𝒚 given
+inputs 𝒙
+𝒚
+
+𝒙
+Daniel Cremers
+
+Introduction to Deep Learning
+
+34
+
+Linear Regression
+Training
+{𝒙1:𝑛 , 𝒚1:𝑛 }
+
+Learner
+
+Data points
+
+𝜽
+Model parameters
+
+Input (e.g., image,
+
+measurement)
+
+Daniel Cremers
+
+Labels
+(e.g., cat/dog)
+Introduction to Deep Learning
+
+35
+
+Linear Regression
+can be parameters of a
+Neural Network
+
+Training
+{𝒙1:𝑛 , 𝒚1:𝑛 }
+
+Learner
+
+𝜽
+Model parameters
+
+Predictor
+
+𝑦ො𝑛+1
+
+Data points
+
+Testing
+𝑥𝑛+1 , 𝜽
+
+Estimation
+Daniel Cremers
+
+Introduction to Deep Learning
+
+36
+
+Linear Prediction
+• A linear model is expressed in the form
+input dimension
+
+𝑑
+
+𝑦ො𝑖 = ෍ 𝑥𝑖𝑗 𝜃𝑗
+𝑗=1
+weights (i.e., model parameters)
+Input data, features
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+37
+
+Linear Prediction
+• A linear model is expressed in the form
+𝑑
+
+𝑦ො𝑖 = 𝜃0 + ෍ 𝑥𝑖𝑗 𝜃𝑗 = 𝜃0 + 𝑥𝑖1 𝜃1 + 𝑥𝑖2 𝜃2 + ⋯ + 𝑥𝑖𝑑 𝜃𝑑
+𝒚
+
+𝑗=1
+bias
+
+𝜃0
+
+Daniel Cremers
+
+𝒙
+
+Introduction to Deep Learning
+
+38
+
+Linear Prediction
+𝑥1
+
+Outside
+𝜃1
+temperature
+
+𝜃2
+𝑥2
+
+Daniel Cremers
+
+𝜃3
+Temperature
+of a building
+
+Number of 𝑥3
+people
+
+𝜃4
+Sun
+exposure
+
+Level of
+humidity
+
+Introduction to Deep Learning
+
+𝑥4
+
+39
+
+Linear Prediction
+𝑥11
+𝑦ො1
+𝑥21
+𝑦ො2
+= 𝜃0 + ⋮
+⋮
+𝑥𝑛1
+𝑦ො𝑛
+
+⋯ 𝑥1𝑑
+⋯ 𝑥2𝑑
+⋱
+⋮
+⋯ 𝑥𝑛𝑑
+
+𝑦ො1
+1 𝑥11
+𝑥21
+𝑦ො2
+1
+=
+⋮ ⋮
+⋮
+1 𝑥𝑛1
+𝑦ො𝑛
+Daniel Cremers
+
+𝜃1
+𝜃
+∙ 2
+⋮
+𝜃𝑑
+
+⋯
+⋯
+⋱
+⋯
+
+𝑥1𝑑
+𝑥2𝑑
+⋮
+𝑥𝑛𝑑
+
+𝜃0
+𝜃1
+⋮
+𝜃𝑑
+
+Introduction to Deep Learning
+
+֜ 𝐲ො = 𝐗𝜽
+
+40
+
+Linear Prediction
+𝐲ො = 𝐗𝜽
+
+Input features
+
+Prediction
+
+(one sample has 𝑑
+features)
+
+𝑦ො1
+1 𝑥11
+𝑥21
+𝑦ො2
+1
+=
+⋮ ⋮
+⋮
+1 𝑥𝑛1
+𝑦ො𝑛
+
+⋯
+⋯
+⋱
+⋯
+
+𝑥1𝑑
+𝑥2𝑑
+⋮
+𝑥𝑛𝑑
+
+𝜃0
+𝜃1
+⋮
+𝜃𝑑
+
+Model
+parameters
+(𝑑 weights and 1 bias)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+41
+
+Linear Prediction
+
+Temperature
+of the building
+
+𝑦ො1
+𝑦ො2
+
+Daniel Cremers
+
+=
+
+MODEL
+
+1
+25 50 2 50
+1 − 10 50 0 10
+
+Introduction to Deep Learning
+
+0.2
+0.64
+⋅ 0
+1
+0.14
+42
+
+Linear Prediction
+How do we
+obtain the
+model?
+Temperature
+of the building
+
+𝑦ො1
+𝑦ො2
+
+Daniel Cremers
+
+=
+
+MODEL
+
+1
+25 50 2 50
+1 − 10 50 0 10
+
+Introduction to Deep Learning
+
+0.2
+0.64
+⋅ 0
+1
+0.14
+43
+
+How to Obtain the Model?
+Labels (ground truth)
+
+Data points
+𝐗
+
+𝑦
+Optimization
+Loss
+function
+
+Daniel Cremers
+
+Model parameters
+
+Estimation
+
+𝜃
+
+𝑦ො
+
+Introduction to Deep Learning
+
+44
+
+How to Obtain the Model?
+• Loss function: measures how good my estimation is
+(how good my model is) and tells the optimization
+method how to make it better.
+• Optimization: changes the model in order to improve
+the loss function (i.e., to improve my estimation).
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+45
+
+Linear Regression: Loss Function
+
+Prediction:
+Temperature
+of the building
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+46
+
+Linear Regression: Loss Function
+
+Prediction:
+Temperature
+of the building
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+47
+
+Linear Regression: Loss Function
+
+𝑛
+
+Minimizing
+Daniel Cremers
+
+1
+𝐽 𝜽 = ෍ 𝑦ො𝑖 − 𝑦𝑖 2
+𝑛
+𝑖=1
+
+Introduction to Deep Learning
+
+Objective function
+Energy
+Cost function 48
+
+Optimization: Linear Least Squares
+• Linear least squares: an approach to fit a linear model
+to the data
+𝑛
+
+1
+min 𝐽 𝜽 = ෍ 𝑦ො𝑖 − 𝑦𝑖 2
+𝜃
+𝑛
+𝑖=1
+
+• Convex problem, there exists a closed-form solution
+that is unique.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+49
+
+Optimization: Linear Least Squares
+𝑛
+
+𝑛
+
+𝑖=1
+
+𝑖=1
+
+1
+1
+2 =
+min 𝐽 𝜽 = ෍ 𝑦ො𝑖 − 𝑦𝑖
+෍ 𝐱 𝑖 𝜽 − 𝑦𝑖 2
+𝜽
+𝑛
+𝑛
+
+𝑛 training samples
+
+Daniel Cremers
+
+The estimation comes
+from the linear model
+
+Introduction to Deep Learning
+
+50
+
+Optimization: Linear Least Squares
+𝑛
+
+𝑛
+
+𝑖=1
+
+𝑖=1
+
+1
+1
+2 =
+min 𝐽 𝜽 = ෍ 𝑦ො𝑖 − 𝑦𝑖
+෍ 𝐱 𝑖 𝜽 − 𝑦𝑖 2
+𝜽
+𝑛
+𝑛
+
+min 𝐽 𝜽 = 𝐗𝜽 − 𝒚 𝑇 (𝐗𝜽 − 𝒚)
+
+Matrix notation
+
+𝜽
+
+𝑛 training samples,
+each input vector has
+size 𝑑
+Daniel Cremers
+
+𝑛 labels
+
+Introduction to Deep Learning
+
+51
+
+Optimization: Linear Least Squares
+𝑛
+
+𝑛
+
+𝑖=1
+
+𝑖=1
+
+1
+1
+2 =
+min 𝐽 𝜽 = ෍ 𝑦ො𝑖 − 𝑦𝑖
+෍ 𝐱 𝑖 𝜽 − 𝑦𝑖 2
+𝜽
+𝑛
+𝑛
+
+min 𝐽 𝜽 = 𝐗𝜽 − 𝒚 𝑇 (𝐗𝜽 − 𝒚)
+𝜽
+
+Matrix notation
+
+More on matrix notation in the next exercise session
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+52
+
+Optimization: Linear Least Squares
+𝑛
+
+𝑛
+
+𝑖=1
+
+𝑖=1
+
+1
+1
+2 =
+min 𝐽 𝜽 = ෍ 𝑦ො𝑖 − 𝑦𝑖
+෍ 𝐱 𝑖 𝜽 − 𝑦𝑖 2
+𝜽
+𝑛
+𝑛
+
+min 𝐽 𝜽 = 𝐗𝜽 − 𝒚 𝑇 (𝐗𝜽 − 𝒚)
+𝜽
+
+Convex
+
+𝜕𝐽(𝜽)
+=0
+𝜕𝜽
+Optimum
+Daniel Cremers
+
+Introduction to Deep Learning
+
+53
+
+Optimization
+𝜕𝐽(𝜃)
+= 2𝐗 𝑇 𝐗𝜽 − 2𝐗 𝑇 𝐲 = 0
+𝜕𝜃
+
+Details in the
+exercise
+session!
+
+𝜃 = 𝐗 𝑇 𝐗 −1 𝐗 𝑇 𝐲
+We have found
+an analytical
+solution to a
+convex problem
+Daniel Cremers
+
+Inputs: Outside
+temperature,
+number of people,
+…
+Introduction to Deep Learning
+
+True output:
+Temperature of
+the building
+
+54
+
+Is this the best Estimate?
+• Least squares estimate
+𝑛
+
+1
+𝐽 𝜽 = ෍ 𝑦ො𝑖 − 𝑦𝑖 2
+𝑛
+𝑖=1
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+55
+
+Maximum Likelihood
+Daniel Cremers
+
+Introduction to Deep Learning
+
+56
+
+Maximum Likelihood Estimate
+𝑝𝑑𝑎𝑡𝑎 (𝐲|𝐗)
+
+True underlying distribution
+
+𝑝𝑚𝑜𝑑𝑒𝑙 (𝐲|𝐗, 𝜽)
+
+Parametric family of distributions
+Controlled by parameter(s)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+57
+
+Maximum Likelihood Estimate
+• A method of estimating the parameters of a statistical
+model given observations,
+
+𝑝𝑚𝑜𝑑𝑒𝑙 (𝐲|𝐗, 𝜽)
+
+Observations from 𝑝𝑑𝑎𝑡𝑎 (𝐲|𝐗)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+58
+
+Maximum Likelihood Estimate
+• A method of estimating the parameters of a statistical
+model given observations, by finding the parameter
+values that maximize the likelihood of making the
+observations given the parameters.
+𝜽𝑴𝑳 = arg max 𝑝𝑚𝑜𝑑𝑒𝑙 (𝐲|𝐗, 𝜽)
+𝜽
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+59
+
+Maximum Likelihood Estimate
+• MLE assumes that the training samples are
+independent and generated by the same probability
+distribution
+𝑛
+
+𝑝𝑚𝑜𝑑𝑒𝑙 𝐲 𝐗, 𝜽 = ෑ 𝑝𝑚𝑜𝑑𝑒𝑙 (𝑦𝑖 |𝐱 𝑖 , 𝜽)
+𝑖=1
+
+“i.i.d.” assumption
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+60
+
+Maximum Likelihood Estimate
+𝑛
+
+𝜽𝑴𝑳 = arg max ෑ 𝑝𝑚𝑜𝑑𝑒𝑙 (𝑦𝑖 |𝐱 𝑖 , 𝜽)
+𝜽
+
+𝑖=1
+𝑛
+
+𝜽𝑴𝑳 = arg max ෍ log 𝑝𝑚𝑜𝑑𝑒𝑙 (𝑦𝑖 |𝐱 𝑖 , 𝜽)
+𝜽
+
+Logarithmic property
+Daniel Cremers
+
+𝑖=1
+
+log 𝑎𝑏 = log 𝑎 + log 𝑏
+
+Introduction to Deep Learning
+
+61
+
+Back to Linear Regression
+𝑛
+
+𝜽𝑴𝑳 = arg max ෍ log 𝑝𝑚𝑜𝑑𝑒𝑙 (𝑦𝑖 |𝐱 𝑖 , 𝜽)
+𝜽
+
+𝑖=1
+
+What shape does our
+probability distribution
+have?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+62
+
+Back to Linear Regression
+𝑝(𝑦𝑖 |𝐱 𝑖 , 𝜽)
+
+Daniel Cremers
+
+What shape does our probability
+distribution have?
+
+Introduction to Deep Learning
+
+63
+
+Back to Linear Regression
+Gaussian / Normal
+distribution
+
+𝑝(𝑦𝑖 |𝐱 𝑖 , 𝜽)
+
+2
+2
+𝑦
+=
+𝒩
+𝐱
+𝜽,
+𝜎
+=
+𝐱
+𝜽
++
+𝒩(0,
+𝜎
+)
+Assuming 𝑖
+𝑖
+𝑖
+mean
+
+Gaussian:
+
+𝑝 𝑦𝑖 =
+Daniel Cremers
+
+1
+
+2𝜋𝜎 2
+
+1
+− 2 𝑦𝑖 −𝜇 2
+𝑒 2𝜎
+
+𝑦𝑖 ~ 𝒩(𝜇, 𝜎 2 )
+
+Introduction to Deep Learning
+
+64
+
+Back to Linear Regression
+𝑝 𝑦𝑖 𝐱 𝑖 , 𝜽 = ?
+
+2
+2
+𝑦
+=
+𝒩
+𝐱
+𝜽,
+𝜎
+=
+𝐱
+𝜽
++
+𝒩(0,
+𝜎
+)
+Assuming 𝑖
+𝑖
+𝑖
+mean
+
+Gaussian:
+
+𝑝 𝑦𝑖 =
+Daniel Cremers
+
+1
+
+2𝜋𝜎 2
+
+1
+− 2 𝑦𝑖 −𝜇 2
+𝑒 2𝜎
+
+𝑦𝑖 ~ 𝒩(𝜇, 𝜎 2 )
+
+Introduction to Deep Learning
+
+65
+
+Back to Linear Regression
+𝑝 𝑦𝑖 𝐱 𝑖 , 𝜽 =
+
+1
+2
+−
+𝑦
+−𝐱
+𝜽
+𝒊
+𝑖
+2
+−1/2
+2𝜋𝜎
+𝑒 2𝜎2
+
+2
+2
+𝑦
+=
+𝒩
+𝐱
+𝜽,
+𝜎
+=
+𝐱
+𝜽
++
+𝒩(0,
+𝜎
+)
+Assuming 𝑖
+𝑖
+𝑖
+mean
+
+Gaussian:
+
+𝑝 𝑦𝑖 =
+Daniel Cremers
+
+1
+
+2𝜋𝜎 2
+
+1
+− 2 𝑦𝑖 −𝜇 2
+𝑒 2𝜎
+
+𝑦𝑖 ~ 𝒩(𝜇, 𝜎 2 )
+
+Introduction to Deep Learning
+
+66
+
+Back to Linear Regression
+𝑝 𝑦𝑖 𝐱 𝑖 , 𝜽 =
+Original
+optimization
+problem
+
+Daniel Cremers
+
+1
+2
+−
+𝑦
+−𝐱
+𝜽
+𝒊
+𝑖
+2
+−1/2
+2𝜋𝜎
+𝑒 2𝜎2
+
+𝑛
+
+𝜽𝑴𝑳 = arg max ෍ log 𝑝𝑚𝑜𝑑𝑒𝑙 (𝑦𝑖 |𝐱 𝑖 , 𝜽)
+𝜽
+
+𝑖=1
+
+Introduction to Deep Learning
+
+67
+
+Back 𝑛to Linear Regression
+෍ log
+
+2𝜋𝜎
+
+1
+2 −2
+
+1
+− 2 𝑦𝑖 −𝒙𝒊 𝜽 2
+𝑒 2𝜎
+
+𝑖=1
+𝑛
+
+Canceling log and 𝑒
+
+𝑛
+
+1
+1
+2
+෍ − log 2𝜋𝜎 + ෍ − 2
+2
+2𝜎
+𝑖=1
+
+𝑦𝑖 − 𝒙𝒊 𝜽 2
+
+𝑖=1
+
+Matrix notation
+
+Daniel Cremers
+
+𝑛
+1
+2
+− log 2𝜋𝜎 − 2 𝒚 − 𝑿𝜽 𝑇 𝒚 − 𝑿𝜽
+2
+2𝜎
+Introduction to Deep Learning
+
+68
+
+Back to Linear Regression
+𝑛
+
+𝜃𝑀𝐿 = arg max ෍ log 𝑝𝑚𝑜𝑑𝑒𝑙 (𝑦𝑖 |𝐱 𝑖 , 𝜽)
+𝜃
+
+𝑖=1
+
+𝑛
+1
+2
+− log 2𝜋𝜎 − 2 𝐲 − 𝐗𝜽 𝑇 𝐲 − 𝐗𝜽
+2
+2𝜎
+Details in the
+exercise session!
+
+𝜕𝐽(𝜽)
+=0
+𝜕𝜽
+
+How can we find
+the estimate of
+theta?
+
+𝜽 = 𝑿𝑇 𝑿 −1 𝑿𝑇 𝐲
+Daniel Cremers
+
+Introduction to Deep Learning
+
+69
+
+Linear Regression
+• Maximum Likelihood Estimate (MLE) corresponds to
+the Least Squares Estimate (given the assumptions)
+• Introduced the concepts of loss function and
+optimization to obtain the best model for regression
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+70
+
+Image Classification
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+71
+
+Regression vs Classification
+• Regression: predict a continuous output value (e.g.,
+temperature of a room)
+
+• Classification: predict a discrete value
+– Binary classification: output is either 0 or 1
+– Multi-class classification: set of N classes
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+72
+
+Logistic Regression
+CAT classifier
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+73
+
+Sigmoid for Binary Predictions
+𝑥0
+
+𝑥1
+
+1
+𝜎 𝑥 =
+1 + 𝑒 −𝑥
+1
+
+𝜃0
+
+𝜃1
+
+Can be interpreted
+as a probability
+
+Σ
+
+𝜃2
+
+0
+
+𝑥2
+Daniel Cremers
+
+𝑦ො𝑖 = 𝑝(𝑦𝑖 = 1|𝐱𝑖 , 𝜽)
+Introduction to Deep Learning
+
+74
+
+Spoiler Alert: 1-Layer Neural Network
+𝑥0
+
+𝑥1
+
+1
+𝜎 𝑥 =
+1 + 𝑒 −𝑥
+1
+
+𝜃0
+
+𝜃1
+
+Can be interpreted
+as a probability
+
+Σ
+
+𝜃2
+
+0
+
+𝑥2
+Daniel Cremers
+
+𝑦ො𝑖 = 𝑝(𝑦𝑖 = 1|𝐱𝑖 , 𝜽)
+Introduction to Deep Learning
+
+75
+
+Logistic Regression: Max. Likelihood
+• Probability of a binary output
+𝑛
+
+𝑝 y 𝐗, 𝜽
+
+𝑦𝑖
+= 𝐲ො = ෑ 𝑦ො𝑖 1 − 𝑦ො𝑖 (1−𝑦𝑖)
+𝑖=1
+
+• Maximum Likelihood Estimate
+
+𝑦ො𝑖 = 𝑝(𝑦𝑖 = 1|𝐱𝑖 , 𝜽)
+
+𝜽𝑴𝑳 = arg max log 𝑝 y 𝐗, 𝜽
+𝜽
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+76
+
+Logistic Regression: Loss Function
+𝑛
+
+𝑝 y 𝐗, 𝜽
+
+𝑦𝑖
+= 𝐲ො = ෑ 𝑦ො𝑖 1 − 𝑦ො𝑖 (1−𝑦𝑖)
+𝑖=1
+𝑛
+
+log 𝑝 y 𝐗, 𝜽 = ෍ log
+
+𝑦𝑖
+𝑦ො𝑖 1 − 𝑦ො𝑖 (1−𝑦𝑖)
+
+𝑖=1
+𝑛
+
+= ෍ 𝑦𝑖 log 𝑦ො𝑖 + (1 − 𝑦𝑖 ) log(1 − 𝑦ො𝑖 )
+𝑖=1
+Daniel Cremers
+
+Introduction to Deep Learning
+
+77
+
+Logistic Regression: Loss Function
+ℒ 𝑦ො𝑖 , 𝑦𝑖 = −[𝑦𝑖 log 𝑦ො𝑖 + 1 − 𝑦𝑖 log(1 − 𝑦ො𝑖 )]
+Referred to as binary cross-entropy loss (BCE)
+
+• Related to the multi-class loss you will see in this
+course (also called softmax loss)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+78
+
+Logistic Regression: Optimization
+• Loss for each training sample:
+ℒ 𝑦ො𝑖 , 𝑦𝑖 = −[𝑦𝑖 log 𝑦ො𝑖 + (1 − 𝑦𝑖 ) log(1 − 𝑦ො𝑖 )]
+𝑛
+• Overall loss
+1
+𝐶 𝜃 = − ෍ ℒ 𝑦ො𝑖 , 𝑦𝑖
+𝑛
+
+𝑖=1
+
+Minimization
+Daniel Cremers
+
+𝑦ො𝑖 = 𝜎(𝐱 𝑖 𝜽)
+
+𝑛
+
+1
+= − ෍ 𝑦𝑖 log 𝑦ො𝑖 + (1 − 𝑦𝑖 ) log(1 − 𝑦ො𝑖 )
+𝑛
+𝑖=1
+
+Introduction to Deep Learning
+
+79
+
+Logistic Regression: Optimization
+• No closed-form solution
+
+• Make use of an iterative method → gradient descent
+Gradient descent –
+later on!
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+80
+
+Insights from the first lecture
+• We can learn from experience
+-> Intelligence, certain ability to infer the future!
+
+• Even linear models are often pretty good for
+complex phenomena: e.g., weather:
+– Linear combination of day-time, day-year etc. is often
+pretty good
+Daniel Cremers
+
+Introduction to Deep Learning
+
+81
+
+Next Lectures
+• Next exercise session: Math Recap II
+• Next Lecture: Lecture 3:
+– Jumping towards our first Neural Networks and
+Computational Graphs
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+82
+
+References for further Reading
+• Cross validation:
+– https://medium.com/@zstern/k-fold-cross-validationexplained-5aeba90ebb3
+– https://towardsdatascience.com/train-test-split-andcross-validation-in-python-80b61beca4b6
+
+• General Machine Learning book:
+– Pattern Recognition and Machine Learning. C. Bishop.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+83
+
+

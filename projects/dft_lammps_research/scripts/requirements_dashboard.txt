@@ -1,0 +1,22 @@
+# DFT+LAMMPS Workflow Dashboard Requirements
+# ==========================================
+
+# Core dependencies
+dash>=2.14.0
+dash-bootstrap-components>=1.5.0
+plotly>=5.18.0
+pandas>=2.0.0
+numpy>=1.24.0
+pyyaml>=6.0.1
+
+# PDF export
+reportlab>=4.0.0
+
+# Optional but recommended
+scipy>=1.11.0
+
+# For 3D structure visualization
+ase>=3.22.0
+
+# For file watching
+watchdog>=3.0.0

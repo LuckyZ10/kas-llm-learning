@@ -1,0 +1,139 @@
+{
+  "attempted": 3804,
+  "success": 22,
+  "failed": 3782,
+  "details": [
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/node.py",
+      "line": 490,
+      "original": "for node_id, info in self._members.items()",
+      "fixed": "for node_id, info in self._members.items()"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/node.py",
+      "line": 489,
+      "original": "node_id: info",
+      "fixed": "node_id: info"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/node.py",
+      "line": 154,
+      "original": "def __init__(self, node_id: str, host: str, port: int,",
+      "fixed": "def __init__(self, node_id: str, host: str, port: int,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/scheduler.py",
+      "line": 901,
+      "original": "\"tasks_running\": len([t for t in self._tasks.values()",
+      "fixed": "\"tasks_running\": len([t for t in self._tasks.values()"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/scheduler.py",
+      "line": 899,
+      "original": "\"tasks_pending\": len([t for t in self._tasks.values()",
+      "fixed": "\"tasks_pending\": len([t for t in self._tasks.values()"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/scheduler.py",
+      "line": 805,
+      "original": "async def wait_for_task(self, task_id: str,",
+      "fixed": "async def wait_for_task(self, task_id: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/scheduler.py",
+      "line": 757,
+      "original": "if task.status not in [TaskStatus.COMPLETED, TaskStatus.FAILED,",
+      "fixed": "if task.status not in [TaskStatus.COMPLETED, TaskStatus.FAILED,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/scheduler.py",
+      "line": 481,
+      "original": "def _split_payload(self, payload: Dict[str, Any],",
+      "fixed": "def _split_payload(self, payload: Dict[str, Any],"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/scheduler.py",
+      "line": 469,
+      "original": "shards_data = [{\"item\": item, \"index\": i}",
+      "fixed": "shards_data = [{\"item\": item, \"index\": i}"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/scheduler.py",
+      "line": 421,
+      "original": "async def submit_sharded_task(self, name: str,",
+      "fixed": "async def submit_sharded_task(self, name: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/state.py",
+      "line": 644,
+      "original": "async def _forward_to_leader(self, command: str, key: str,",
+      "fixed": "async def _forward_to_leader(self, command: str, key: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/state.py",
+      "line": 345,
+      "original": "async def acquire_lock(self, lock_id: str,",
+      "fixed": "async def acquire_lock(self, lock_id: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/state.py",
+      "line": 247,
+      "original": "async def set(self, key: str, value: Any,",
+      "fixed": "async def set(self, key: str, value: Any,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/integration.py",
+      "line": 780,
+      "original": "name: state.value",
+      "fixed": "name: state.value"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/integration.py",
+      "line": 645,
+      "original": "async def _node_message_callback(self, msg_type: str,",
+      "fixed": "async def _node_message_callback(self, msg_type: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/integration.py",
+      "line": 595,
+      "original": "async def _send_message_callback(self, msg_type: str,",
+      "fixed": "async def _send_message_callback(self, msg_type: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/integration.py",
+      "line": 383,
+      "original": "def configure_tcp_transport(self, port: int,",
+      "fixed": "def configure_tcp_transport(self, port: int,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/integration.py",
+      "line": 298,
+      "original": "def __init__(self, cluster_node, cluster_manager,",
+      "fixed": "def __init__(self, cluster_node, cluster_manager,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/integration.py",
+      "line": 245,
+      "original": "async def _send_response(self, request_message: Message,",
+      "fixed": "async def _send_response(self, request_message: Message,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/manager.py",
+      "line": 340,
+      "original": "def _meets_requirements(self, node_info: NodeInfo,",
+      "fixed": "def _meets_requirements(self, node_info: NodeInfo,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/manager.py",
+      "line": 245,
+      "original": "def select_node_for_task(self, task_id: str,",
+      "fixed": "def select_node_for_task(self, task_id: str,"
+    },
+    {
+      "file": "/root/.openclaw/workspace/kas/kas/core/cluster/manager.py",
+      "line": 150,
+      "original": "def __init__(self, node: ClusterNode,",
+      "fixed": "def __init__(self, node: ClusterNode,"
+    }
+  ]
+}

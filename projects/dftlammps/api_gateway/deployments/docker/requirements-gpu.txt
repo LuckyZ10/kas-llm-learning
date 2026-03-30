@@ -1,0 +1,17 @@
+# GPU dependencies for ML training
+torch==2.1.1
+torchvision==0.16.1
+torchaudio==2.1.1
+
+# Deep Learning
+numpy==1.24.3
+scipy==1.11.4
+scikit-learn==1.3.2
+
+# ML Potential training
+dpdata==0.2.17
+pymatgen==2023.11.12
+ase==3.22.1
+
+# GPU acceleration
+pynvml==11.5.0

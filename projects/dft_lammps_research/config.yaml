@@ -1,0 +1,120 @@
+# DFT-LAMMPS 全局配置文件示例
+# ================================
+# 此文件演示如何使用 OmegaConf 管理配置
+#
+# 使用方法:
+#   from core import get_config
+#   config = get_config("config.yaml")
+
+# 项目基本信息
+project_name: "my_materials_project"
+debug: false
+
+# 日志配置
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: logs/workflow.log
+  console: true
+  json_format: false
+
+# 硬件资源配置（全局默认值）
+hardware:
+  ncores: 32
+  ngpus: 2
+  memory_gb: 64.0
+  use_mpi: true
+  use_openmp: true
+
+# DFT 计算配置
+dft:
+  code: vasp  # vasp, espresso, abacus
+  functional: PBE
+  kpoints_density: 0.25
+  spin_polarized: false
+  
+  # VASP 特有配置
+  vasp:
+    encut: 520.0
+    ediff: 1.0e-6
+    ediffg: -0.01
+    ismear: 0
+    sigma: 0.05
+    ibrion: 2
+    nsw: 100
+    isif: 3
+    npar: 4
+    kpar: 4
+    vasp_cmd: vasp_std
+  
+  # Quantum ESPRESSO 特有配置
+  espresso:
+    pw_cmd: pw.x
+    pseudo_dir: ./pseudo
+    ecutwfc: 50.0
+    ecutrho: 200.0
+
+# 分子动力学配置
+md:
+  engine: lammps
+  ensemble: nvt
+  nsteps: 10000
+  dump_freq: 100
+  thermo_freq: 10
+  
+  lammps:
+    lmp_cmd: lmp
+    pair_style: nep
+    timestep: 1.0
+    temperature: 300.0
+    thermostat: nose-hoover
+    tdamp: 100.0
+
+# 机器学习势配置
+ml:
+  type: nep  # nep, deepmd, mace, chgnet
+  data_dir: ./training_data
+  train_ratio: 0.9
+  
+  nep:
+    version: 4
+    neuron: 50
+    layer: 4
+    num_epochs: 20000
+    learning_rate: 0.001
+    cutoff: 6.0
+  
+  deepmd:
+    descriptor_type: se_e2_a
+    rcut: 6.0
+    numb_steps: 1000000
+
+# 高通量筛选配置
+screening:
+  batch_size: 20
+  max_concurrent: 5
+  max_atoms: 100
+  max_energy_above_hull: 0.1
+  
+  mp:
+    api_key: ${oc.env:MP_API_KEY,null}  # 从环境变量读取
+    max_entries: 500
+
+# 工作流配置
+workflow:
+  name: default_workflow
+  output_dir: ./results
+  checkpoint_dir: ./checkpoints
+  save_intermediate: true
+  stages:
+    - structure_preparation
+    - dft_calculation
+    - ml_training
+    - md_simulation
+    - analysis
+
+# 数据库配置
+database:
+  type: sqlite
+  name: dft_lammps.db
+  echo: false

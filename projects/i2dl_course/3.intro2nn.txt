@@ -1,0 +1,1132 @@
+Introduction to
+Neural Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+From Linear and
+Logitistic Regression
+to Neural Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+2
+
+Linear Regression
+= a supervised learning method to find a linear model of
+the form
+𝑑
+
+𝑦ො𝑖 = 𝜃0 + ෍ 𝑥𝑖𝑗 𝜃𝑗 = 𝜃0 + 𝑥𝑖1 𝜃1 + 𝑥𝑖2 𝜃2 + ⋯ + 𝑥𝑖𝑑 𝜃𝑑
+𝑗=1
+
+Goal: find a model that
+explains a target y given
+the input x
+
+𝜃0
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+3
+
+Logistic Regression
+• Loss per training sample
+ℒ 𝑦ො𝑖 , 𝑦𝑖 = −[𝑦𝑖 log 𝑦ො𝑖 + 1 − 𝑦𝑖 log(1 − 𝑦ො𝑖 )]
+• Overall loss
+𝑛
+
+1
+𝒞 𝜽 = − ෍(𝑦𝑖 ∙ log 𝑦ෝ𝑖 + (1 − 𝑦𝑖 ) ∙ log[1 − 𝑦ෝ𝑖 ])
+𝑛
+𝑖=1
+
+Minimization
+Daniel Cremers
+
+𝑦ෝ𝑖 = 𝜎(𝑥𝑖 𝜽)
+Introduction to Deep Learning
+
+4
+
+Linear vs Logistic Regression
+y=1
+
+y=0
+Predictions can exceed the range
+of the training samples
+→ in the case of classification
+[0;1] this becomes a real issue
+Daniel Cremers
+
+Predictions are guaranteed
+to be within [0;1]
+
+Introduction to Deep Learning
+
+5
+
+How to obtain the Model?
+Data points
+
+Labels (ground truth)
+𝒚
+
+𝒙
+
+Optimization
+
+Daniel Cremers
+
+Loss
+function
+
+Model parameters
+
+Estimation
+
+𝜽
+
+ෝ
+𝒚
+
+Introduction to Deep Learning
+
+6
+
+Linear Score Functions
+• Linear score function as seen in linear regression
+
+𝒇𝒊 = ෍ 𝑤𝒊,𝒋 𝑥𝒋
+𝒋
+
+𝒇=𝑾𝒙
+
+Daniel Cremers
+
+(Matrix Notation)
+
+Introduction to Deep Learning
+
+7
+
+Linear Score Functions on Images
+• Linear score function 𝒇 = 𝑾𝒙
+
+On CIFAR-10
+
+On ImageNet
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Source:: Li/Karpathy/Johnson
+8
+
+Linear Score Functions?
+Logistic Regression
+
+Daniel Cremers
+
+Linear Separation Impossible!
+
+Introduction to Deep Learning
+
+9
+
+Linear Score Functions?
+• Can we make linear regression better?
+– Naïve idea: Multiply with another weight matrix 𝑾𝟐
+
+𝒇෠ = 𝑾𝟐 ⋅ 𝑾𝟏 ⋅ 𝒙
+• Operation remains linear:
+W = 𝑾 𝟐 ⋅ 𝑾𝟏
+𝒇෠ = W 𝒙
+• Solution → add non-linearity!!
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+10
+
+Neural Network
+• Linear score function 𝒇 = 𝑾𝒙
+• Neural network is a nesting of ‘functions’
+– 2-layers: 𝒇 = 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙)
+– 3-layers: 𝒇 = 𝑾𝟑 max(𝟎, 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙))
+– 4-layers: 𝒇 = 𝑾𝟒 tanh (𝑾𝟑 , max(𝟎, 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙)))
+– 5-layers: 𝒇 = 𝑾𝟓 𝜎(𝑾𝟒 tanh(𝑾𝟑 , max(𝟎, 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙))))
+– … up to hundreds of layers
+Daniel Cremers
+
+Introduction to Deep Learning
+
+11
+
+Introduction to
+Neural Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+12
+
+History of Neural Networks
+
+Daniel Cremers
+
+Source: http://beamlab.org/deeplearning/2017/02/23/deep_learning_101_part1.html
+13
+Introduction to Deep Learning
+
+Neural Network
+Neural Networks
+
+Logistic Regression
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+14
+
+Neural Network
+• Non-linear score function 𝒇 = … (max(𝟎, 𝑾𝟏 𝒙))
+
+On CIFAR-10
+
+Daniel Cremers
+
+Visualizing activations of the first layer.
+Introduction to Deep Learning
+
+Source: ConvNetJS
+15
+
+Neural Network
+1-layer network: 𝒇 = 𝑾𝒙
+
+2-layer network: 𝒇 = 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙)
+
+𝒙
+𝑾
+128 × 128 = 16384
+
+𝒇
+10
+
+𝒙
+
+𝑾𝟏
+128 × 128 = 16384
+
+𝒉
+1000
+
+𝑾2
+
+𝒇
+10
+
+Why is this structure useful?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+16
+
+Neural Network
+2-layer network: 𝒇 = 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙)
+
+𝒙
+
+𝑾𝟏
+
+Daniel Cremers
+
+𝒉
+
+128 × 128 = 16384
+
+1000
+
+Input Layer
+
+Hidden Layer
+
+Introduction to Deep Learning
+
+𝑾2
+
+𝒇
+10
+
+Output Layer
+
+17
+
+Net of Artificial Neurons
+𝑓(𝑊0,0 𝑥 + 𝑏0,0 )
+𝑓(𝑊1,0 𝑥 + 𝑏1,0 )
+
+𝑥1
+𝑓(𝑊0,1 𝑥 + 𝑏0,1 )
+
+𝑥2
+
+𝑓(𝑊1,1 𝑥 + 𝑏1,1 )
+
+𝑓(𝑊2,0 𝑥 + 𝑏2,0 )
+
+𝑓(𝑊0,2 𝑥 + 𝑏0,2 )
+
+𝑥3
+𝑓(𝑊1,2 𝑥 + 𝑏1,2 )
+
+𝑓(𝑊0,3 𝑥 + 𝑏0,3 )
+Daniel Cremers
+
+Introduction to Deep Learning
+
+18
+
+Neural Network
+
+Source: https://towardsdatascience.com/training-deep-neural-networks-9fdb1964b964
+Daniel Cremers
+
+Introduction to Deep Learning
+
+19
+
+Activation Functions
+Leaky ReLU: max 0.1𝑥, 𝑥
+
+1
+
+Sigmoid: 𝜎 𝑥 = (1+𝑒 −𝑥 )
+
+tanh: tanh 𝑥
+Parametric ReLU: max 𝛼𝑥, 𝑥
+Maxout max 𝑤1𝑇 𝑥 + 𝑏1 , 𝑤2𝑇 𝑥 + 𝑏2
+ReLU: max 0, 𝑥
+Daniel Cremers
+
+ELU f x = ቊ
+Introduction to Deep Learning
+
+𝑥 if 𝑥 > 0
+if 𝑥 ≤ 0
+
+α e𝑥 − 1
+
+20
+
+Neural Network
+𝒇 = 𝑾𝟑 ⋅ (𝑾𝟐 ⋅ 𝑾𝟏 ⋅ 𝒙 ))
+Why activation functions?
+Simply concatenating linear
+layers would be so much
+cheaper...
+Daniel Cremers
+
+Introduction to Deep Learning
+
+21
+
+Neural Network
+Why organize a neural network into layers?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+22
+
+Biological Neurons
+
+Credit: Stanford CS 231n
+Daniel Cremers
+
+Introduction to Deep Learning
+
+23
+
+Biological Neurons
+
+Credit: Stanford CS 231n
+Daniel Cremers
+
+Introduction to Deep Learning
+
+24
+
+Artificial Neural Networks vs Brain
+
+Artificial neural networks are inspired by the brain,
+but not even close in terms of complexity!
+The comparison is great for the media and news articles though... ☺
+Daniel Cremers
+
+Introduction to Deep Learning
+
+25
+
+Artificial Neural Network
+𝑓(𝑊0,0 𝑥 + 𝑏0,0 )
+𝑓(𝑊1,0 𝑥 + 𝑏1,0 )
+
+𝑥1
+𝑓(𝑊0,1 𝑥 + 𝑏0,1 )
+
+𝑥2
+
+𝑓(𝑊1,1 𝑥 + 𝑏1,1 )
+
+𝑓(𝑊2,0 𝑥 + 𝑏2,0 )
+
+𝑓(𝑊0,2 𝑥 + 𝑏0,2 )
+
+𝑥3
+𝑓(𝑊1,2 𝑥 + 𝑏1,2 )
+
+𝑓(𝑊0,3 𝑥 + 𝑏0,3 )
+Daniel Cremers
+
+Introduction to Deep Learning
+
+26
+
+Neural Network
+• Summary
+– Given a dataset with ground truth training pairs [𝑥𝑖 ; 𝑦𝑖 ],
+– Find optimal weights and biases 𝑾 using stochastic
+gradient descent, such that the loss function is minimized
+• Compute gradients with backpropagation (use batch-mode;
+more later)
+• Iterate many times over training set (SGD; more later)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+27
+
+Computational
+Graphs
+Daniel Cremers
+
+Introduction to Deep Learning
+
+28
+
+Computational Graphs
+• Directional graph
+• Matrix operations are represented as compute
+nodes.
+• Vertex nodes are variables or operators like +, -, *, /,
+log(), exp() …
+• Directional edges show flow of inputs to vertices
+Daniel Cremers
+
+Introduction to Deep Learning
+
+29
+
+Computational Graphs
+• 𝑓 𝑥, 𝑦, 𝑧 = 𝑥 + 𝑦 ⋅ 𝑧
+
+sum
+
+𝑓 𝑥, 𝑦, 𝑧
+mult
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+30
+
+Evaluation: Forward Pass
+• 𝑓 𝑥, 𝑦, 𝑧 = 𝑥 + 𝑦 ⋅ 𝑧
+1
+
+1
+𝑑 = −2
+
+−3
+−3
+
+Initialization 𝑥 = 1, 𝑦 = −3, 𝑧 = 4
+
+sum
+
+𝑓 = −8
+mult
+
+4
+4
+Daniel Cremers
+
+Introduction to Deep Learning
+
+31
+
+Computational Graphs
+• Why discuss compute graphs?
+• Neural networks have complicated architectures
+𝒇 = 𝑾𝟓 𝜎(𝑾𝟒 tanh(𝑾𝟑 , max(𝟎, 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙))))
+
+• Lot of matrix operations!
+• Represent NN as computational graphs!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+32
+
+Computational Graphs
+A neural network can be represented as a
+computational graph...
+– it has compute nodes (operations)
+– it has edges that connect nodes (data flow)
+– it is directional
+
+– it can be organized into ‘layers’
+Daniel Cremers
+
+Introduction to Deep Learning
+
+33
+
+Computational Graphs
+(2)
+
+𝑤11
+
+𝑥1
+
+(2)
+
+(2)
+𝑤12
+
+(2)
+𝑧1
+
+𝑓
+
+(2)
+
+(3)
+
+𝑎1
+
+𝑤11
+(3)
+
+𝑤13
+
+𝑤12
+
+(2)
+
+𝑥2
+
+𝑤21
+(2)
+𝑤22
+
+(2)
+𝑧2
+
+(2)
+
+𝑤23
+
+𝑓
+
+(3)
+
+(2)
+𝑎2
+
+(2)
+
+𝑥3
+
+(2)
+𝑧3
+
+(2)
+
+𝑤33
+
+(2)
+
+(2)
+
++１
+
+Daniel Cremers
+
+(3)
+
+𝑧1
+
+(3)
+
+𝑤22
+
+(3)
+
+𝑤31
+(2)
+𝑤32
+
+𝑏1
+
+𝑤21
+
+𝑓
+
+𝑤31
+
+(2)
+
+𝑎3
+
+𝑏2
+
+(3)
+
+𝑧2
+
+(3)
+𝑤32
+(3)
+
+𝑏1
+
+(2)
+
+(3)
+
+𝑏2
+
+𝑏3
+
++１
+
+Introduction to Deep Learning
+
+34
+
+Computational Graphs
+• From a set of neurons to a Structured Compute Pipeline
+
+[Szegedy et al.,CVPR’15] Going Deeper with Convolutions
+Daniel Cremers
+
+Introduction to Deep Learning
+
+35
+
+Computational Graphs
+• The computation of Neural Network has further
+meanings:
+– The multiplication of 𝑾 and 𝒙: encode input information
+– The activation function: select the key features
+
+Daniel Cremers
+
+Source; https://www.zybuluo.com/liuhui0803/note/981434
+Introduction to Deep Learning
+
+36
+
+Computational Graphs
+• The computations of Neural Networks have further
+meanings:
+– The convolutional layers: extract useful features with
+shared weights
+
+Source: https://medium.com/@timothy_terati/image-convolution-filtering-a54dce7c786b
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+37
+
+Computational Graphs
+• The computations of Neural Networks have further
+meanings:
+– The convolutional layers: extract useful features with
+shared weights
+
+Source: https://www.zybuluo.com/liuhui0803/note/981434
+Daniel Cremers
+
+Introduction to Deep Learning
+
+38
+
+Loss Functions
+Daniel Cremers
+
+Introduction to Deep Learning
+
+39
+
+What’s Next?
+Inputs
+
+Neural Network
+
+Outputs
+
+Targets
+
+Are these reasonably close?
+
+We need a way to describe how close the network's
+outputs (= predictions) are to the targets!
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+40
+
+What’s Next?
+Idea: calculate a ‘distance’ between prediction and target!
+prediction
+
+large distance!
+
+Daniel Cremers
+
+target
+
+prediction
+small distance!
+target
+
+bad prediction
+
+good prediction
+
+Introduction to Deep Learning
+
+41
+
+Loss Functions
+• A function to measure the goodness of the
+predictions (or equivalently, the network's
+performance)
+Intuitively, ...
+– a large loss indicates bad predictions/performance
+(→ performance needs to be improved by training the
+model)
+– the choice of the loss function depends on the concrete
+problem or the distribution of the target variable
+Daniel Cremers
+
+Introduction to Deep Learning
+
+42
+
+Regression Loss
+• L1 Loss:
+
+𝑛
+
+1
+ෝ; 𝜽 = ෍ | 𝑦𝑖 − 𝑦ෝ𝑖 | 1
+𝐿 𝒚, 𝒚
+𝑛
+𝑖
+
+• MSE Loss:
+
+𝑛
+
+1
+ෝ; 𝜽 = ෍ | 𝑦𝑖 − 𝑦ෝ𝑖 | 22
+𝐿 𝒚, 𝒚
+𝑛
+𝑖
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+43
+
+Binary Cross Entropy
+• Loss function for binary (yes/no) classification
+𝑛
+
+1
+ෝ; 𝜽 = − ෍[𝑦𝑖 log 𝑦ො𝑖 + 1 − 𝑦𝑖 log(1 − 𝑦ො𝑖 )]
+𝐿 𝒚, 𝒚
+𝑛
+𝑖
+
+Yes! (0.8)
+No! (0.2)
+
+Daniel Cremers
+
+The network predicts
+the probability of the input
+belonging to the "yes" class!
+
+Introduction to Deep Learning
+
+44
+
+Cross Entropy
+Generalizes to multi-class classification:
+𝑛
+
+1 𝑖𝑓 𝑥𝑖 ∈ 𝑐𝑙𝑎𝑠𝑠 𝑘
+𝑦𝑖𝑘 = ቊ
+0 𝑒𝑙𝑠𝑒
+
+𝑘
+
+ෝ; 𝜽 = − ෍ ෍ (𝑦𝑖𝑘 ∙ log𝑦ො𝑖𝑘 )
+𝐿 𝒚, 𝒚
+𝑖=1 𝑘=1
+dog (0.1)
+rabbit (0.2)
+
+duck (0.7)
+…
+Daniel Cremers
+
+Introduction to Deep Learning
+
+45
+
+More General Case
+•
+•
+•
+•
+
+Ground truth: 𝒚
+ෝ
+Prediction: 𝒚
+ෝ
+Loss function: 𝐿 𝒚, 𝒚
+Motivation:
+– minimize the loss <=> find better predictions
+– predictions are generated by the NN
+– find better predictions <=> find better NN
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+46
+
+Initially
+Loss
+Prediction
+
+Targets
+t1
+Bad prediction!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Training time
+
+47
+
+During Training…
+Loss
+
+Prediction
+
+Targets
+t2
+Bad prediction!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Training time
+
+48
+
+During Training…
+Loss
+
+Prediction
+
+Targets
+t3
+Bad prediction!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Training time
+
+49
+
+Loss
+
+Daniel Cremers
+
+Training Curve
+
+Introduction to Deep Learning
+
+Training time
+
+50
+
+How to Find a Better NN?
+Plotting loss curves against model
+parameters
+
+Loss
+𝐿(𝒚, 𝑓𝜽 𝒙 )
+
+𝜽
+
+Parameters 𝜽
+Daniel Cremers
+
+Introduction to Deep Learning
+
+51
+
+How to Find a Better NN?
+ෝ = 𝐿(𝒚, 𝑓𝜽 𝒙 )
+• Loss function: 𝐿 𝒚, 𝒚
+• Neural Network: 𝑓𝜽 (𝒙)
+• Goal:
+– minimize the loss w. r. t. 𝜽
+
+Optimization! We train compute graphs
+with some optimization techniques!
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+52
+
+Gradient Descent
+Minimize loss 𝐿 𝒚, 𝑓𝜽 𝒙
+
+w.r.t. 𝜽:
+
+𝐿(𝒚, 𝑓𝜽 𝒙 )
+
+step size / learning rate
+
+𝛁𝜽 𝐿(𝒚, 𝑓𝜽 𝒙 )
+
+𝜽𝒕+𝟏 = 𝜽𝒕 − 𝛼 𝛁𝜽 𝐿 𝒚, 𝑓𝜽 𝒙
+
+ቚ
+
+𝜽𝒕
+
+t→∞
+𝜽∗ = arg min 𝐿 𝒚, 𝑓𝜽 𝒙
+
+𝜽𝒕 𝜽𝒕+𝟏 𝜽∗
+Daniel Cremers
+
+𝜽
+Introduction to Deep Learning
+
+53
+
+How to Find a Better NN?
+• Given inputs 𝒙 and targets 𝒚
+• Given one layer NN with no activation function
+𝒇𝜽 𝒙 = 𝑾𝒙 ,
+𝜽=𝑾
+Later 𝜽 = {𝑾, 𝒃}
+
+1
+𝑛
+
+ෝ; 𝜽 = σ𝑛𝑖 | 𝑦𝑖 − 𝑦ෝ𝑖 | 22
+• Given MSE Loss: 𝐿 𝒚, 𝒚
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+54
+
+How to Find a Better NN?
+• Given inputs 𝒙 and targets 𝒚
+• Given one layer NN with no activation function
+1 𝑛
+= σ𝑖 | 𝑦𝑖 − 𝑾 ⋅ 𝑥𝑖 | 22
+𝑛
+
+ෝ; 𝜽
+• Given MSE Loss: 𝐿 𝒚, 𝒚
+𝑥
+*
+
+𝑊
+
+Multiply
+
+Gradient flow
+𝐿
+
+𝑦
+Daniel Cremers
+
+Introduction to Deep Learning
+
+55
+
+How to Find a Better NN?
+• Given inputs 𝒙 and targets 𝒚
+• Given one layer NN with no activation function
+𝑓𝜃 𝒙 = 𝑾𝒙,
+𝜽=𝑾
+1
+𝑛
+
+ෝ; 𝜽 = σ𝑛𝑖 | 𝑾 ⋅ 𝑥𝑖 − 𝑦𝑖 | 22
+• Given MSE Loss: 𝐿 𝒚, 𝒚
+2
+𝑛
+
+• 𝛻𝜃 𝐿 𝒚, 𝑓𝜃 (𝒙) = σ𝑛𝑖 𝑾 ⋅ 𝑥𝑖 − 𝑦𝑖 ⋅ 𝑥𝑖𝑇
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+56
+
+How to Find a Better NN?
+• Given inputs 𝒙 and targets 𝒚
+• Given a multi-layer NN with many activations
+
+𝒇 = 𝑾𝟓 𝜎(𝑾𝟒 tanh(𝑾𝟑 , max(𝟎, 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙))))
+• Gradient descent for 𝐿 𝒚, 𝑓𝜽 𝒙
+
+w. r. t. 𝜽
+
+– Need to propagate gradients from end to first layer (𝑾𝟏 ).
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+57
+
+How to Find a Better NN?
+• Given inputs 𝒙 and targets 𝒚
+• Given multi-layer NN with many activations
+𝑥
+*
+𝑊1
+
+max(𝟎, )
+
+Gradient flow
+*
+
+Multiply
+𝑊2
+
+Multiply
+
+𝐿
+
+𝑦
+Daniel Cremers
+
+Introduction to Deep Learning
+
+58
+
+How to Find a Better NN?
+• Given inputs 𝒙 and targets 𝒚
+• Given multilayer layer NN with many activations
+𝒇 = 𝑾𝟓 𝜎(𝑾𝟒 tanh(𝑾𝟑 , max(𝟎, 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙))))
+• Gradient descent solution for 𝐿 𝒚, 𝑓𝜽 𝒙
+
+w. r. t. 𝜽
+
+– Need to propagate gradients from end to first layer (𝑾𝟏 )
+
+• Backpropagation: Use chain rule to compute
+gradients
+– Compute graphs come in handy!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+59
+
+How to Find a Better NN?
+• Why gradient descent?
+– Easy to compute using compute graphs
+
+• Other methods include
+– Newtons method
+– L-BFGS
+– Adaptive moments
+– Conjugate gradient
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+60
+
+Summary
+• Neural Networks are computational graphs
+• Goal: for a given train set, find optimal weights
+• Optimization is done using gradient-based solvers
+– Many options (more in the next lectures)
+
+• Gradients are computed via backpropagation
+– Nice because can easily modularize complex functions
+Daniel Cremers
+
+Introduction to Deep Learning
+
+61
+
+Next Lectures
+• Next Lecture:
+– Backpropagation and optimization of Neural Networks
+
+• Check for updates on website/piazza regarding
+exercises
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+62
+
+

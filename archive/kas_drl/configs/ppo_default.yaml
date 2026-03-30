@@ -1,0 +1,48 @@
+# PPO默认配置
+
+agent:
+  type: "ppo"
+  state_dim: 128
+  action_dim: 21
+  
+  # PPO特定配置
+  lr: 3.0e-4
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_epsilon: 0.2
+  value_coef: 0.5
+  entropy_coef: 0.01
+  max_grad_norm: 0.5
+  ppo_epochs: 10
+  batch_size: 64
+  hidden_dim: 256
+
+environment:
+  max_steps: 500
+  num_tasks: 10
+  task_complexity_range: [0.1, 1.0]
+  user_satisfaction_threshold: 0.7
+  capability_decay: 0.01
+  reward_scale: 1.0
+
+training:
+  num_episodes: 2000
+  max_steps_per_episode: 500
+  eval_interval: 50
+  save_interval: 100
+  log_dir: "./logs/ppo_training"
+  experiment_name: "kas_ppo_default"
+  use_early_stopping: true
+  patience: 100
+  min_delta: 0.01
+  device: "cuda"
+
+reward:
+  user_satisfaction_weight: 0.35
+  capability_retention_weight: 0.20
+  convergence_speed_weight: 0.20
+  response_quality_weight: 0.15
+  efficiency_weight: 0.10
+  gamma: 0.99
+  clip_min: -10.0
+  clip_max: 10.0

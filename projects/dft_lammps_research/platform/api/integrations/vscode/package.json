@@ -1,0 +1,215 @@
+{
+  "name": "dft-lammps-vscode",
+  "displayName": "DFT+LAMMPS Research Platform",
+  "description": "VS Code extension for DFT+LAMMPS materials research API",
+  "version": "1.0.0",
+  "publisher": "dft-lammps",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Data Science",
+    "Machine Learning",
+    "Visualization"
+  ],
+  "keywords": [
+    "dft",
+    "lammps",
+    "materials",
+    "simulation",
+    "molecular-dynamics"
+  ],
+  "activationEvents": [
+    "onCommand:dft-lammps.login",
+    "onView:dft-lammps-explorer"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "dft-lammps.login",
+        "title": "Sign In",
+        "icon": "$(sign-in)",
+        "category": "DFT+LAMMPS"
+      },
+      {
+        "command": "dft-lammps.logout",
+        "title": "Sign Out",
+        "category": "DFT+LAMMPS"
+      },
+      {
+        "command": "dft-lammps.refreshProjects",
+        "title": "Refresh Projects",
+        "icon": "$(refresh)",
+        "category": "DFT+LAMMPS"
+      },
+      {
+        "command": "dft-lammps.createProject",
+        "title": "Create Project",
+        "icon": "$(add)",
+        "category": "DFT+LAMMPS"
+      },
+      {
+        "command": "dft-lammps.viewProject",
+        "title": "View Project",
+        "category": "DFT+LAMMPS"
+      },
+      {
+        "command": "dft-lammps.submitCalculation",
+        "title": "Submit Calculation",
+        "icon": "$(run)",
+        "category": "DFT+LAMMPS"
+      },
+      {
+        "command": "dft-lammps.viewCalculation",
+        "title": "View Calculation Results",
+        "category": "DFT+LAMMPS"
+      },
+      {
+        "command": "dft-lammps.uploadStructure",
+        "title": "Upload Structure",
+        "icon": "$(file-add)",
+        "category": "DFT+LAMMPS"
+      },
+      {
+        "command": "dft-lammps.openSettings",
+        "title": "Open Settings",
+        "icon": "$(gear)",
+        "category": "DFT+LAMMPS"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "dft-lammps-explorer",
+          "name": "DFT+LAMMPS",
+          "when": "dft-lammps:authenticated"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "dft-lammps-explorer",
+        "contents": "Welcome to DFT+LAMMPS!\n\n[Sign In](command:dft-lammps.login)\n\nTo use this extension, you need an API key from [DFT+LAMMPS Portal](https://api.dft-lammps.org/portal)."
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "dft-lammps.createProject",
+          "when": "view == dft-lammps-explorer",
+          "group": "navigation"
+        },
+        {
+          "command": "dft-lammps.refreshProjects",
+          "when": "view == dft-lammps-explorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "dft-lammps.viewProject",
+          "when": "view == dft-lammps-explorer && viewItem == project",
+          "group": "inline"
+        },
+        {
+          "command": "dft-lammps.submitCalculation",
+          "when": "view == dft-lammps-explorer && viewItem == project",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "dft-lammps.viewProject",
+          "when": "false"
+        },
+        {
+          "command": "dft-lammps.viewCalculation",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "DFT+LAMMPS",
+      "properties": {
+        "dft-lammps.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API Key for DFT+LAMMPS Platform",
+          "scope": "application"
+        },
+        "dft-lammps.baseUrl": {
+          "type": "string",
+          "default": "https://api.dft-lammps.org",
+          "description": "Base URL for DFT+LAMMPS API"
+        },
+        "dft-lammps.defaultProjectType": {
+          "type": "string",
+          "default": "battery_screening",
+          "enum": [
+            "battery_screening",
+            "catalysis",
+            "phonon",
+            "custom"
+          ],
+          "description": "Default project type"
+        },
+        "dft-lammps.pollInterval": {
+          "type": "number",
+          "default": 5,
+          "description": "Calculation status poll interval (seconds)"
+        },
+        "dft-lammps.notifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable notifications for calculation completions"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "dft-lammps.submitCalculation",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus && resourceExtname =~ /\\.(cif|poscar|xyz|json)/"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "python",
+        "path": "./snippets/python.json"
+      },
+      {
+        "language": "javascript",
+        "path": "./snippets/javascript.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.4",
+    "@vscode/test-electron": "^2.2.0",
+    "@vscode/vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dft-lammps/vscode-extension.git"
+  },
+  "license": "MIT"
+}

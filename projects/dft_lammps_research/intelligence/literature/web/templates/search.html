@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-search me-2"></i>文献搜索</h2>
+        <p class="text-muted">从多个学术数据库搜索相关文献</p>
+    </div>
+</div>
+
+<!-- 搜索表单 -->
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form id="searchForm">
+                    <div class="mb-3">
+                        <label class="form-label">搜索关键词</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-lg" id="query" 
+                                   placeholder="输入关键词，如: density functional theory battery materials">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search me-1"></i>搜索
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">数据源</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="arxiv" id="source_arxiv" checked>
+                                <label class="form-check-label" for="source_arxiv">arXiv</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="pubmed" id="source_pubmed">
+                                <label class="form-check-label" for="source_pubmed">PubMed</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="crossref" id="source_crossref">
+                                <label class="form-check-label" for="source_crossref">CrossRef</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="semanticscholar" id="source_semantic">
+                                <label class="form-check-label" for="source_semantic">Semantic Scholar</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">最大结果数</label>
+                            <input type="number" class="form-control" id="maxResults" value="50" min="10" max="200">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">搜索建议</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li><code>density functional theory</code></li>
+                    <li><code>molecular dynamics</code></li>
+                    <li><code>machine learning potential</code></li>
+                    <li><code>solid electrolyte</code></li>
+                    <li><code>lithium battery</code></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 搜索结果 -->
+<div class="row mt-4" id="resultsSection" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">搜索结果</h5>
+                <span class="badge bg-primary" id="resultCount">0 篇论文</span>
+            </div>
+            <div class="card-body">
+                <div id="papersList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 加载动画 -->
+<div class="loading-overlay" id="loadingOverlay" style="display: none;">
+    <div class="text-center">
+        <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+        <p class="text-muted">正在搜索文献...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('searchForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const query = document.getElementById('query').value;
+    if (!query) {
+        alert('请输入搜索关键词');
+        return;
+    }
+    
+    // 获取选中的数据源
+    const sources = [];
+    if (document.getElementById('source_arxiv').checked) sources.push('arxiv');
+    if (document.getElementById('source_pubmed').checked) sources.push('pubmed');
+    if (document.getElementById('source_crossref').checked) sources.push('crossref');
+    if (document.getElementById('source_semantic').checked) sources.push('semanticscholar');
+    
+    if (sources.length === 0) {
+        alert('请至少选择一个数据源');
+        return;
+    }
+    
+    const maxResults = document.getElementById('maxResults').value;
+    
+    // 显示加载动画
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    
+    try {
+        const response = await fetch('/api/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                query: query,
+                sources: sources,
+                max_results: parseInt(maxResults)
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displayResults(data.papers);
+        } else {
+            alert('搜索失败: ' + data.error);
+        }
+    } catch (error) {
+        alert('请求失败: ' + error.message);
+    } finally {
+        document.getElementById('loadingOverlay').style.display = 'none';
+    }
+});
+
+function displayResults(papers) {
+    const resultsSection = document.getElementById('resultsSection');
+    const papersList = document.getElementById('papersList');
+    const resultCount = document.getElementById('resultCount');
+    
+    resultCount.textContent = papers.length + ' 篇论文';
+    
+    let html = '';
+    papers.forEach((paper, index) => {
+        const authors = paper.authors.map(a => a.name).join(', ');
+        const keywords = paper.keywords.map(k => `<span class="keyword-tag">${k}</span>`).join('');
+        const date = new Date(paper.publication_date).toLocaleDateString();
+        
+        html += `
+            <div class="card paper-card mb-3">
+                <div class="card-body">
+                    <div class="form-check position-absolute" style="top: 15px; right: 15px;">
+                        <input class="form-check-input paper-checkbox" type="checkbox" value="${paper.id}" id="paper_${index}">
+                    </div>
+                    <h5 class="card-title">${paper.title}</h5>
+                    <p class="card-text text-muted mb-2">
+                        <small><i class="fas fa-users me-1"></i>${authors}</small>
+                    </p>
+                    <p class="card-text">${paper.abstract.substring(0, 300)}${paper.abstract.length > 300 ? '...' : ''}</p>
+                    <div class="mb-2">${keywords}</div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>${date}
+                            ${paper.journal ? '<i class="fas fa-book ms-2 me-1"></i>' + paper.journal : ''}
+                            ${paper.citation_count > 0 ? '<i class="fas fa-quote-right ms-2 me-1"></i>被引 ' + paper.citation_count + ' 次' : ''}
+                        </small>
+                        <div>
+                            ${paper.url ? `<a href="${paper.url}" target="_blank" class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-external-link-alt"></i> 查看</a>` : ''}
+                            ${paper.pdf_url ? `<a href="${paper.pdf_url}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="fas fa-file-pdf"></i> PDF</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    if (papers.length > 0) {
+        html = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="selectAll">
+                    <label class="form-check-label" for="selectAll">全选</label>
+                </div>
+                <button class="btn btn-success" onclick="analyzeSelected()">
+                    <i class="fas fa-chart-line me-1"></i>分析选中论文
+                </button>
+            </div>
+        ` + html;
+    }
+    
+    papersList.innerHTML = html;
+    resultsSection.style.display = 'block';
+    
+    // 全选功能
+    document.getElementById('selectAll')?.addEventListener('change', function() {
+        document.querySelectorAll('.paper-checkbox').forEach(cb => {
+            cb.checked = this.checked;
+        });
+    });
+}
+
+function analyzeSelected() {
+    const selected = Array.from(document.querySelectorAll('.paper-checkbox:checked')).map(cb => cb.value);
+    if (selected.length === 0) {
+        alert('请至少选择一篇论文');
+        return;
+    }
+    
+    // 保存到sessionStorage并跳转
+    sessionStorage.setItem('selectedPapers', JSON.stringify(selected));
+    window.location.href = '/analysis';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,127 @@
+# 钙钛矿稳定性预测配置文件
+# Perovskite Stability Prediction Configuration
+
+# 钙钛矿类型: halide (卤化物), oxide (氧化物), double (双钙钛矿)
+perovskite_type: "halide"
+
+# A位元素 (12配位)
+A_site_elements:
+  - "Cs"
+  - "Rb"
+  - "K"
+  - "MA"       # 甲基铵 CH3NH3+
+  - "FA"       # 甲脒 CH(NH2)2+
+  - "EA"       # 乙基铵 CH3CH2NH3+
+  - "Ca"
+  - "Sr"
+  - "Ba"
+
+# B位元素 (6配位)
+B_site_elements:
+  - "Pb"
+  - "Sn"
+  - "Ge"
+  - "Sr"
+  - "Ca"
+  - "Ba"
+  - "Mg"
+  - "Cd"
+  - "Zn"
+  - "Ti"
+  - "Zr"
+  - "Hf"
+  - "Nb"
+  - "Ta"
+
+# X位元素
+X_site_elements:
+  - "I"
+  - "Br"
+  - "Cl"
+  - "F"
+  - "O"
+  - "S"
+
+# Goldschmidt容忍因子范围
+tolerance_factor_range: [0.8, 1.0]
+
+# 八面体因子范围
+octahedral_factor_range: [0.4, 0.9]
+
+# 结构预测参数
+tolerance_factor_thresholds:
+  cubic_min: 0.9
+  cubic_max: 1.0
+  orthorhombic_min: 0.8
+  orthorhombic_max: 0.9
+  hexagonal_min: 1.0
+  hexagonal_max: 1.1
+
+# DFT计算参数
+dft_functional: "PBE"
+dft_encut: 520              # eV
+dft_kpoints: 0.2            # Å⁻¹
+dft_precision: "accurate"
+
+# 稳定性阈值
+max_decomposition_energy: 0.1   # eV/atom
+max_hull_distance: 0.05         # eV/atom
+min_band_gap: 1.0               # eV (用于光伏应用)
+
+# 热力学参数
+temperature_range: [0, 1000]    # K
+pressure: 1.0                   # atm
+temperature_step: 10            # K
+
+# 相变预测
+phase_transition_prediction:
+  include_enthalpy: true
+  include_entropy: true
+  debye_model: true
+
+# 离子半径数据源 (Shannon)
+ionic_radii_coordination:
+  A_site_CN: 12
+  B_site_CN: 6
+  X_site_CN: 6
+
+# 电负性差阈值 (用于预测离子性)
+electronegativity_threshold:
+  min: 0.5
+  max: 2.5
+
+# 缺陷形成能计算 (可选)
+defect_calculations:
+  calculate_vacancies: false
+  calculate_interstitials: false
+  calculate_antisites: false
+
+# 工作目录
+work_dir: "./perovskite_stability_results"
+
+# 输出选项
+generate_phase_diagrams: true
+generate_stability_maps: true
+generate_synthesis_guidelines: true
+
+# 可视化选项
+plot_options:
+  figure_dpi: 300
+  publication_dpi: 600
+  colormap: "RdYlGn_r"
+  tolerance_factor_resolution: 0.01
+
+# 机器学习选项 (可选)
+machine_learning:
+  enable: false
+  model_type: "random_forest"
+  features:
+    - "tolerance_factor"
+    - "octahedral_factor"
+    - "electronegativity_difference"
+    - "ionic_polarizability"
+  training_data: null
+
+# 并行计算
+max_parallel: 4
+save_intermediate: true

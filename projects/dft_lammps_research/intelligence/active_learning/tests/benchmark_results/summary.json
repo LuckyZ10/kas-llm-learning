@@ -1,0 +1,50 @@
+{
+  "random": {
+    "final_accuracy": 0.8385531443892577,
+    "total_cost": 1150.0,
+    "auc": 65.98459907048496,
+    "total_time": 0.1455080509185791,
+    "n_iterations": 20
+  },
+  "bayesian_optimization": {
+    "final_accuracy": 0.7911390902933537,
+    "total_cost": 1150.0,
+    "auc": 72.54624887739531,
+    "total_time": 0.19000935554504395,
+    "n_iterations": 20
+  },
+  "dpp_diversity": {
+    "final_accuracy": 0.8692742946863464,
+    "total_cost": 1150.0,
+    "auc": 74.02226852435184,
+    "total_time": 0.22075104713439941,
+    "n_iterations": 20
+  },
+  "adaptive_hybrid": {
+    "final_accuracy": 0.8626807927298767,
+    "total_cost": 1150.0,
+    "auc": 73.11014395264638,
+    "total_time": 0.3032822608947754,
+    "n_iterations": 20
+  },
+  "rankings": {
+    "by_accuracy": [
+      "dpp_diversity",
+      "adaptive_hybrid",
+      "random",
+      "bayesian_optimization"
+    ],
+    "by_auc": [
+      "dpp_diversity",
+      "adaptive_hybrid",
+      "bayesian_optimization",
+      "random"
+    ],
+    "by_efficiency": [
+      "dpp_diversity",
+      "adaptive_hybrid",
+      "bayesian_optimization",
+      "random"
+    ]
+  }
+}

@@ -1,0 +1,172 @@
+# 钙钛矿实验参考数据
+# Experimental Data for Validation
+
+reference_perovskites:
+  # 卤化物钙钛矿
+  CsPbI3:
+    crystal_system: "orthorhombic"
+    space_group: "Pnma"
+    lattice_constants:
+      a: 8.857  # Å
+      b: 8.576
+      c: 12.472
+    band_gap: 1.73  # eV (间接)
+    tolerance_factor: 0.81
+    decomposition_energy: 0.08  # eV/atom (estimated)
+    phase_transitions:
+      - temperature: 310  # K, α-β相变
+        from_phase: "orthorhombic"
+        to_phase: "cubic"
+    stability_notes: "室温稳定，但易受潮分解"
+    references:
+      - "Marronnier et al., J. Phys. Chem. Lett. 7 (2016) 2338"
+      - "Swarnkar et al., Science 354 (2016) 92"
+
+  CsPbBr3:
+    crystal_system: "orthorhombic"
+    space_group: "Pnma"
+    lattice_constants:
+      a: 8.255
+      b: 8.207
+      c: 11.753
+    band_gap: 2.30  # eV
+    tolerance_factor: 0.80
+    decomposition_energy: 0.03
+    phase_transitions:
+      - temperature: 403  # K, 立方相变
+        from_phase: "orthorhombic"
+        to_phase: "cubic"
+    stability_notes: "非常稳定，适合实际应用"
+    references:
+      - "Protesescu et al., Nano Lett. 15 (2015) 3692"
+
+  MAPbI3:
+    crystal_system: "tetragonal"
+    space_group: "I4/mcm"
+    lattice_constants:
+      a: 8.849
+      c: 12.642
+    band_gap: 1.57  # eV (直接)
+    tolerance_factor: 0.91
+    decomposition_energy: 0.05
+    phase_transitions:
+      - temperature: 327  # K
+        from_phase: "tetragonal"
+        to_phase: "cubic"
+    stability_notes: "最广泛研究的光伏材料"
+    references:
+      - "Stoumpos et al., Inorg. Chem. 52 (2013) 9019"
+      - "Noh et al., Nano Lett. 13 (2013) 1764"
+
+  FAPbI3:
+    crystal_system: "trigonal"
+    space_group: "P3m1"  # δ相
+    lattice_constants:
+      a: 9.00
+      c: 10.99
+    band_gap: 1.48  # eV (直接)
+    tolerance_factor: 0.99
+    decomposition_energy: 0.06
+    phase_transitions:
+      - temperature: 285  # K, δ-α相变
+        from_phase: "trigonal"
+        to_phase: "cubic"
+    stability_notes: "窄带隙，高效率"
+    references:
+      - "Eperon et al., Energy Environ. Sci. 7 (2014) 982"
+      - "Pellet et al., Angew. Chem. 126 (2014) 3213"
+
+  CsSnI3:
+    crystal_system: "orthorhombic"
+    space_group: "Pnma"
+    band_gap: 1.30  # eV (直接)
+    tolerance_factor: 0.84
+    decomposition_energy: 0.12
+    stability_notes: "Sn²⁺易氧化为Sn⁴⁺"
+    references:
+      - "Chung et al., Nature 485 (2012) 486"
+
+  # 混合阴离子钙钛矿
+  CsPbI2Br:
+    crystal_system: "cubic"
+    band_gap: 1.91  # eV
+    tolerance_factor: 0.81
+    decomposition_energy: 0.04
+    stability_notes: "比CsPbI3更稳定"
+
+  # 双钙钛矿
+  Cs2AgBiBr6:
+    crystal_system: "cubic"
+    space_group: "Fm-3m"
+    lattice_constant: 11.27
+    band_gap: 2.20  # eV
+    tolerance_factor: 0.93
+    decomposition_energy: 0.02
+    stability_notes: "无毒，高稳定性"
+    references:
+      - "Volonakis et al., J. Phys. Chem. Lett. 8 (2017) 772"
+
+# 稳定性评价标准
+stability_criteria:
+  excellent:
+    decomposition_energy: [0, 0.02]  # eV/atom
+    description: "非常稳定，适合商业化"
+    examples: ["CsPbBr3", "Cs2AgBiBr6"]
+    
+  very_good:
+    decomposition_energy: [0.02, 0.05]
+    description: "稳定，适合实验室研究"
+    examples: ["MAPbI3", "FAPbI3"]
+    
+  good:
+    decomposition_energy: [0.05, 0.1]
+    description: "可合成，需注意条件"
+    examples: ["CsPbI3"]
+    
+  moderate:
+    decomposition_energy: [0.1, 0.2]
+    description: "稳定性较差"
+    examples: ["CsSnI3"]
+    
+  poor:
+    decomposition_energy: [0.2, 1.0]
+    description: "不稳定，难以合成"
+
+# 合成条件建议
+synthesis_conditions:
+  solution_process:
+    precursors: "PbI2 + CsI in DMF/DMSO"
+    temperature: "60-100°C"
+    annealing: "300-350°C"
+    atmosphere: "N2 glovebox"
+    
+  vapor_deposition:
+    method: "dual-source evaporation"
+    substrate: "FTO/c-TiO2"
+    temperature: "room temperature"
+    
+  anti_solvent:
+    method: "toluene or chlorobenzene drip"
+    purpose: "rapid crystallization"
+
+# 降解机制
+degradation_mechanisms:
+  moisture:
+    reaction: "MAPbI3 + H2O → CH3NH2 + HI + PbI2"
+    rate: "fast at >50% RH"
+    prevention: "encapsulation"
+    
+  oxygen:
+    reaction: "photo-oxidation under illumination"
+    rate: "slow"
+    prevention: "inert atmosphere"
+    
+  thermal:
+    reaction: "organic cation loss at >80°C"
+    rate: "temperature dependent"
+    prevention: "inorganic cations (Cs+)"
+    
+  light:
+    reaction: "ion migration, phase segregation"
+    rate: "under continuous illumination"
+    prevention: "composition engineering"

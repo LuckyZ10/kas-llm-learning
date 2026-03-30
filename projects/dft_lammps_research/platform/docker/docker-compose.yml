@@ -1,0 +1,190 @@
+version: '3.8'
+
+services:
+  # ===========================================================================
+  # DFT+LAMMPS 主服务
+  # ===========================================================================
+  dft-lammps:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: dft-lammps-framework:latest
+    container_name: dft-lammps-workspace
+    
+    # 资源限制
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    
+    # 挂载卷
+    volumes:
+      # 项目代码
+      - ../:/workspace/dft_lammps_research
+      # 数据目录
+      - dft-lammps-data:/workspace/data
+      # VASP二进制文件（用户需配置）
+      # - /path/to/your/vasp/bin:/opt/vasp/bin:ro
+      # VASP势函数文件
+      # - /path/to/your/potentials:/opt/vasp/potentials:ro
+      # 输出目录
+      - ./outputs:/workspace/outputs
+      # Jupyter配置
+      - jupyter-config:/home/researcher/.jupyter
+    
+    # 端口映射
+    ports:
+      # Jupyter Lab
+      - "8888:8888"
+      # Dash Dashboard
+      - "8050:8050"
+      # Bokeh Server
+      - "5006:5006"
+    
+    # 环境变量
+    environment:
+      - PYTHONPATH=/workspace/dft_lammps_research
+      - OMP_NUM_THREADS=4
+      - OPENBLAS_NUM_THREADS=4
+      - MKL_NUM_THREADS=4
+      - CUDA_VISIBLE_DEVICES=0
+      # Materials Project API Key（可选）
+      # - MP_API_KEY=your_api_key_here
+    
+    # 工作目录
+    working_dir: /workspace
+    
+    # 保持容器运行
+    stdin_open: true
+    tty: true
+    
+    # 命令
+    command: /bin/bash
+    
+    # 网络
+    networks:
+      - dft-lammps-net
+
+  # ===========================================================================
+  # Jupyter Lab服务（可选独立启动）
+  # ===========================================================================
+  jupyter:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: dft-lammps-framework:latest
+    container_name: dft-lammps-jupyter
+    
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    
+    volumes:
+      - ../:/workspace/dft_lammps_research
+      - dft-lammps-data:/workspace/data
+      - ./outputs:/workspace/outputs
+      - jupyter-config:/home/researcher/.jupyter
+    
+    ports:
+      - "8888:8888"
+    
+    environment:
+      - PYTHONPATH=/workspace/dft_lammps_research
+      - JUPYTER_ENABLE_LAB=yes
+    
+    command: >
+      bash -c "
+        jupyter lab 
+        --ip=0.0.0.0 
+        --port=8888 
+        --no-browser 
+        --allow-root
+        --NotebookApp.token=''
+        --NotebookApp.password=''
+        --notebook-dir=/workspace
+      "
+    
+    networks:
+      - dft-lammps-net
+
+  # ===========================================================================
+  # 监控Dashboard服务
+  # ===========================================================================
+  dashboard:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: dft-lammps-framework:latest
+    container_name: dft-lammps-dashboard
+    
+    volumes:
+      - ../:/workspace/dft_lammps_research
+      - ./outputs:/workspace/outputs:ro
+    
+    ports:
+      - "8050:8050"
+    
+    environment:
+      - PYTHONPATH=/workspace/dft_lammps_research
+    
+    working_dir: /workspace/dft_lammps_research
+    
+    command: >
+      bash -c "
+        python monitoring_dashboard.py 
+        --config dashboard_config.yaml 
+        --host 0.0.0.0 
+        --port 8050
+      "
+    
+    networks:
+      - dft-lammps-net
+
+  # ===========================================================================
+  # HPC作业调度器（用于测试Slurm集成）
+  # ===========================================================================
+  slurm-master:
+    image: giovtorres/slurm-docker-cluster:latest
+    container_name: slurm-master
+    hostname: slurmctl
+    
+    volumes:
+      - ../:/workspace/dft_lammps_research:ro
+      - slurm-data:/var/spool/slurm
+    
+    ports:
+      - "6817:6817"
+      - "6818:6818"
+      - "6819:6819"
+    
+    environment:
+      - SLURM_CPUS_ON_NODE=8
+      - SLURM_MEMORY=16384
+    
+    networks:
+      - dft-lammps-net
+
+# ===========================================================================
+# 数据卷
+# ===========================================================================
+volumes:
+  dft-lammps-data:
+    driver: local
+  jupyter-config:
+    driver: local
+  slurm-data:
+    driver: local
+
+# ===========================================================================
+# 网络
+# ===========================================================================
+networks:
+  dft-lammps-net:
+    driver: bridge

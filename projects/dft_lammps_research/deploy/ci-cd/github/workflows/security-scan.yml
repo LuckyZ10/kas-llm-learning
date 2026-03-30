@@ -1,0 +1,128 @@
+# =============================================================================
+# Security Scanning Workflow
+# =============================================================================
+
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    # Run weekly on Sundays
+    - cron: '0 0 * * 0'
+
+jobs:
+  # ==========================================================================
+  # Dependency Vulnerability Scan
+  # ==========================================================================
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install safety pip-audit
+
+      - name: Run Safety check
+        run: |
+          safety check --full-report --json || true
+
+      - name: Run pip-audit
+        run: |
+          pip-audit --format=json --output=pip-audit-results.json || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit
+          path: pip-audit-results.json
+
+  # ==========================================================================
+  # Code Security Scan (Bandit)
+  # ==========================================================================
+  code-security:
+    name: Code Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Bandit
+        run: |
+          pip install bandit bandit-sarif-formatter
+
+      - name: Run Bandit scan
+        run: |
+          bandit -r . -f sarif -o bandit-results.sarif || true
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: bandit-results.sarif
+
+      - name: Run Bandit summary
+        run: |
+          bandit -r . -ll || true
+
+  # ==========================================================================
+  # Secret Scanning
+  # ==========================================================================
+  secret-scan:
+    name: Secret Detection
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run GitLeaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+  # ==========================================================================
+  # CodeQL Analysis
+  # ==========================================================================
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: python
+          queries: security-extended,security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2

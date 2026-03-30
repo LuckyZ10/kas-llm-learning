@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "memory-pipeline": {
+      "name": "Memory Pipeline",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=memory-pipeline",
+      "source": "skillhub",
+      "version": "0.4.0"
+    },
+    "memory-maintenance": {
+      "name": "Memory Maintenance",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=memory-maintenance",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "evolver": {
+      "name": "Evolver",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=evolver",
+      "source": "skillhub",
+      "version": "1.31.0"
+    }
+  }
+}

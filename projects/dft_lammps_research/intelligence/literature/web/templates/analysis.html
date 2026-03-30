@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-chart-line me-2"></i>智能分析</h2>
+        <p class="text-muted">主题建模、趋势分析、知识图谱可视化</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- 分析选项卡 -->
+    <div class="col-12">
+        <ul class="nav nav-tabs" id="analysisTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="topics-tab" data-bs-toggle="tab" data-bs-target="#topics"
+                        type="button" role="tab"><i class="fas fa-tags me-1"></i>主题建模</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="trends-tab" data-bs-toggle="tab" data-bs-target="#trends"
+                        type="button" role="tab"><i class="fas fa-chart-area me-1"></i>趋势分析</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="knowledge-tab" data-bs-toggle="tab" data-bs-target="#knowledge"
+                        type="button" role="tab"><i class="fas fa-project-diagram me-1"></i>知识图谱</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="methods-tab" data-bs-toggle="tab" data-bs-target="#methods"
+                        type="button" role="tab"><i class="fas fa-cogs me-1"></i>方法分析</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="analysisTabContent">
+            <!-- 主题建模 -->
+            <div class="tab-pane fade show active" id="topics" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5>主题分布</h5>
+                            <button class="btn btn-primary btn-sm" onclick="analyzeTopics()">
+                                <i class="fas fa-play me-1"></i>运行分析
+                            </button>
+                        </div>
+                        <div id="topicsResult">
+                            <div class="text-center py-5 text-muted">
+                                <i class="fas fa-tags fa-3x mb-3"></i>
+                                <p>点击"运行分析"开始主题建模</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 趋势分析 -->
+            <div class="tab-pane fade" id="trends" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5>研究趋势</h5>
+                            <button class="btn btn-primary btn-sm" onclick="analyzeTrends()">
+                                <i class="fas fa-play me-1"></i>运行分析
+                            </button>
+                        </div>
+                        <div id="trendsResult">
+                            <div class="text-center py-5 text-muted">
+                                <i class="fas fa-chart-area fa-3x mb-3"></i>
+                                <p>点击"运行分析"开始趋势分析</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 知识图谱 -->
+            <div class="tab-pane fade" id="knowledge" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5>知识图谱</h5>
+                            <button class="btn btn-primary btn-sm" onclick="buildKnowledgeGraph()">
+                                <i class="fas fa-play me-1"></i>构建图谱
+                            </button>
+                        </div>
+                        <div id="knowledgeResult">
+                            <div class="text-center py-5 text-muted">
+                                <i class="fas fa-project-diagram fa-3x mb-3"></i>
+                                <p>点击"构建图谱"生成知识图谱</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 方法分析 -->
+            <div class="tab-pane fade" id="methods" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5>方法提取</h5>
+                            <button class="btn btn-primary btn-sm" onclick="extractMethods()">
+                                <i class="fas fa-play me-1"></i>提取方法
+                            </button>
+                        </div>
+                        <div id="methodsResult">
+                            <div class="text-center py-5 text-muted">
+                                <i class="fas fa-cogs fa-3x mb-3"></i>
+                                <p>点击"提取方法"识别论文中的方法</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay" style="display: none;">
+    <div class="text-center">
+        <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+        <p class="text-muted">正在分析...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 获取选中的论文ID
+function getSelectedPapers() {
+    const stored = sessionStorage.getItem('selectedPapers');
+    if (stored) {
+        return JSON.parse(stored);
+    }
+    return [];
+}
+
+// 检查是否有选中的论文
+document.addEventListener('DOMContentLoaded', function() {
+    const papers = getSelectedPapers();
+    if (papers.length === 0) {
+        // 如果没有选中论文，显示提示
+        document.querySelectorAll('.tab-pane .card-body').forEach(el => {
+            if (!el.innerHTML.includes('text-muted')) {
+                el.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        请先<a href="/search">搜索并选择论文</a>
+                    </div>
+                `;
+            }
+        });
+    }
+});
+
+async function analyzeTopics() {
+    const papers = getSelectedPapers();
+    if (papers.length === 0) {
+        alert('请先选择论文');
+        return;
+    }
+    
+    showLoading();
+    try {
+        const response = await fetch('/api/analyze/topics', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paper_ids: papers, n_topics: 10 })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displayTopics(data.topics, data.topic_distribution);
+        } else {
+            alert('分析失败: ' + data.error);
+        }
+    } catch (error) {
+        alert('请求失败: ' + error.message);
+    }
+    hideLoading();
+}
+
+function displayTopics(topics, distribution) {
+    let html = '<div class="row">';
+    
+    // 主题列表
+    html += '<div class="col-md-6"><h6>识别到的主题</h6><ul class="list-group">';
+    Object.entries(topics).forEach(([id, topic]) => {
+        html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+            ${topic}
+            <span class="badge bg-primary rounded-pill">${distribution[topic] || 0}</span>
+        </li>`;
+    });
+    html += '</ul></div>';
+    
+    // 分布图表
+    html += `
+        <div class="col-md-6">
+            <h6>主题分布</h6>
+            <canvas id="topicChart"></canvas>
+        </div>
+    `;
+    
+    html += '</div>';
+    document.getElementById('topicsResult').innerHTML = html;
+    
+    // 绘制简单条形图
+    drawBarChart('topicChart', distribution);
+}
+
+async function analyzeTrends() {
+    const papers = getSelectedPapers();
+    if (papers.length === 0) {
+        alert('请先选择论文');
+        return;
+    }
+    
+    showLoading();
+    try {
+        const response = await fetch('/api/analyze/trends', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paper_ids: papers })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displayTrends(data.trends, data.hot_topics);
+        } else {
+            alert('分析失败: ' + data.error);
+        }
+    } catch (error) {
+        alert('请求失败: ' + error.message);
+    }
+    hideLoading();
+}
+
+function displayTrends(trends, hotTopics) {
+    let html = '<div class="row">';
+    
+    // 热门主题
+    html += '<div class="col-md-4"><div class="card"><div class="card-header"><h6>热门主题</h6></div><div class="card-body"><ul class="list-group list-group-flush">';
+    hotTopics.forEach(([topic, score]) => {
+        html += `<li class="list-group-item d-flex justify-content-between">
+            <span>${topic}</span>
+            <span class="badge bg-success">${score.toFixed(1)}</span>
+        </li>`;
+    });
+    html += '</ul></div></div></div>';
+    
+    // 趋势数据
+    html += '<div class="col-md-8"><div class="card"><div class="card-header"><h6>年度趋势</h6></div><div class="card-body">';
+    html += '<div style="max-height: 400px; overflow-y: auto;"><table class="table table-sm">';
+    html += '<thead><tr><th>主题</th><th>年份</th><th>论文数</th><th>引用数</th><th>增长率</th></tr></thead><tbody>';
+    trends.forEach(t => {
+        html += `<tr>
+            <td>${t.topic}</td>
+            <td>${t.year}</td>
+            <td>${t.paper_count}</td>
+            <td>${t.citation_count}</td>
+            <td>${(t.growth_rate * 100).toFixed(1)}%</td>
+        </tr>`;
+    });
+    html += '</tbody></table></div>';
+    html += '</div></div></div>';
+    
+    html += '</div>';
+    document.getElementById('trendsResult').innerHTML = html;
+}
+
+async function buildKnowledgeGraph() {
+    const papers = getSelectedPapers();
+    if (papers.length === 0) {
+        alert('请先选择论文');
+        return;
+    }
+    
+    showLoading();
+    try {
+        const response = await fetch('/api/analyze/knowledge_graph', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paper_ids: papers, min_cooccurrence: 2 })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('knowledgeResult').innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    知识图谱已构建！包含 ${data.graph.nodes.length} 个节点和 ${data.graph.edges.length} 条边。
+                    <br><a href="/knowledge_graph" class="btn btn-sm btn-primary mt-2">查看完整图谱</a>
+                </div>
+            `;
+            // 保存图谱数据
+            sessionStorage.setItem('knowledgeGraph', JSON.stringify(data.d3_format));
+        } else {
+            alert('构建失败: ' + data.error);
+        }
+    } catch (error) {
+        alert('请求失败: ' + error.message);
+    }
+    hideLoading();
+}
+
+function showLoading() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoading() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+function drawBarChart(canvasId, data) {
+    // 简化的条形图绘制
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const values = Object.values(data);
+    const labels = Object.keys(data);
+    
+    canvas.width = 400;
+    canvas.height = 300;
+    
+    const max = Math.max(...values);
+    const barWidth = canvas.width / values.length * 0.6;
+    const spacing = canvas.width / values.length * 0.4;
+    
+    ctx.fillStyle = '#3498db';
+    values.forEach((val, i) => {
+        const height = (val / max) * (canvas.height - 40);
+        ctx.fillRect(i * (barWidth + spacing) + spacing/2, canvas.height - height - 20, barWidth, height);
+    });
+}
+
+function extractMethods() {
+    document.getElementById('methodsResult').innerHTML = `
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            方法提取功能正在开发中，请在综述生成页面查看方法分析结果。
+        </div>
+    `;
+}
+</script>
+{% endblock %}

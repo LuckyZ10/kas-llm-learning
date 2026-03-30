@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>半导体外延：异质结构的物理与制备（中文版）</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm 2cm 2.5cm 2cm;
+            @top-center {
+                content: "半导体外延：异质结构的物理与制备";
+                font-size: 9pt;
+                color: #666;
+            }
+            @bottom-center {
+                content: counter(page);
+                font-size: 10pt;
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "SimSun", serif;
+            font-size: 11pt;
+            line-height: 1.8;
+            color: #333;
+            text-align: justify;
+        }
+        
+        h1 {
+            font-size: 24pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 40pt 0 20pt 0;
+            color: #1a1a1a;
+            page-break-before: always;
+        }
+        
+        h1:first-of-type {
+            page-break-before: auto;
+        }
+        
+        h2 {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 25pt 0 15pt 0;
+            page-break-after: avoid;
+        }
+        
+        h3 {
+            font-size: 13pt;
+            font-weight: bold;
+            color: #34495e;
+            margin: 18pt 0 12pt 0;
+        }
+        
+        p {
+            margin: 10pt 0;
+            text-indent: 2em;
+        }
+        
+        .no-indent {
+            text-indent: 0;
+        }
+        
+        .center {
+            text-align: center;
+        }
+        
+        .author {
+            font-size: 14pt;
+            text-align: center;
+            margin: 20pt 0;
+            color: #555;
+        }
+        
+        .subtitle {
+            font-size: 16pt;
+            text-align: center;
+            margin: 15pt 0;
+            color: #444;
+        }
+        
+        .edition {
+            font-size: 12pt;
+            text-align: center;
+            margin: 10pt 0;
+            color: #666;
+        }
+        
+        .series {
+            font-size: 11pt;
+            text-align: center;
+            margin: 30pt 0 10pt 0;
+            color: #666;
+            border-top: 1pt solid #ccc;
+            padding-top: 15pt;
+        }
+        
+        .copyright {
+            font-size: 9pt;
+            color: #666;
+            margin: 20pt 0;
+            padding: 15pt;
+            background-color: #f9f9f9;
+            border-left: 3pt solid #ccc;
+        }
+        
+        .preface {
+            margin: 20pt 0;
+        }
+        
+        .signature {
+            text-align: right;
+            margin: 20pt 0;
+            font-style: italic;
+        }
+        
+        .pagenumber {
+            text-align: center;
+            color: #999;
+            font-size: 10pt;
+            margin: 15pt 0;
+        }
+        
+        /* 数学公式样式 */
+        .math {
+            font-family: "Times New Roman", "Latin Modern Math", serif;
+            font-style: italic;
+            background-color: #f8f8f8;
+            padding: 10pt;
+            margin: 10pt 0;
+            border-radius: 3pt;
+            overflow-x: auto;
+        }
+        
+        /* 代码样式 */
+        code {
+            font-family: "Fira Code", "Consolas", "Monaco", monospace;
+            font-size: 9.5pt;
+            background-color: #f4f4f4;
+            padding: 2pt 4pt;
+            border-radius: 2pt;
+        }
+        
+        pre {
+            font-family: "Fira Code", "Consolas", "Monaco", monospace;
+            font-size: 9pt;
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 12pt;
+            margin: 12pt 0;
+            border-radius: 4pt;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        /* 元数据保留 */
+        .metadata {
+            font-size: 9pt;
+            color: #666;
+            margin: 8pt 0;
+        }
+        
+        @media print {
+            body {
+                font-size: 10.5pt;
+            }
+            
+            h1 {
+                font-size: 22pt;
+            }
+            
+            h2 {
+                font-size: 15pt;
+            }
+            
+            pre {
+                white-space: pre-wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <p>外延 of 
+Semiconductors</p>
+    <p>Udo W. Pohl</p>
+    <p>物理学 and 制备 
+of 异质结构</p>
+    <p>第二版</p>
+    <p>物理学研究生教材</p>
+    <p>物理学研究生教材</p>
+    <p>丛书编辑</p>
+    <p>Kurt H. Becker, NYU Polytechnic School of Engineering, Brooklyn, NY, USA</p>
+    <p>Jean-Marc Di Meglio, Matière et Systèmes Complexes, Bâtiment Condorcet,
+Université Paris Diderot, Paris, France</p>
+    <p class="author">Sadri Hassani, Department of 物理学, Illinois State University, Normal, IL, USA</p>
+    <p class="author">Morten Hjorth-Jensen, Department of 物理学, Blindern, University of Oslo, Oslo,
+Norway</p>
+    <p>Bill Munro, NTT Basic Research Laboratories, Atsugi, Japan</p>
+    <p class="author">William T. Rhodes, Department of Computer and Electrical Engineering
+and Computer Science, Florida Atlantic University, Boca Raton, FL, USA</p>
+    <p class="author">Susan Scott, Australian National University, Acton, Australia</p>
+    <p class="author">H. Eugene Stanley, Center for Polymer Studies, 物理学 Department, Boston
+University, Boston, MA, USA</p>
+    <p class="author">Martin Stutzmann, Walter Schottky Institute, Technical University of Munich,
+Garching, Germany</p>
+    <p class="author">Andreas Wipf, Institute of Theoretical 物理学, Friedrich-Schiller-University Jena,
+Jena, Germany</p>
+    <p>物理学研究生教材 publishes core learning/teaching material for graduate- and
+advanced-level undergraduate courses on topics of current and emerging ﬁelds within
+物理学, both pure and applied. These textbooks serve students at the MS- or
+PhD-level and their instructors as comprehensive sources of principles, deﬁnitions,
+derivations, experiments and applications (as relevant) for their mastery and teaching,
+respectively. International in scope and relevance, the textbooks correspond to course
+syllabi sufﬁciently to serve as required reading. Their didactic style, comprehensive-
+ness and coverage offundamental material also make them suitable as introductions or
+references for scientists entering, or requiring timely knowledge of, a research ﬁeld.</p>
+    <div class="metadata">More information about this series at http://www.springer.com/series/8431</div>
+    <p>Udo W. Pohl</p>
+    <p>半导体外延</p>
+    <p>异质结构的物理与制备</p>
+    <p>第二版</p>
+    <div class="pagenumber">123</div>
+    <p class="author">Udo W. Pohl
+Institute of 固体物理学
+Technische Universität Berlin
+Berlin, Germany</p>
+    <p>ISSN 1868-4513
+ISSN 1868-4521
+(electronic)
+Graduate Texts in Physics
+ISBN 978-3-030-43868-5
+ISBN 978-3-030-43869-2
+(eBook)
+https://doi.org/10.1007/978-3-030-43869-2</p>
+    <p>1st edition: © Springer-Verlag Berlin Heidelberg 2013
+2nd edition: © Springer Nature Switzerland AG 2020
+This work is subject to copyright. All rights are reserved by the Publisher, whether the whole or part
+of the material is concerned, speciﬁcally the rights of translation, reprinting, reuse of illustrations,
+recitation, broadcasting, reproduction on microﬁlms or in any other physical way, and transmission
+or information storage and retrieval, electronic adaptation, computer software, or by similar or dissimilar
+methodology now known or hereafter developed.
+The use of general descriptive names, registered names, trademarks, service marks, etc. in this
+publication does not imply, even in the absence of a speciﬁc statement, that such names are exempt from
+the relevant protective laws and regulations and therefore free for general use.
+The publisher, the authors and the editors are safe to assume that the advice and information in this
+book are believed to be true and accurate at the date of publication. Neither the publisher nor the
+authors or the editors give a warranty, express or implied, with respect to the material contained herein or
+for any errors or omissions that may have been made. The publisher remains neutral with regard to
+jurisdictional claims in published maps and institutional afﬁliations.</p>
+    <p>This Springer imprint is published by the registered company Springer Nature Switzerland AG
+The registered company address is: Gewerbestrasse 11, 6330 Cham, Switzerland</p>
+    <h2>第二版前言</h2>
+    <p>The book 半导体外延 has been well received by students and the
+scientiﬁc community. The ﬁrst edition focused concisely on the very basics and
+omitted quite a number of important aspects. In the 第二版, I therefore
+added a few new chapters and also amended the initial text. The new parts comprise
+the emerging ﬁeld of 有机半导体 with their speciﬁc peculiarities and
+the important 原位分析 of 外延的 生长, which is today routinely imple-
+mented in commercial 生长 systems for online monitoring and control. A chapter
+on the application of 表面活性剂 is added, illustrating an additional means to control
+生长 and pointing out the effect of 动力学. One new chapter is dedicated to
+special techniques, which are applied by all major 外延 methods MOVPE（金属有机气相外延）, MBE（分子束外延）,
+and LPE（液相外延）. 选区生长 is widely employed in 纳米结构制备 and
+外延横向过生长 to create layers with areas of low defect density;
+迁移增强外延 is used to improve the performance of MBE（分子束外延）, and
+气-液-固生长 is a popular and versatile method for fabricating nano-
+wires with high quality.
+我要感谢 my colleagues for critically reading parts of the new
+manuscript: Armin Dadgar (Univ. Magdeburg), Mario Dähne (TU Berlin), Norbert
+Esser (ISAS Berlin), and Kolja Haberland (LayTec Berlin). 我感激 Nigel
+Mason (Oxford, UK) for stimulating the inclusion of in situ sensing, and I appre-
+ciate encouraging comments I received from Ganesh Balakrishnan (Univ.
+Albuquerque, NM).</p>
+    <p>Berlin
+September 2019
+Udo W. Pohl</p>
+    <div class="pagenumber">v</div>
+    <h2>第一版前言</h2>
+    <p class="author">外延—the 生长 of a 晶体层 on a 晶体衬底—represents the
+basis for the 制备 of 半导体 异质结构 and devices. Textbooks
+on 半导体物理 and devices usually describe the design of a
+异质结构 and subsequently measured data of a respective realization. The
+chain between these end points requires to solve many basic problems related to
+物理学 and technology. Such steps are generally described in specialized literature
+focusing on diverse aspects. Students and researchers starting in the ﬁeld need to
+study papers and books on quite speciﬁc problems in a wide ﬁeld. This textbook
+attempts to bridge the gap between well-established books on 半导体
+物理学 on one side and texts on completed 异质结构 like 半导体
+devices on the other.
+The book is based on a one-semester course held at Technical University of
+Berlin for undergraduate and graduate students in 物理学 and engineering 物理学.
+It is primarily addressed to the non-specialist with some basic knowledge in solid
+state and 半导体物理. The ﬁeld of 外延 is rapidly evolving and
+includes many materials and 生长 techniques. The text, therefore, focuses on
+basics and important aspects of 外延, emphasizing particularly the physical
+principles. Problems are illustrated for important semiconductors with 闪锌矿 or
+纤锌矿 structure.
+The subject matter ﬁrst covers the properties of 异质结构. Structural
+aspects implying 弹性 and 应变弛豫 by 位错 are addressed as
+well as electronic properties including 能带对齐 and 电子态 in
+低维结构. Then, the 热力学 and 动力学 of 外延的
+layer 生长 are considered, introducing the driving force of crystallization and
+paying special attention to 成核 and surface structures. Instructive examples
+are given for self-organized 生长 of 量子点 and wires. Afterward, aspects
+of 掺杂, 扩散, and 接触 are discussed. Eventually, the most important
+methods used for 外延的 生长 are introduced: metalorganic vapor-phase epi-
+taxy, 分子束外延, and 液相外延.</p>
+    <div class="pagenumber">vii</div>
+    <p>I am grateful to my students, who consistently engaged me in discussions about
+fundamentals of epitaxy and stimulated an active motivation to write this book.
+I am also indebted to A. Krost for critical manuscript reading, and I appreciated the
+cooperation with C. Ascheron, Springer Science+Business Media.</p>
+    <p>Berlin
+July 2012
+Udo W. Pohl</p>
+    <h2>viii
+第一版前言</h2>
+    <p>Contents</p>
+    <p>1
+Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+1
+1.1
+外延 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+1
+1.1.1
+Roots of 外延 . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+1
+1.1.2
+外延 and Bulk-Crystal 生长 . . . . . . . . . . . . . . . .
+4
+1.2
+Issues of 外延 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4
+1.2.1
+Convention on Use of the Term “Atom” . . . . . . . . . . .
+4
+1.2.2
+Assembly of Atoms . . . . . . . . . . . . . . . . . . . . . . . . . .
+5
+1.2.3
+Tasks for 外延的 生长 . . . . . . . . . . . . . . . . . . . . .
+6
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+10</p>
+    <p>2
+Structural Properties of 异质结构 . . . . . . . . . . . . . . . . . . . .
+13
+2.1
+Basic Crystal Structures . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+13
+2.1.1
+Notation of Planes and Directions . . . . . . . . . . . . . . . .
+13
+2.1.2
+Wafer Orientation . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+15
+2.1.3
+Face-Centered Cubic and Hexagonal Close-Packed
+Structures. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+16
+2.1.4
+闪锌矿 and Diamond Structures . . . . . . . . . . . . . .
+17
+2.1.5
+Rocksalt and Cesium-Chloride Structures . . . . . . . . . . .
+19
+2.1.6
+纤锌矿 Structure . . . . . . . . . . . . . . . . . . . . . . . . . . .
+19
+2.1.7
+Thermal Expansion. . . . . . . . . . . . . . . . . . . . . . . . . . .
+20
+2.1.8
+Structural Stability Map . . . . . . . . . . . . . . . . . . . . . . .
+22
+2.1.9
+Polytypism . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+23
+2.1.10
+Random Alloys and Vegard’s Rule . . . . . . . . . . . . . . .
+25
+2.1.11
+Virtual-Crystal Approximation . . . . . . . . . . . . . . . . . .
+29
+2.2
+Elastic Properties of 异质结构 . . . . . . . . . . . . . . . . . . . .
+30
+2.2.1
+Strain in One and Two Dimensions . . . . . . . . . . . . . . .
+30
+2.2.2
+Three-Dimensional Strain . . . . . . . . . . . . . . . . . . . . . .
+31
+2.2.3
+Hooke’s Law . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+32
+2.2.4
+Poisson’s Ratio . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+35
+2.2.5
+Pseudomorphic 异质结构 . . . . . . . . . . . . . . . . .
+36</p>
+    <div class="pagenumber">ix</div>
+    <p>2.2.6
+Critical Layer Thickness . . . . . . . . . . . . . . . . . . . . . . .
+40
+2.2.7
+Approaches to Extend the Critical Thickness . . . . . . . .
+44
+2.2.8
+Partially Relaxed Layers and Thermal Mismatch . . . . .
+47
+2.3
+位错 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+49
+2.3.1
+Edge and Screw 位错 . . . . . . . . . . . . . . . . . . .
+49
+2.3.2
+Motion of 位错 . . . . . . . . . . . . . . . . . . . . . . . .
+50
+2.3.3
+Dislocation Network . . . . . . . . . . . . . . . . . . . . . . . . . .
+52
+2.3.4
+位错 in the fcc Structure . . . . . . . . . . . . . . . . .
+54
+2.3.5
+位错 in Diamond and 闪锌矿 Structures . . .
+56
+2.3.6
+Dislocation Energy . . . . . . . . . . . . . . . . . . . . . . . . . . .
+57
+2.3.7
+位错 in the hcp and 纤锌矿 Structures . . . . . .
+61
+2.3.8
+Antiphase Domains . . . . . . . . . . . . . . . . . . . . . . . . . .
+64
+2.3.9
+Mosaic Crystal . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+65
+2.4
+Structural Characterization Using X-Ray Diffraction . . . . . . . . .
+67
+2.4.1
+Bragg’s Law . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+67
+2.4.2
+The Structure Factor . . . . . . . . . . . . . . . . . . . . . . . . . .
+68
+2.4.3
+The Reciprocal Lattice . . . . . . . . . . . . . . . . . . . . . . . .
+70
+2.4.4
+The Ewald Construction . . . . . . . . . . . . . . . . . . . . . . .
+72
+2.4.5
+High-Resolution Scans in the Reciprocal Space . . . . . .
+73
+2.4.6
+Reciprocal-Space Map . . . . . . . . . . . . . . . . . . . . . . . .
+76
+2.5
+Problems Chapter 2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+79
+2.6
+General Reading Chapter 2 . . . . . . . . . . . . . . . . . . . . . . . . . . .
+83
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+83</p>
+    <p>3
+Structure of Organic Crystals . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+87
+3.1
+Building Blocks in Organic Crystals . . . . . . . . . . . . . . . . . . . .
+87
+3.1.1
+Bonding in Organic Crystals . . . . . . . . . . . . . . . . . . . .
+88
+3.1.2
+Small-Molecule Crystals . . . . . . . . . . . . . . . . . . . . . . .
+90
+3.1.3
+Polymers . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+96
+3.2
+Substrate-Layer Relation and Defects of Organic Crystals . . . . .
+97
+3.2.1
+Substrate-Layer Relation of Organic Crystals . . . . . . . .
+97
+3.2.2
+Ordered Pentacene Layers . . . . . . . . . . . . . . . . . . . . . .
+100
+3.2.3
+Defects in Small-Molecule Crystals . . . . . . . . . . . . . . .
+103
+3.2.4
+Defects in Polymers . . . . . . . . . . . . . . . . . . . . . . . . . .
+107
+3.3
+Problems Chapter 3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+109
+3.4
+General Reading Chapter 3 . . . . . . . . . . . . . . . . . . . . . . . . . . .
+111
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+111</p>
+    <p>4
+Electronic Properties of 异质结构 . . . . . . . . . . . . . . . . . . . .
+115
+4.1
+Bulk Properties . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+115
+4.1.1
+Electronic Bands of 闪锌矿 and 纤锌矿
+Crystals . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+115
+4.1.2
+Strain Effects . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+117
+4.1.3
+Spontaneous Polarization and Piezoelectricity. . . . . . . .
+123</p>
+    <p>x
+Contents</p>
+    <p>4.1.4
+Temperature Dependence of the Bandgap . . . . . . . . . .
+128
+4.1.5
+Bandgap of Alloys . . . . . . . . . . . . . . . . . . . . . . . . . . .
+129
+4.2
+Band Offsets . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+133
+4.2.1
+Electron-Afﬁnity Rule . . . . . . . . . . . . . . . . . . . . . . . . .
+134
+4.2.2
+Common-Anion Rule . . . . . . . . . . . . . . . . . . . . . . . . .
+135
+4.2.3
+Model of Deep Impurity Levels . . . . . . . . . . . . . . . . .
+136
+4.2.4
+Interface-Dipol Theory . . . . . . . . . . . . . . . . . . . . . . . .
+137
+4.2.5
+Model-Solid Theory . . . . . . . . . . . . . . . . . . . . . . . . . .
+139
+4.2.6
+Offsets of Some Isovalent 异质结构 . . . . . . . . .
+139
+4.2.7
+Band Offset of Heterovalent Interfaces. . . . . . . . . . . . .
+140
+4.2.8
+Band Offsets of Alloys . . . . . . . . . . . . . . . . . . . . . . . .
+143
+4.3
+电子态 in 低维结构 . . . . . . . . . . .
+144
+4.3.1
+Dimensionality of the Electronic Density-of-States . . . .
+145
+4.3.2
+Characteristic Scale for Size Quantization . . . . . . . . . .
+149
+4.3.3
+Quantum Wells . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+151
+4.3.4
+量子线 . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+156
+4.3.5
+量子点 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+161
+4.4
+Problems Chapter 4 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+169
+4.5
+General Reading Chapter 4 . . . . . . . . . . . . . . . . . . . . . . . . . . .
+170
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+170</p>
+    <p>5
+Electronic Properties of 有机半导体 . . . . . . . . . . . . . .
+177
+5.1
+Band Structure of Organic Crystals . . . . . . . . . . . . . . . . . . . . .
+177
+5.1.1
+Highest Occupied and Lowest Unoccupied
+Molecular Orbitals . . . . . . . . . . . . . . . . . . . . . . . . . . .
+178
+5.1.2
+Bands and Bandgaps in Organic Crystals . . . . . . . . . . .
+180
+5.1.3
+Excitons in Organic Crystals . . . . . . . . . . . . . . . . . . . .
+185
+5.2
+Transport in 有机半导体 . . . . . . . . . . . . . . . . . . . .
+187
+5.2.1
+Polarons . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+188
+5.2.2
+Mobility of Carriers in 有机半导体 . . . . . .
+190
+5.3
+Interfaces in 有机半导体. . . . . . . . . . . . . . . . . . . .
+197
+5.3.1
+Organic-Organic Heterointerface . . . . . . . . . . . . . . . . .
+198
+5.3.2
+Organic-Metal Interface . . . . . . . . . . . . . . . . . . . . . . .
+200
+5.4
+Problems Chapter 5 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+201
+5.5
+General Reading Chapter 5 . . . . . . . . . . . . . . . . . . . . . . . . . . .
+203
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+203</p>
+    <p>6
+热力学 of 外延的 Layer-生长 . . . . . . . . . . . . . . . . .
+207
+6.1
+Phase Equilibria . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+207
+6.1.1
+Thermodynamic Equilibrium . . . . . . . . . . . . . . . . . . . .
+208
+6.1.2
+Gibbs Phase Rule . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+211
+6.1.3
+Gibbs Energy of a Single-Component System . . . . . . .
+212
+6.1.4
+Phases Boundaries in a Single-Component System . . . .
+216</p>
+    <p>Contents
+xi</p>
+    <p>6.1.5
+Driving Force for Crystallization . . . . . . . . . . . . . . . . .
+218
+6.1.6
+Two-Component System . . . . . . . . . . . . . . . . . . . . . . .
+221
+6.2
+晶体的 生长 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+227
+6.2.1
+Homogeneous Three-Dimensional 成核 . . . . . . .
+227
+6.2.2
+Heterogeneous Three-Dimensional 成核 . . . . . . .
+230
+6.2.3
+生长 Modes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+233
+6.2.4
+Equilibrium Surfaces . . . . . . . . . . . . . . . . . . . . . . . . .
+235
+6.2.5
+Two-Dimensional 成核 . . . . . . . . . . . . . . . . . . .
+241
+6.2.6
+Island 生长 and Coalescence . . . . . . . . . . . . . . . . . .
+244
+6.2.7
+生长 without 成核 . . . . . . . . . . . . . . . . . . . . .
+246
+6.2.8
+Ripening Process After 生长 Interruption . . . . . . . . .
+247
+6.3
+Problems Chapter 6 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+248
+6.4
+General Reading Chapter 6 . . . . . . . . . . . . . . . . . . . . . . . . . . .
+249
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+249</p>
+    <p>7
+Atomistic Aspects of 外延的 Layer-生长 . . . . . . . . . . . . . . . . .
+251
+7.1
+Surface Structure . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+251
+7.1.1
+The Kink Site of a Kossel Crystal . . . . . . . . . . . . . . . .
+252
+7.1.2
+Surfaces of a Kossel Crystal . . . . . . . . . . . . . . . . . . . .
+253
+7.1.3
+Relaxation and Reconstruction . . . . . . . . . . . . . . . . . .
+255
+7.1.4
+Electron-Counting Model . . . . . . . . . . . . . . . . . . . . . .
+256
+7.1.5
+Denotation of Surface Reconstructions. . . . . . . . . . . . .
+259
+7.1.6
+Reconstructions of the GaAs(001) Surface . . . . . . . . . .
+261
+7.1.7
+The Silicon (111)(7  7) Reconstruction . . . . . . . . . . .
+266
+7.2
+Kinetic Process Steps in Layer 生长 . . . . . . . . . . . . . . . . . .
+268
+7.2.1
+动力学 in the Terrace-Step-Kink Model . . . . . . . . . . .
+268
+7.2.2
+Atomistic Processes in 成核 and 生长 . . . . . .
+269
+7.2.3
+Adatoms on a Terraced Surface. . . . . . . . . . . . . . . . . .
+274
+7.2.4
+生长 by Step Advance . . . . . . . . . . . . . . . . . . . . . .
+276
+7.2.5
+The Ehrlich-Schwoebel Barrier . . . . . . . . . . . . . . . . . .
+280
+7.2.6
+Effect of the Ehrlich-Schwoebel Barrier on Surface
+Steps . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+282
+7.2.7
+Roughening of Surface Steps . . . . . . . . . . . . . . . . . . .
+284
+7.2.8
+生长 of a Si(111)(7  7) Surface . . . . . . . . . . . . . . .
+287
+7.2.9
+生长 of a GaAs(001) b2ð2  4Þ Surface . . . . . . . . .
+290
+7.3
+Self-organized Nanostructures . . . . . . . . . . . . . . . . . . . . . . . . .
+292
+7.3.1
+Stranski-Krastanow Island 生长. . . . . . . . . . . . . . . .
+293
+7.3.2
+热力学 Versus 动力学 in Island
+Formation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+299
+7.3.3
+Wire 生长 on Non-planar Surfaces . . . . . . . . . . . . .
+301
+7.4
+Problems Chapter 7 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+303
+7.5
+General Reading Chapter 7 . . . . . . . . . . . . . . . . . . . . . . . . . . .
+305
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+305</p>
+    <p>xii
+Contents</p>
+    <p>8
+In Situ 生长 Analysis . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+311
+8.1
+Surface and Ambient Probing . . . . . . . . . . . . . . . . . . . . . . . . .
+311
+8.2
+In Situ Ambient Analysis . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+314
+8.2.1
+Quadrupole Mass Spectrometry . . . . . . . . . . . . . . . . . .
+314
+8.2.2
+Optical Ambient Probing . . . . . . . . . . . . . . . . . . . . . .
+317
+8.3
+Surface-Sensitive Diffraction Techniques . . . . . . . . . . . . . . . . .
+320
+8.3.1
+Reﬂection High-Energy Electron Diffraction
+(RHEED) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+320
+8.3.2
+Grazing Incidence X-Ray Diffraction (GIXD)
+and Reﬂection . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+323
+8.4
+Optical in Situ Surface Probes . . . . . . . . . . . . . . . . . . . . . . . . .
+324
+8.4.1
+Pyrometry . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+325
+8.4.2
+Deﬂectometry. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+326
+8.4.3
+Reﬂectance and Ellipsometry . . . . . . . . . . . . . . . . . . .
+329
+8.4.4
+Reﬂectance-Difference Spectroscopy . . . . . . . . . . . . . .
+335
+8.5
+Problems Chapter 8 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+338
+8.6
+General Reading Chapter 8 . . . . . . . . . . . . . . . . . . . . . . . . . . .
+340
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+340</p>
+    <p>9
+Application of 表面活性剂. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+345
+9.1
+The Surfactant Effect . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+345
+9.1.1
+Concept of Surfactant-Mediated 生长 . . . . . . . . . . .
+345
+9.1.2
+Evidence for the Surfactant Effect . . . . . . . . . . . . . . . .
+347
+9.1.3
+Surfactant-Mediated Ge/Si 外延 . . . . . . . . . . . . . . .
+349
+9.1.4
+Surfactant-Mediated 外延 of III–V
+Semiconductors . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+353
+9.2
+Models of Surfactant-Assisted 外延 . . . . . . . . . . . . . . . . . . .
+356
+9.2.1
+Thermodynamic Considerations . . . . . . . . . . . . . . . . . .
+356
+9.2.2
+Kinetic Approach . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+358
+9.2.3
+The 扩散—De-exchange—Passivation (DDP)
+Model . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+361
+9.2.4
+Exchange Pathways in Surfactant-Mediated 外延 . . .
+364
+9.3
+Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+367
+9.4
+Problems Chapter 9 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+367
+9.5
+General Reading Chapter 9 . . . . . . . . . . . . . . . . . . . . . . . . . . .
+369
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+369</p>
+    <p>10
+掺杂, 扩散, and 接触 . . . . . . . . . . . . . . . . . . . . . . . . . . .
+373
+10.1
+掺杂 of Semiconductors . . . . . . . . . . . . . . . . . . . . . . . . . . .
+374
+10.1.1
+Thermal Equilibrium Carrier-Densities . . . . . . . . . . . . .
+375
+10.1.2
+Solubility of Dopants . . . . . . . . . . . . . . . . . . . . . . . . .
+380
+10.1.3
+Amphoteric Dopants . . . . . . . . . . . . . . . . . . . . . . . . . .
+384
+10.1.4
+Compensation by Native Defects . . . . . . . . . . . . . . . . .
+385
+10.1.5
+Hydrogen Compensation and Passivation . . . . . . . . . . .
+388</p>
+    <p>Contents
+xiii</p>
+    <p>10.1.6
+DX Centers . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+389
+10.1.7
+Fermi-Level Stabilization Model . . . . . . . . . . . . . . . . .
+391
+10.1.8
+Delta 掺杂 and Modulation 掺杂 . . . . . . . . . . . . .
+393
+10.2
+扩散 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+398
+10.2.1
+扩散 Equations . . . . . . . . . . . . . . . . . . . . . . . . . .
+398
+10.2.2
+扩散 Mechanisms . . . . . . . . . . . . . . . . . . . . . . . .
+402
+10.2.3
+Effective 扩散 Coefﬁcients . . . . . . . . . . . . . . . . . .
+404
+10.2.4
+Disordering of Heterointerfaces . . . . . . . . . . . . . . . . . .
+407
+10.3
+Metal-半导体 Contact . . . . . . . . . . . . . . . . . . . . . . . . .
+411
+10.3.1
+Ideal Schottky Contact . . . . . . . . . . . . . . . . . . . . . . . .
+411
+10.3.2
+Real Metal-半导体 Contact . . . . . . . . . . . . . . .
+415
+10.3.3
+Practical Ohmic Metal-半导体 Contact . . . . . . .
+418
+10.3.4
+外延的 Contact Structures . . . . . . . . . . . . . . . . . . . .
+420
+10.4
+Problems Chapter 10 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+422
+10.5
+General Reading Chapter 10 . . . . . . . . . . . . . . . . . . . . . . . . . .
+423
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+424</p>
+    <p>11
+Methods of 外延 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+427
+11.1
+液相外延 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+428
+11.1.1
+生长 Systems . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+429
+11.1.2
+Congruent Melting . . . . . . . . . . . . . . . . . . . . . . . . . . .
+432
+11.1.3
+LPE（液相外延） Principle . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+433
+11.1.4
+LPE（液相外延） Processes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+436
+11.2
+金属有机气相外延 . . . . . . . . . . . . . . . . . . . . .
+439
+11.2.1
+Metalorganic Precursors . . . . . . . . . . . . . . . . . . . . . . .
+440
+11.2.2
+The 生长 Process . . . . . . . . . . . . . . . . . . . . . . . . . .
+442
+11.2.3
+Mass Transport . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+447
+11.3
+Molecular Beam 外延 . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+453
+11.3.1
+MBE（分子束外延） System and Vacuum Requirements . . . . . . . . . . .
+453
+11.3.2
+Beam Sources . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+456
+11.3.3
+Uniformity of Deposition . . . . . . . . . . . . . . . . . . . . . .
+461
+11.3.4
+Adsorption of Impinging Particles . . . . . . . . . . . . . . . .
+463
+11.4
+Problems Chapter 11 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+464
+11.5
+General Reading Chapter 11 . . . . . . . . . . . . . . . . . . . . . . . . . .
+465
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+466</p>
+    <p>12
+Special 生长 Techniques . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+469
+12.1
+选区生长 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+470
+12.1.1
+Principle of 选区生长 . . . . . . . . . . . . . . .
+470
+12.1.2
+Conditions for Selectivity . . . . . . . . . . . . . . . . . . . . . .
+471
+12.1.3
+选区生长 of Faceted Structures . . . . . . . .
+476
+12.1.4
+外延横向过生长 (ELO) . . . . . . . . . . . . . .
+480</p>
+    <p>xiv
+Contents</p>
+    <p>12.2
+Vapor–Liquid–Solid 生长 of 纳米线 . . . . . . . . . . . . . . . .
+485
+12.2.1
+Outline of the VLS Method . . . . . . . . . . . . . . . . . . . .
+486
+12.2.2
+生长 of Si 纳米线 . . . . . . . . . . . . . . . . . . . . . . .
+488
+12.2.3
+生长 of III–V 纳米线 . . . . . . . . . . . . . . . . . . . .
+491
+12.3
+Atomic Layer 外延 and Related Techniques . . . . . . . . . . . . .
+499
+12.3.1
+Atomic Layer 外延 (ALE) . . . . . . . . . . . . . . . . . . .
+501
+12.3.2
+迁移增强外延 (MEE) . . . . . . . . . . . . . .
+501
+12.3.3
+Atomic Layer Deposition (ALD) . . . . . . . . . . . . . . . . .
+502
+12.4
+Deposition of Organic Crystals . . . . . . . . . . . . . . . . . . . . . . . .
+505
+12.4.1
+Methods of Organic Layer Deposition . . . . . . . . . . . . .
+506
+12.4.2
+外延 of 有机半导体 . . . . . . . . . . . . . . .
+509
+12.5
+General Reading Chapter 12 . . . . . . . . . . . . . . . . . . . . . . . . . .
+513
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+514</p>
+    <p>Appendix . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+521</p>
+    <p>Index . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+527</p>
+    <p>Fundamental Physical Constants . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+535</p>
+    <p>Contents
+xv</p>
+    <p>About the Author</p>
+    <p class="author">Dr. rer. nat. Udo W. Pohl, professor of experimental
+物理学,
+studied
+物理学
+in
+Aachen
+and
+Berlin,
+Germany, and received his Ph.D. degree in 1988 from
+the Technical University of Berlin, where he is cur-
+rently principal investigator in the Institute of Solid
+State 物理学. He is a member of the German Physical
+Society, participated in international conference com-
+mittees, and has given keynote addresses at interna-
+tional conferences. Since the early 1990s he has given
+lectures on 半导体物理 and 外延. In
+2009, he was appointed Adjunct Professor of 物理学 at
+Technical University of Berlin. He is series editor of
+Materials Sciences, has authored over 200 journal
+articles and conference papers, the books 外延 of
+Semiconductors and—together with Prof. Dr. Karl W.
+Böer—半导体物理, thirteen book contribu-
+tions, and patents. His current research interests include
+物理学 and 外延 of 半导体 nanostructures
+and devices.</p>
+    <div class="pagenumber">xvii</div>
+    <p>Abbreviations</p>
+    <p class="author">0D
+zero-dimensional
+1D
+one-dimensional
+2D
+two-dimensional
+3D
+three-dimensional
+ACS
+American Chemical Society
+AIP
+American Institute of 物理学
+APS
+American Physical Society
+AVS
+American Vacuum Society—The Science &amp; Technology Society
+bcc
+body-centered cubic
+BEP
+beam equivalent pressure
+CB
+conduction band
+CBE
+chemical beam 外延
+CVD
+chemical vapor deposition
+DAS
+dimer adatom stacking-fault (model)
+DBR
+distributed Bragg reﬂector
+DOS
+density of states
+ELO
+外延横向过生长 (also: ELOG)
+EMA
+effective mass approximation
+EXAFS
+extended X-ray absorption ﬁne-structure
+fcc
+face-centered cubic
+FET
+ﬁeld-effect transistor
+FWHM
+full width at half maximum
+GSMBE
+gas-source molecular beam 外延
+hcp
+hexagonally closed packed
+hh
+heavy hole
+HRTEM
+high-resolution transmission electron microscopy
+HRXRD
+high-resolution X-ray diffraction
+HUC
+half unit cell
+LEED
+low-energy electron diffraction
+LED
+light-emitting diode</p>
+    <div class="pagenumber">xix</div>
+    <p>lh
+light hole
+LPE（液相外延）
+liquid phase 外延
+MBE（分子束外延）
+molecular beam 外延
+ML
+monolayer
+MOCVD
+metal-organic chemical vapor deposition
+MOMBE
+metal-organic molecular beam 外延
+MOVPE（金属有机气相外延）
+metal-organic vapor-phase 外延
+MRS
+Materials Research Society
+MWQ
+multiple quantum well
+PL
+photoluminescence
+PLE
+photoluminescence excitation (spectroscopy)
+PVD
+physical vapor deposition
+QD
+quantum dot
+QW
+quantum well
+QWR
+quantum wire
+RHEED
+reﬂection high-energy electron diffraction
+rms
+root mean square
+RSC
+Royal Society of Chemistry
+SEM
+scanning electron microscopy
+si
+semi-insulating
+SIMS
+secondary ion mass spectrometry
+SL
+superlattice
+slm
+standard liters per minute
+so
+spin-orbit, also split-off
+STM
+scanning tunneling microscopy
+TEC
+thermal expansion coefﬁcient
+TEM
+transmission electron microscopy
+TLK
+terrace-ledge-kink (model)
+TSK
+terrace-step-kink (model)
+UHV
+ultra-high vacuum
+VB
+valence band
+VCA
+virtual crystal approximation
+VCSEL
+vertical-cavity surface-emitting laser
+ViGS
+virtual gap states
+VPE
+vapor phase 外延
+Wiley
+John Wiley and Sons
+XPS
+X-ray photoelectron spectroscopy
+XRD
+X-ray diffraction
+XSTM
+cross-sectional scanning tunneling microscopy
+ZB
+闪锌矿</p>
+    <p>xx
+Abbreviations</p>
+    <h2>Chapter 1
+Introduction</h2>
+    <p>Abstract This introductory chapter provides a brief survey on the development of
+外延的 生长 techniques and points out tasks for the 外延 of device structures.
+Starting from early studies of alkali-halide overgrowth in the beginning of the 20th
+century, basic concepts for lattice match between layer and substrate were developed
+in the late 1920s, followed by the theory of misﬁt 位错 introduced about 1950.
+Major progress in 外延 was achieved by technical improvements of the 生长
+techniques, namely liquid phase 外延 in the early, and molecular beam 外延
+and metalorganic vapor phase 外延 in the late 1960s. Current tasks for 外延的
+生长 are often motivated by needs for the 制备 of advanced devices, aiming
+to control carriers and photons.</p>
+    <p>Most 半导体 devices fabricated today are made out of a thin stack of layers
+with a typical total thickness of only some µm. Layers in such a stack differ in material
+composition and may be as thin as a single atomic layer. All layers are to be grown
+with high perfection and composition control on a bulk crystal used as a substrate.
+The 生长 technique employed for coping with this task is termed 外延. In the
+following we brieﬂy consider the historical development and illustrate typical issues
+accomplished using 外延.</p>
+    <p>1.1
+外延</p>
+    <p>1.1.1
+Roots of 外延</p>
+    <p>晶体的 solids found in nature show regularly shaped as-grown faces. The faces of
+a zinc selenide crystal grown from the vapor phase in the lab are shown in Fig.1.1a.
+Mineralogists found that the angles between corresponding faces are always the
+same for different samples of the same type of crystal. They concluded already in the
+18th century that such regular shapes originate from a regular assembly of identical
+building blocks forming the crystal as indicated in Fig.1.1b. In the early 19th century
+mineralogists noticed that naturally occurring crystals sometimes grew together with</p>
+    <p>© Springer Nature Switzerland AG 2020
+U. W. Pohl, Epitaxy of Semiconductors, Graduate Texts in Physics,
+https://doi.org/10.1007/978-3-030-43869-2_1</p>
+    <div class="pagenumber">1</div>
+    <h2>2
+1
+Introduction</h2>
+    <p>(b)
+(a)</p>
+    <p>(111)</p>
+    <p>(111)
+(100)
+(001)</p>
+    <p>Fig. 1.1 a ZnSe bulk crystal with {100} and {111} 生长 faces. b Faces formed from regularly
+repeating building blocks described around 1800 [3]. The complete shape of the displayed rhomb-
+dodecahedron is indicated by red lines</p>
+    <p>a unique relationship of their orientations [1]. A ﬁrst successful artiﬁcial reproduction
+of this effect in a laboratory was reported by Moritz L. Frankenheim in 1836 [2]. He
+demonstrated a parallel oriented 生长 of sodium nitrate NaNO3 from solution on
+a freshly cleaved calcite crystal CaCO3.
+First systematic studies on the crystal 生长 on top of another 晶体的 material
+were reported by Thomas V. Barker starting 1906 [4]. At that time 生长 from solu-
+tion and optical microscopy were the only readily developed techniques for 生长
+and characterization of samples, respectively. Baker investigated a large number of
+NaCl-type alkali halides like chlorides, bromides, iodides, and cyanides of, e.g.,
+rubidium and cesium. He placed a drop of saturated solution of one halide onto
+a freshly cleaved surface of another halide and observed the 成核 of a crys-
+talline structure under a microscope. Crystals of the solute appeared as a rule in a
+few seconds, but sometimes 成核 was too rapid to be observed or difﬁculties
+arose due to a greater solubility for the crystal than for the dilute dropped on top.
+He concluded that 晶体的 生长 of alkali halides was more likely to occur if
+the molecular volumes of the two inter-growing materials were nearly equal. We
+note that such conditions often imply a similar size of the building blocks mentioned
+above and consequently a small misﬁt of the lattice constants of the two materi-
+als.
+The discovery of X-ray diffraction (1912) and electron diffraction (1927) by crys-
+tals had a strong impact on the knowledge about crystal structure. When Louis Royer
+made his seminal comprehensive studies with a wide variety of layers and substrate
+materials in 1928, he could precisely report on the effect of substrate crystal struc-
+ture on the 晶体的 orientation of the layer [5]. Royer introduced the term epi-</p>
+    <p>1.1 外延
+3</p>
+    <p>taxy from the Greek epi (epi, upon, attached to)—taxis (taxis, arrangement, order)
+and concluded general rules for 外延. He noted that oriented 生长 occurs only
+when it involves the parallelism of two lattice planes which have lattice networks
+of identical or quasi-identical form and closely similar spacing. More precisely, he
+found that the differences between the lattice-network spacing (lattice parameters)
+for 生长 of alkali halides upon other alkali halides or mica (minerals of the form
+XY2-3Z4O10(OH, F)2) should be no more than 15%. Such geometrical considera-
+tions are still prominent today, though it was established later that 外延 may also
+occur for much larger misﬁts.
+In the 1930s, G. I. Finch and A. G. Quarrell concluded from a study of zinc oxide
+on sputtered zinc that the initial layer is strained in order to attain lattice matching
+parallel to the interface [6]. The layer lattice-parameter vertical to the interface was
+also considered to be changed to maintain approximately the bulk density. They
+named this phenomenon pseudomorphism. Though later the experimental evidence
+was pointed out to be by no means conclusive [1], the concept of pseudomorphic
+layers proved to be of basic importance for 外延的 structures.
+The introduction of the theory of misﬁt 位错 at the interface between the
+substrate and the layer by F. C. Frank and Jan H. van der Merve in 1949 [7–9]
+extended the pseudomorphism approach and predicted a limit for the misﬁt of pseu-
+domorphic 生长. The incorporation of edge 位错 allows to accommodate
+misﬁt strain and consequently makes 外延 possible also for structures with larger
+misﬁt. Conclusive experimental evidence for this was provided by John W. Matthews
+and co-workers in the 1960s [10, 11]. Thin metal layers on single-crystal metals with
+low misﬁt proved to grow pseudomorphic, while misﬁt 位错 were generated in
+thicker layers with a density depending on layer thickness. Later also conditions not
+included in the mentioned concepts like, e.g., interface alloying or surface energies
+were found to signiﬁcantly affect 外延的 生长.
+The emerging 半导体 industry in the early 1960s had a strong impact on
+the interest in 外延. In addition, advancements in the technique of producing high
+vacuum and pure materials, and progress in experimental techniques like electron
+microscopy and X-ray diffraction allowed to efﬁciently develop methods for epi-
+taxial 生长. 液相外延 enabled 外延的 生长 of multilayered device
+structures of high complexity like separate-conﬁnement 半导体 lasers. The
+advancement of this technology was facilitated by its similarity to the well-studied
+生长 of bulk single-crystals from seeded solution. In the 70s the more sophisti-
+cated methods of 分子束外延 [12] and 金属有机气相外延
+emerged. These techniques opened up 外延 far from thermodynamic equilibrium
+and hence 制备 of structures with atomically sharp interfaces, which cannot
+be produced near equilibrium. Understanding and control of the 外延的 生长
+techniques was signiﬁcantly advanced by the application of in-situ studies of the
+成核 and 生长 process, and by the development of computational techniques.
+In the late 80s the modern techniques attained a maturity to get in the lead of device
+mass-production. Today a large variety of electronic, optoelectronic, magnetic, and
+superconducting layer structures are fabricated using 外延的 techniques, including
+structures of reduced dimensionality on a nanometer scale.</p>
+    <h2>4
+1
+Introduction</h2>
+    <p>1.1.2
+外延 and Bulk-Crystal 生长</p>
+    <div class="math">Crystal growth in an epitaxial process proceeds basically in the same way as con-
+ventional growth of bulk crystals. In epitaxy, however, layer and substrate differ in
+the nature and strength of the chemical bond. Moreover, both materials may have a
+different crystal structure and generally have an unequal lattice parameter—at least
+if the temperature is varied. We may therefore say that crystals differ energetically
+and geometrically in epitaxy [13]. Crystalline deposition of different materials on
+each other is also termed heteroepitaxy.
+Such a deﬁnition does obviously not apply for the epitaxial deposition on a sub-
+strate of the same material. The process is usually referred to as homoepitaxy (some-
+times also autoepitaxy). Let us consider a simple example to illustrate that there may
+still be a difference to conventional crystal growth. Epitaxy of electronic devices
+is usually performed on doped substrates and often starts by depositing a layer of
+the same material termed homoepitaxial buffer layer. Doping often alters the lat-
+tice parameter without signiﬁcantly changing the chemical bond in bulk material.
+A p-type doping of, e.g., silicon with boron to a level of 2 × 1019 cm−3 induces a
+change of the lattice parameter by −1%. An undoped layer on a doped substrate of
+the same material will hence not differ energetically but geometrically. This provides
+a clear distinction of homoepitaxy from conventional crystal growth. According to
+this differentiation deposition of a layer of the same kind and doping like the sub-
+strate underneath should be termed crystal growth instead of epitaxy. Following the
+general usage we will, however, use the term homoepitaxy less strictly. Deposition
+of a layer of the same material as the substrate is usually just one of many layers
+to follow in the growth process of a device structure. Furthermore, fabrication of
+bulk crystals is usually performed applying a different growth regime than in epi-
+taxy, allowing for much higher growth rates. Accordingly also different experimental
+setups are employed. The term homoepitaxy will be used here for deposition of the
+same material as the substrate, just to distinguish from heteroepitaxy.</div>
+    <p>1.2
+Issues of 外延</p>
+    <p>1.2.1
+Convention on Use of the Term “Atom”</p>
+    <p>Solids are composed of atoms, which may be charged due to the character of the
+chemical bond. When used in a general way in this book, the word “atom” denotes
+both, an atom or an ion. Uncharged atoms are hence for simplicity usually not dis-
+tinguished from charged atom cores in, e.g., ionic crystals or metals unless explicitly
+pointed out.</p>
+    <p>1.2 Issues of 外延
+5</p>
+    <p>Fig. 1.2 Gradual circular arrangement of 48 iron adatoms on a copper surface assembled using
+a low-temperature scanning tunnelling microscope. Interference ripples originate from electron
+surface states. From [15]</p>
+    <p>1.2.2
+Assembly of Atoms</p>
+    <div class="math">Epitaxy denotes the regular assembly of atoms on a crystalline substrate. By inventing
+the scanning tunneling microscope (STM) a particular means has been developed to
+control the assembly of single atoms for forming an ordered structure. The method
+uses the ﬁnite force an STM tip always exerts on an adsorbed atom (adatom) attached
+to the surface of a solid [14]. The magnitude of the force can be tuned by adjusting
+the voltage and the position of the tip. Since generally less force is required to move
+an atom across a surface than to pull it away the tip parameters can be set to allow for
+positioning an individual adatom while it remains bound to the surface. The example
+given in Fig.1.2 shows iron atoms on a (111) copper surface. The initially disordered
+Fe atoms were carefully positioned at chosen locations. May such procedure also
+be applied to deposit an epitaxial layer onto a substrate? Imagine a skillful operator
+placing one atom per second exactly on the correct site of a layer. For typically about
+1015 sites per cm2 such procedure requires 31 Mio.years for a single atomic layer
+being deposited on one cm2. The fabrication of epitaxial structures hence requires
+other methods.
+The problem of growing a layer by the assembly of single atoms is comparable to
+the issue of describing the behavior of a gas by formulating the equation of motion
+for each atom. This cannot be accomplished for exceedingly large ensembles like
+a considerable fraction of 6 × 1023 atoms present in one mole. The approach of
+kinetic theory of gases hence solely describes averages of certain quantities of the
+vast number of atoms in the ensemble, concluded from the behavior of one single
+atom. These averages correspond to macroscopic variables. We will basically follow
+a comparable approach. In epitaxial growth we seek to establish favorable conditions
+for atoms of a nutrient phase to ﬁnding proper lattice sites in the solid phase. The
+macroscopic control parameters are governed by both thermodynamics and kinetics,
+and their effect depends on the materials and the applied growth method.</div>
+    <h2>6
+1
+Introduction</h2>
+    <p>1.2.3
+Tasks for 外延的 生长</p>
+    <div class="math">Semiconductor devices control the ﬂow and conﬁnement of charge carriers and pho-
+tons. To fulﬁll its task a device is composed of crystalline layers and corresponding
+interfaces with different physical properties. Epitaxy is employed to assemble such
+layer structure. The precise control of the growth process in epitaxy requires the
+accomplishment of issues with quite different nature. We consider the example of a
+semiconductor device-structure to illustrate a number of tasks addressed during fabri-
+cation and indicate the connection to respective chapters of this book. The addressed
+concepts basically apply also for insulators and metals. In this book we focus on
+semiconductor materials.
+The demand for increasing data-rate capacity in data-communication networks
+raised the need for suitable optical interconnects, particularly for light sources.
+Vertical-cavity surface-emitting lasers (VCSELs) have characteristics meeting ambi-
+tious requirements of ﬁber communication and meanwhile emerged from the labora-
+tory to the marketplace. VCSEL devices are also widely used in computer mice due
+to a good shape of their optical radiation ﬁeld. A VCSEL is a semiconductor laser,
+which emits the radiation vertically via its surface—in contrast to the more common
+edge-emitting lasers. Like any laser it consists of an active zone where the light is
+generated, overlapping with a region where the optical wave is guided. Light is gen-
+erated by recombination of electrons and holes which are conﬁned in quantum wells
+(MQW, multiple quantum well). The generated photons contribute to the light wave
+which travels back and forth in an optical Fabry-Pérot resonator built by two mirrors,
+and a small fraction representing the laser radiation is allowed to emerge from the top
+mirror. Since the resonator in a VCSEL is very short, the reﬂectivity of the mirrors
+must be very high (R &gt; 99%) to maintain lasing oscillation. They hence are made
+from distributed Bragg reﬂectors (DBR) of many pairwise 1</div>
+    <div class="math">4λ/n thick layers with a
+difference in the respective refractive index n, λ being the operation wavelength. If
+the index step n is low many pairs are required (a few tens). The basic design of a
+VCSEL is given in Fig.1.3.
+The realization of a semiconductor device is a complex process. The basic design
+layout is determined by a number of operation parameters like, e.g., the emission
+wavelength for an optoelectronic device. Already at this stage materials aspects play
+an important role. Obviously a wide-bandgap semiconductor material, e.g., must be
+used in the active region if the device is to radiate at high photon energy. The design
+stage comprises simulation work on electrical, optical, and other properties of the
+device depending on the employed materials and the speciﬁc purpose of the device.
+The design eventually yields a list of materials composition, thickness, and doping
+for each individual layer in the entire layer stack to be epitaxially grown.
+The crystalline epitaxial growth on a single-crystalline substrate requires a well-
+deﬁned relationship of the substrate structure with respect to that of the layers grown
+on top. For this purpose the spacing of the atoms parallel to the interface between
+substrate and the layers of the device structure on top has to accommodate. Since
+the lateral lattice constants never match perfectly and the total layer thickness of the</div>
+    <p>1.2 Issues of 外延
+7</p>
+    <p>Fig. 1.3 Schematic of a
+vertical-cavity
+surface-emitting laser
+indicating the sequence of
+differently alloyed and doped
+半导体 layers</p>
+    <p>p-DBR mirror</p>
+    <p>n-DBR mirror</p>
+    <p>p-contact</p>
+    <p>n-contact</p>
+    <p>n-substrate</p>
+    <p>n-buffer layer</p>
+    <p>MQW
+cavity</p>
+    <p>light output</p>
+    <p>device structure is generally much below the substrate thickness, 外延的 layers are
+elastically strained. Chapter 2 introduces into the structural and elastic properties of
+外延的 layers and points out a critical limit for such strain. As a consequence of
+overcritical stress, plastic relaxation occurs by the introduction of misﬁt 位错.
+Prominent species of such 位错 for the important crystal structures 闪锌矿
+and 纤锌矿 are treated. Prior to the 生长 of the device layers usually a buffer
+layer is grown on the substrate. This layer is introduced to keep defects located at the
+interface to the substrate and 位错 originating from large misﬁts away from
+the device layers. A further challenge occurs from a large change of composition
+within a layer sequence. The device depicted in Fig.1.3 comprises Bragg mirrors,
+which require a large step of the refractive index between consecutive quarter-lambda
+thick layers. A large index step of the layer pairs in the mirror stack is connected
+not only to a large difference of the fundamental bandgap of the layers, but usually
+also to a large difference of lattice constants. To keep the strain below the critical
+limit, layers with a composition mix of materials are used to maintain the lattice
+constant while changing the refractive index. The change of lattice constant in mixed
+layers and means to compensate the total strain in a layer stack are also considered
+in Chap.2.
+有机半导体 are increasingly applied in (opto-) electronic devices.
+Their structure differs substantially from that of their inorganic counterparts and
+is discussed in Chap.3. 有机半导体 comprise small-molecule crystals
+and polymers; they both feature weak intermolecular forces, yielding usually highly
+defective crystals with a close molecule packing. The structure of a thin small-
+molecule ﬁlm often deviates from the bulk structure and depends on the ﬁlm thickness
+and on the interaction to the substrate. The exact register of substrate and layer lattices
+commonly observed for inorganic 异质结构 is usually not found for organic
+layers. The new 外延的 coincidence modes occuring in such structures and their
+relation to intra- and intermolecular 弹性 are outlined in Chap.3. Various kinds</p>
+    <h2>8
+1
+Introduction</h2>
+    <p>of defects are described, including the prevailing vacancies and grain boundaries
+between single-crystal domains.
+Strain and interfaces between layers with different bandgap affect the electronic
+properties of the layer structure. In Chap.4 the effect of strain on valence and
+conduction-band states is outlined. Furthermore, the consequence of alloying on
+the fundamental bandgap is considered. The contact of two semiconducting layers
+raises the question how the uppermost valence bands mutually align. Models treating
+this problem and effects of interface composition are reviewed in Chap.4. The band
+discontinuities determine the conﬁnement of charge carriers in a sandwich structure
+and are also affected by strain. This is particularly important for the active layers
+which are usually formed by quantum wells as depicted in Fig.1.3. Structures with a
+reduced dimensionality—quantum wells, 量子线, and 量子点—form
+the active core of many advanced devices. Chapter 4 points out the basic electronic
+properties of such quantum structures to indicate the required dimensions, which
+have to be realized in the 外延的 生长 process.
+In 有机半导体 the highest occupied und lowest unoccupied molecu-
+lar orbitals (HOMO and LUMO) form the valence and conduction bands. Chapter 5
+considers the special properties of these bands originating from the molecular struc-
+ture, and the consequences for the electronic properties. The environment of a charge
+carrier in an organic crystal experiences a strong structural and electronic relaxation.
+The resulting strongly bound Frenkel excitons and the pronounced polaron character
+of mobile carriers are pointed out, and the transport properties are discussed. The
+能带对齐 at interfaces with 有机半导体 depends sensitively on
+molecule charge and orientation. In many cases the classical electron-afﬁnity rule
+known from Chap.4 yields a good description of the heterojunction between two
+organic solids. The effect of molecule orientation is discussed in Chap.5, and also
+the 能带对齐 for a contact to a metal is treated.
+生长 occurs at some deviation from thermodynamic equilibrium. 外延 is a
+controlled transition from the gas or liquid phase to a 晶体的 solid. The nature
+of the driving force depends on the particular material system and 生长 con-
+ditions. Chapter 6 introduces into the 热力学 of 生长 for simple one-
+and two-component systems. 成核 of a layer, 外延的 生长 modes, and a
+thermodynamic approach to surface energies are described. Even though 外延的
+生长 processes may occur under conditions far from equilibrium, thermalization
+times of atoms arriving from the nutrition phase on the surface can be much less
+than the time required to grow a single monoatomic layer. In such cases thermody-
+namic descriptions are often successfully applied to model the 生长 process. For
+the device structure illustrated in Fig.1.3 热力学 may constitute limits for
+the stability of mixed crystals used to meet the requirements for lattice constants,
+bandgaps, band alignments, and 掺杂. In such cases 外延 may still be possible
+in a restricted temperature range.
+The 制备 of atomically sharp interfaces between two dissimilar solids
+requires a signiﬁcant deviation from equilibrium to suppress interdiffusion. This
+is particularly important for quantum structures like the active layers in the VCSEL
+structure shown in Fig.1.3, usually realized using multiple quantum wells. Under</p>
+    <p>1.2 Issues of 外延
+9</p>
+    <p>such nonequilibrium conditions 生长 is strongly affected by kinetic inﬂuences.
+动力学 and atomistic aspects of 外延的 生长 are addressed in Chap.7. A kinetic
+description of 成核 and layer 生长 accounts for the detailed steps atoms expe-
+rience on the growing surface. They depend on the structure of the surface, where
+the arrangement of atoms may differ substantially from that found in the solid bulk
+underneath. Such surface reconstructions are speciﬁc for the given material and
+change with 生长 conditions—they are pointed out for speciﬁc examples. 生长
+modes depending on strain or speciﬁc surface states are often employed in 外延
+to fabricate 低维结构 by self-organized processes. The basics of
+such self-organized formation of 量子点 and 量子线 is considered
+in Chap.7. VCSEL devices like that depicted in Fig.1.3 are also fabricated using
+量子点 in the active region, formed in the self-organized Stranski-Krastanow
+生长 mode.
+The online analysis of a layer structure already during its 外延的 生长 is a
+prominent tool for the development of device structures and for ensuring run-to-run
+reproducibility. Sensors for the in situ measurement of sample temperature, 生长
+rate, strain, and other parameters of the 生长 process are considered in Chap.8.
+The data are deduced by probing the sample surface, or from the analysis of the
+ambient in the vicinity of the growing sample using mass spectrometry or optical
+spectroscopy. Most online tools discussed in Chap.8 are applicable to all major
+生长 techniques, and some of them can even resolve the 生长 of a single mono-
+layer. Prominent techniques for the 原位分析 of 外延 comprise structural
+analysis by diffraction methods and various optical probes; besides pyrometry tech-
+niques such as deﬂectometry, reﬂectometry, ellipsometry, and others are addressed
+providing both chemical and structural information.
+The surface energy can be modiﬁed during 外延 by surface-active species
+referred to as 表面活性剂. Chapter 9 discusses how the three-dimensional island
+生长 occurring during mismatched heteroepitaxy can be suppressed, yielding
+smooth two-dimensional 生长 for an appropriate combination of surfactant and
+半导体 material. During 生长 the surfactant layer ﬂoates on the semi-
+conductor layer; altered adatom diffusivity and 成核 rate are considered, and
+processes for 应变弛豫 in the 外延的 layer are pointed out. Chapter 9 also
+introduces models treating both kinetic and thermodynamic effects, and highlights
+the prominent role of the passivation of step edges at nucleating monolayer islands.
+For speciﬁc examples exchange pathways of adatoms and surfactant atoms are dis-
+cussed.
+Electronic and optoelectronic devices require control of charge carriers in semi-
+conductors and a contact of the 半导体 structure to a metal for a connection
+to the electric circuit. Chapter 10 gives a brief introduction to problems in 外延
+connected to 掺杂 and contact 制备. For a given 半导体 material
+热力学 may impose limits in the 掺杂 level originating from restricted
+solubility of the dopants, an amphoteric behavior of the dopants, or compensation
+by native defects. Nonequilibrium 外延的 生长 may relieve some restrictions.
+生长 far from equilibrium also enables delta-like 掺杂 proﬁles, used to fabricate
+devices employing a two-dimensional electron gas with a high mobility. 掺杂 and</p>
+    <h2>10
+1
+Introduction</h2>
+    <p>异质结构 composition proﬁles may be affected by redistribution of atoms due
+to 扩散 phenomena. Mechanisms of 扩散 in semiconductors are considered
+and examples are given for dependences on the ambient atmosphere and on the kind
+of 掺杂. Ohmic 接触 between 半导体 and metal are a classical subject,
+but 外延 also enables the 生长 of speciﬁc contact structures to achieve a low
+contact resistance. Some examples are outlined in Chap.10.
+Various techniques for 外延的 生长 have been established and are described
+in Chap.11. The ﬁrst method which attained maturity to produce complex devices
+was 液相外延. It operates close to thermodynamic equilibrium and may
+hence be well described by 热力学. More versatile control is achieved using
+the more sophisticated methods of 分子束外延 and metalorganic vapor-
+phase 外延, which both operate far from thermal equilibrium. They hence both
+allow for a control of layer thickness down to a fraction of a single atomic layer and
+are used to fabricate devices with quantum structures in the active region. The two
+methods are also employed in VCSEL production on a large scale.
+Chapter 12 addresses special techniques applied using common 外延的 meth-
+ods. In 选区生长 an 外延的 layer is grown only in selected parts of a
+substrate, deﬁned by windows in a mask. The conditions for selectivity are pointed
+out, and the effects of the mask and the crystallographic orientation on the 生长 rate
+are discussed. 外延横向过生长 of the mask is highlighted as an important
+application. In the following section vapor-liquid-solid (VLS) 生长 is introduced
+as a prominent method to fabricate 半导体 纳米线 with high performance.
+Controlled axial and radial 生长 enabling the 制备 of axial and core-shell
+异质结构 is pointed out, and the very large critical thicknesses for coherent
+外延 is discussed. Techniques with an alternately pulsed supply of gaseous pre-
+cursors are considered next, comprising atomic layer 外延 (ALE) or deposition
+(ALD), and the related migration enhanced 外延 (MEE). The MEE mode of MBE（分子束外延）
+leads to an increased lifetime of adatoms, enabling particularly sharp interfaces and
+掺杂 proﬁles. ALD of amorphous or polycrystalline layers is widely used in semi-
+conductor technology due to an exceptional conformality and thickness control on
+nonplanar surfaces. Chapter 12 concludes considering the 外延的 deposition of
+organic crystals using organic molecular beam deposition or organic vapor-phase
+deposition. Differences with respect to inorganic layer deposition is discussed, and
+the demanding 成核 issues are emphasized.</p>
+    <p>References</p>
+    <p>1. D.W. Pashley, A historical review of 外延, in 外延的 生长 (Part B), ed. by J.W. Matthews
+(Academic Press, New York, 1975), pp. 1–27
+2. M.L. Frankenheim, Über die Verbindung verschiedenartiger Krystalle. Ann. Phys. 113, 516
+(1836). (On the interface of different crystals, in German)
+3. M. L’Abbé, R.J. Haüy, Traité Élémentaire de Physique, 3rd edn. (Mme. V. Courcier, Libraire
+Pour Les Sciences, Paris, 1821) (in French)</p>
+    <p>References
+11</p>
+    <p class="author">4. T.V. Barker, Contributions to the theory of isomorphism based on experiments on the regular
+growths of crystals on one substance on those of another. J. Chem. Soc. Trans. 89, 1120 (1906)
+5. L. Royer, Recherches expérimentales sur l’epitaxie ou orientation mutuelle de cristaux
+d’espèces différentes. Bull. Soc. Fr. Minéral. Cristallogr. 51, 7 (1928). (Experimental investi-
+gation on the epitaxy or mutual orientation of crystals of different species, in French)
+6. G.I. Finch, A.G. Quarrell, The structure of magnesium, zinc and aluminium ﬁlms. Proc. R.
+Soc. Lond. A 141, 398 (1933)
+7. F.C. Frank, J.H. van der Merve, One-dimensional dislocations. I. Static theory. Proc. R. Soc.
+Lond. A 198, 205 (1949)
+8. F.C. Frank, J.H. van der Merve, One-dimensional dislocations. II. Misﬁtting monolayers and
+oriented overgrowth. Proc. R. Soc. Lond. A 198, 216 (1949)
+9. F.C. Frank, J.H. van der Merve, One-dimensional dislocations. III. Inﬂuence of the second
+harmonic term in the potential representation, on the properties of the model. Proc. R. Soc.
+Lond. A 200, 125 (1949)
+10. W.A. Jesser, J.W. Matthews, Evidence for pseudomorphic growth of iron on copper. Philos.
+Mag. 15, 1097 (1967)
+11. W.A. Jesser, J.W. Matthews, Pseudomorphic growth of iron on hot copper. Philos. Mag. 17,
+595 (1968)
+12. J. Orton, T. Foxon, Molecular Beam Epitaxy: A Short History (Oxford University Press, Oxford,
+UK, 2015)
+13. I.V. Markov, Crystal Growth for Beginners (World Scientiﬁc, Singapore, 2003)
+14. D.M. Eigler, E.K. Schweizer, Positioning single atoms with a scanning tunnelling microscope.
+Nature 344, 524 (1990)
+15. Details and the last STM image are reported in M.F. Crommie, C.P. Lutz, D.M. Eigler, Con-
+ﬁnement of electrons to quantum corrals on a metal surface. Science 262, 218 (1993). Image
+originally created by IBM Corporation, http://www.almaden.ibm.com/vis/stm/corral.html</p>
+    <h2>Chapter 2
+Structural Properties of 异质结构</h2>
+    <p>Abstract Structural properties of 外延的 layers are pointed out in this chapter
+with some emphasis on 闪锌矿 and 纤锌矿 crystals. After a brief review on
+perfect, polytype, and mixed bulk crystals we focus on elastic properties of pseu-
+domorphic strained-layer structures. Then the concept of critical layer thickness is
+introduced, and 位错 relieving the strain in 外延的 layers are presented.
+X-ray diffraction—the standard tool for structural characterization—is outlined at
+the end of the chapter.</p>
+    <p>2.1
+Basic Crystal Structures</p>
+    <p>Atoms in an ideal solid have a regular periodic arrangement, which represents a
+minimum of total energy. The structure of such a 晶体的 solid is described by a
+lattice, which constitutes the translational periodicity, and a basis, which represents
+the atomic details of the recurring unit cell. In 1848 Auguste Bravais showed that
+there are only 14 lattices in three-dimensional space. These 14 Bravais lattices may
+be divided into 7 crystal systems, which differ in shape of their unit cell as shown
+in Table2.1. The given unit cells reﬂect the symmetry of the structures. In most
+cases they are not primitive, i.e., they are larger than the smallest possible unit cell
+and contain more than one basis. Some important crystal structures are pointed out
+explicitly in this chapter.</p>
+    <p>2.1.1
+Notation of Planes and Directions</p>
+    <p>Lattice planes and directions in crystals are generally denoted by triplets of integer
+numbers h, k,l called Miller indices. To determine the Miller indices of a given plane,
+ﬁrst a coordinate system is constructed using base vectors of the unit cell (regardless
+of being primitive or not). Then the intersection points of the plane with the axes
+are determined in units of the lattice constants, i.e., as multiples of the base vectors.
+Finally the reciprocal of these three values are expanded to the smallest set of integer</p>
+    <p>© Springer Nature Switzerland AG 2020
+U. W. Pohl, Epitaxy of Semiconductors, Graduate Texts in Physics,
+https://doi.org/10.1007/978-3-030-43869-2_2</p>
+    <div class="pagenumber">13</div>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+# 电催化剂实验参考数据
+# 数据来源: 文献报道的实验测量值
+
+reference_catalysts:
+  # 商业催化剂基准
+  Pt_C:
+    name: "Pt/C (Commercial)"
+    type: "ORR"
+    orr_overpotential: 0.35   # V @ 0.1 mA/cm²
+    orr_onset_potential: 0.95 # V vs RHE
+    orr_tafel_slope: 60       # mV/dec
+    references:
+      - "Gasteiger et al., Appl. Catal. B 9 (1995)"
+    
+  Pt_111:
+    name: "Pt(111) Single Crystal"
+    type: "ORR"
+    orr_overpotential: 0.40
+    orr_onset_potential: 0.90
+    references:
+      - "Markovic et al., J. Phys. Chem. 99 (1995)"
+    
+  Pt_100:
+    name: "Pt(100) Single Crystal"
+    type: "ORR"
+    orr_overpotential: 0.45
+    orr_onset_potential: 0.85
+    
+  # 合金催化剂
+  Pt3Ni_111:
+    name: "Pt3Ni(111)"
+    type: "ORR"
+    orr_overpotential: 0.30   # 比Pt高10倍活性
+    orr_specific_activity: 10 # 相对Pt(111)
+    references:
+      - "Stamenkovic et al., Science 315 (2007) 493"
+    
+  Pt3Co:
+    name: "Pt3Co/C"
+    type: "ORR"
+    orr_overpotential: 0.32
+    mass_activity: 2.5        # A/mg_Pt @ 0.9 V
+    
+  # OER催化剂
+  IrO2:
+    name: "IrO2 (Rutile)"
+    type: "OER"
+    oer_overpotential: 0.35   # @ 10 mA/cm²
+    oer_tafel_slope: 40       # mV/dec
+    stability: "excellent"
+    references:
+      - "Reier et al., J. Am. Chem. Soc. 137 (2015) 13031"
+    
+  RuO2:
+    name: "RuO2 (Rutile)"
+    type: "OER"
+    oer_overpotential: 0.28   # 最高活性但稳定性差
+    oer_tafel_slope: 45
+    stability: "poor"
+    
+  # 双功能催化剂
+  Ir_C:
+    name: "Ir/C"
+    type: "bifunctional"
+    orr_overpotential: 0.45
+    oer_overpotential: 0.38
+    total_overpotential: 0.83
+    
+  Pt_Ir_C:
+    name: "Pt-Ir/C"
+    type: "bifunctional"
+    orr_overpotential: 0.38
+    oer_overpotential: 0.42
+    total_overpotential: 0.80
+
+# 文献报道的DFT计算值 (用于验证)
+dft_reference:
+  Pt_111:
+    dG_OH: -0.25
+    dG_O: 0.75
+    dG_OOH: 2.95
+    orr_overpotential: 0.45
+    
+  Pt_100:
+    dG_OH: -0.30
+    dG_O: 0.85
+    orr_overpotential: 0.52
+    
+  Au_111:
+    dG_OH: 0.80
+    dG_O: 2.20
+    orr_overpotential: 0.75
+    
+  Pd_111:
+    dG_OH: -0.15
+    dG_O: 0.65
+    orr_overpotential: 0.50
+
+# 火山曲线理论参数
+volcano_parameters:
+  orr:
+    descriptor: "dG_OH"
+    optimal_dG_OH: -0.15   # eV, 火山顶点
+    volcano_type: "symmetric"
+    
+  oer:
+    descriptor: "dG_O - dG_OH"
+    optimal_difference: 1.60  # eV
+    volcano_type: "asymmetric"
+
+# 电化学窗口
+potential_window:
+  aqueous_acid:
+    min: 0.0   # V vs RHE
+    max: 1.23  # V vs RHE (水的稳定性)
+    
+  aqueous_alkaline:
+    min: 0.0
+    max: 1.23
+    
+  practical_fuel_cell:
+    operating_voltage: 0.7   # V
+    target_overpotential: 0.35  # V

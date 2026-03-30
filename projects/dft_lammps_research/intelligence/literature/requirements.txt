@@ -1,0 +1,29 @@
+# 智能文献综述系统依赖
+
+# Web框架
+flask>=2.0.0
+
+# PDF解析
+PyPDF2>=3.0.0
+pdfplumber>=0.7.0
+
+# 数据解析
+beautifulsoup4>=4.11.0
+lxml>=4.9.0
+
+# 分析库
+numpy>=1.21.0
+scikit-learn>=1.0.0
+
+# 主题建模 (可选)
+bertopic>=0.14.0
+sentence-transformers>=2.2.0
+
+# 图处理 (可选)
+networkx>=2.8.0
+
+# 其他
+markdown>=3.4.0
+requests>=2.28.0
+tqdm>=4.64.0
+python-dateutil>=2.8.0

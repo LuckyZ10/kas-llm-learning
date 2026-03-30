@@ -1,0 +1,23 @@
+# Core dependencies
+asyncssh>=2.0.0
+pyyaml>=5.0
+
+# Optional cloud provider support
+# boto3>=1.20.0  # AWS
+# aliyun-python-sdk-core>=2.13.0  # Aliyun
+# qcloud-sdk-python>=3.0.0  # Tencent
+
+# Optional monitoring
+# prometheus-client>=0.12.0
+
+# Development dependencies
+pytest>=6.0
+pytest-asyncio>=0.18.0
+pytest-cov>=2.12.0
+
+# Type checking
+mypy>=0.900
+
+# Documentation
+sphinx>=4.0
+sphinx-rtd-theme>=1.0

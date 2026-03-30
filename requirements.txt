@@ -1,0 +1,25 @@
+# Core dependencies
+numpy>=1.20.0
+pandas>=1.3.0
+ase>=3.22.0
+pymatgen>=2022.0.0
+scipy>=1.7.0
+scikit-learn>=1.0.0
+matplotlib>=3.4.0
+pyyaml>=6.0
+tqdm>=4.60.0
+
+# Optional: DeepMD support
+# deepmd-kit>=2.0.0
+# dpdata>=0.2.0
+
+# Optional: Materials screening
+# matminer>=0.7.0
+# dscribe>=1.2.0
+# mp-api>=0.30.0
+
+# Optional: Visualization
+# ovito>=3.7.0
+# nglview>=3.0.0
+# plotly>=5.0.0
+# pyvista>=0.37.0

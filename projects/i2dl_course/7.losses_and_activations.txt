@@ -1,0 +1,2118 @@
+Loss Functions and
+Activations
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+Lecture 6 Recap
+Daniel Cremers
+
+Introduction to Deep Learning
+
+2
+
+Learning Rate: Implications
+• What if too high?
+• What if too low?
+
+I2DL:
+Niessner
+DanielProf.
+Cremers
+
+Source: http://cs231n.github.io/neural-networks-3/
+Introduction to Deep Learning
+
+3
+
+Basic Recipe for Machine Learning
+
+Example scenario
+
+• Split your data
+
+Daniel Cremers
+
+60%
+
+20%
+
+20%
+
+train
+
+validation
+
+test
+
+Ground truth error …... 1%
+Training set error ….... 5%
+Val/test set error ….... 8%
+Introduction to Deep Learning
+
+Bias (or underfitting)
+Variance
+(overfitting)
+4
+
+Lecture 7
+Loss Functions and
+Activations
+Daniel Cremers
+
+Introduction to Deep Learning
+
+5
+
+What we have seen so far
+Data points
+
+Best practices
+to obtain
+good results
+
+Optimization
+
+Model parameters
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Labels (ground truth)
+
+Loss
+function
+
+Estimation
+
+6
+
+Output and Loss
+Functions
+Daniel Cremers
+
+Introduction to Deep Learning
+
+7
+
+Neural Networks
+
+What is the
+shape of this
+function?
+
+Loss
+
+Prediction
+Daniel Cremers
+
+Introduction to Deep Learning
+
+8
+
+Regression Losses
+• L2 Loss:
+• L1 Loss:
+
+2
+𝑛
+𝐿 = σ𝑖=1 𝑦𝑖 − 𝑓 𝒙𝑖
+𝐿1 = σ𝑛𝑖=1 |𝑦𝑖 − 𝑓(𝒙𝑖 )|
+2
+
+training pairs [𝒙𝑖 ; 𝑦𝑖 ]
+(input and labels)
+
+12
+
+24
+
+42
+
+23
+
+15
+
+20
+
+40
+
+25
+
+34
+
+32
+
+5
+
+2
+
+34
+
+32
+
+5
+
+2
+
+12
+
+31
+
+12
+
+31
+
+12
+
+31
+
+12
+
+31
+
+31
+
+64
+
+5
+
+13
+
+31
+
+64
+
+5
+
+13
+
+𝑓(𝒙𝑖 )
+
+𝑦𝑖
+
+𝐿2 𝑥, 𝑦 = 9 + 16 + 4 + 4 + 0 + ⋯ + 0 = 33
+𝐿1 𝑥, 𝑦 = 3 + 4 + 2 + 2 + 0 + ⋯ + 0 = 11
+Daniel Cremers
+
+Introduction to Deep Learning
+
+9
+
+Regression Losses: L2 vs L1
+• L1 Loss:
+
+• L2 Loss:
+
+𝑛
+
+𝑛
+
+2
+
+𝐿 = ෍ 𝑦𝑖 − 𝑓 𝒙𝑖
+
+2
+
+𝐿1 = ෍ |𝑦𝑖 − 𝑓(𝒙𝑖 )|
+𝑖=1
+
+𝑖=1
+
+– Sum of squared
+differences (SSD)
+– Prone to outliers
+– Compute-efficient
+optimization
+
+Daniel Cremers
+
+– Sum of absolute
+differences
+– Robust (cost of outliers is
+linear)
+– Costly to optimize
+
+Introduction to Deep Learning
+
+10
+
+Binary Classification: Sigmoid
+training pairs 𝒙𝑖 ; 𝑦𝑖 ,
+𝒙𝑖 ∈ ℝ𝐷 , 𝑦𝑖 ∈ {1,0} (2 classes)
+
+𝑝 𝑦𝑖 = 1 𝒙𝒊 , 𝜽 = 𝜎 𝑠 =
+
+𝑥𝑖0
+1
+𝜎 𝑠 =
+1 + 𝑒 −𝑠
+
+𝜃0
+
+𝑥𝑖1
+
+𝜃1
+
+Σ
+
+1
+𝐷
+
+1 + 𝑒 − σ𝑑=0 𝜃𝑑𝑥𝑖𝑑
+Sigmoid output can
+be interpreted as a
+probability
+
+𝑝(𝑦𝑖 = 1|𝒙𝒊 , 𝜽)
+
+𝑠
+
+…
+
+𝜃𝐷
+
+𝑥𝑖𝐷
+Daniel Cremers
+
+Score of class 1
+(𝑦𝑖 = 1)
+
+0 < 𝜎(𝑠) < 1
+
+Introduction to Deep Learning
+
+Probability of class 1
+(𝑦𝑖 = 1)
+11
+
+Multiclass Classification: Softmax
+training pairs 𝒙𝑖 ; 𝑦𝑖 ,
+𝒙𝑖 ∈ ℝ𝐷 , 𝑦𝑖 ∈ {1,2 … 𝐶} (C classes)
+𝑥𝑖0
+
+𝑥𝑖1
+
+weights for class k
+𝜃𝑘0 (𝑦𝑖 = 𝑘)
+𝜃𝑘1
+
+Σ
+
+…
+
+?
+
+𝑠𝑘
+
+𝜃𝑘𝐷
+
+𝑥𝑖𝐷
+Daniel Cremers
+
+Score of class k
+(𝑦𝑖 = 𝑘)
+Introduction to Deep Learning
+
+𝑝(𝑦𝑖 = 𝑘|𝒙𝒊 , 𝜽)
+
+Probability of class k
+(𝑦𝑖 = 𝑘)
+12
+
+Multiclass Classification: Softmax
+Weights for
+each class
+𝑥𝑖0 𝜽1 , 𝜽2 , 𝜽3
+
+Scores for
+each class
+𝑠1 , 𝑠2 , 𝑠3
+
+Σ
+𝑥𝑖1
+
+Σ
+
+…
+
+Σ
+
+Probabilities
+for each class
+
+𝑠1
+
+𝑒 𝑠𝑒1𝒙𝒊 𝜽𝟏
+𝑝(𝑦𝑖𝑖 =
+= 1|𝒙
+1|𝒙𝒊𝒊,, 𝚯)
+𝚯) =
+= 𝒙𝑠 𝜽 𝑠 𝒙 𝜽 𝑠 𝒙 𝜽
+𝑝(𝑦
+3 𝑒 𝒊 𝟑
+𝟏 +
+𝒊 𝟐𝑒 +
+𝑒 𝑒2 +
+𝑒𝑒 𝒊1 +
+
+𝑠2
+
+𝑒 𝑠2𝑒 𝒙𝒊 𝜽𝟐
+𝑝(𝑦
+𝑝(𝑦𝑖𝑖 =
+= 2|𝒙
+2|𝒙𝒊𝒊,, 𝚯)
+𝚯) =
+= 𝑒 𝑠𝒙1 𝜽+ 𝑒 𝑠2 𝒙+𝜽𝑒 𝑠3 𝒙 𝜽
+𝑒 𝒊 𝟏 +𝑒 𝒊 𝟐 +𝑒 𝒊 𝟑
+
+𝑠3
+
+Softmax
+
+𝑒 𝑠𝑒3 𝒙𝒊 𝜽𝟑
+𝑝(𝑦𝑖 = 3|𝒙𝒊 , 𝚯) = 𝑠𝒙 𝜽 𝑠 𝒙 𝜽 𝑠 𝒙 𝜽
+𝟏 +
+3 𝑒 𝒊 𝟑
+𝑒 1𝒊 +
+𝑒 𝑒2 +𝒊 𝑒𝟐 +
+
+𝑥𝑖𝐷
+Daniel Cremers
+
+Introduction to Deep Learning
+
+13
+
+Multiclass Classification: Softmax
+Exp
+
+• Softmax
+
+𝑒 𝑠𝑦𝑖
+𝑒 𝒙𝑖𝜽𝑦𝑖
+𝑝 𝑦𝑖 𝒙𝒊 , Θ = 𝐶
+= 𝐶
+𝑠
+σ𝑘=1 𝑒 𝑘 σ𝑘=1 𝑒 𝒙𝑖𝜽𝑘
+Probability of
+the true class
+
+normalize
+
+training pairs 𝒙𝑖 ; 𝑦𝑖 ,
+𝒙𝑖 ∈ ℝ𝐷 , 𝑦𝑖 ∈ 1,2 … 𝐶
+𝑦𝑖 : label (true class)
+Parameters:
+𝚯 = [𝜽1 , 𝜽2 , … , 𝜽𝐶 ]
+
+C : number of classes
+s : score of the class
+
+1. Exponential operation: make sure probability>0
+2. Normalization: make sure probabilities sum up to 1.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+14
+
+Multiclass Classification: Softmax
+• Numerical Stability
+𝑒 𝑠𝑦𝑖
+𝑒 𝑠𝑦𝑖 −𝑠𝑚𝑎𝑥
+𝑝 𝑦𝑖 𝒙𝒊 , Θ = 𝐶
+= 𝐶
+𝑠
+𝑘
+σ𝑘=1 𝑒
+σ𝑘=1 𝑒 𝑠𝑘−𝑠𝑚𝑎𝑥
+
+Try to prove it
+by yourself ☺
+
+• Cross-Entropy Loss (Maximum Likelihood Estimate)
+𝑒 𝑠𝑦𝑖
+𝐿𝑖 = −log(𝑝 𝑦𝑖 𝒙𝒊 , Θ ) = −log(
+)
+𝑠
+𝑘
+σ𝑘 𝑒
+Daniel Cremers
+
+Introduction to Deep Learning
+
+15
+
+Example: Cross-Entropy Loss
+
+scores
+
+Suppose: 3 training examples and 3 classes
+
+cat
+chair
+car
+
+Daniel Cremers
+
+3.2
+5.1
+-1.7
+
+1.3
+4.9
+2.0
+
+2.2
+2.5
+-3.1
+
+Introduction to Deep Learning
+
+16
+
+Example: Cross-Entropy Loss
+Cross Entropy
+
+𝑠
+
+𝑒 𝑦𝑖
+𝐿𝑖 = − log(σ 𝑒 𝑠𝑘 )
+𝑘
+
+Score function
+𝒔 = 𝒇(𝒙𝑖 , 𝜣)
+e.g., 𝒇 𝒙𝑖 , 𝜣 = 𝑥𝑖0 , 𝑥𝑖2 , … , 𝑥𝑖𝑑 ∙ [𝜽𝟏 , 𝜽𝟐 , … , 𝜽𝑪 ]
+Suppose: 3 training examples and 3 classes
+
+Given a function with
+weights 𝜣, training pairs
+[𝒙𝑖 ; 𝑦𝑖 ] (input and labels)
+𝑏
+𝜽𝒌 = [ 𝑘 ] parameters for
+𝒘𝑘
+each class with 𝐶 classes
+
+Image 1
+
+scores
+
+exp
+
+cat
+chair
+car
+
+3.2
+5.1
+-1.7
+
+Loss
+
+2.04
+
+Daniel Cremers
+
+1.3
+4.9
+2.0
+
+2.2
+2.5
+-3.1
+
+3.2
+5.1
+-1.7
+
+normalize
+
+24.5
+164.0
+0.18
+
+-log(x)
+
+0.13
+0.87
+0.00
+
+2.04
+0.14
+6.94
+
+Scores
+
+Introduction to Deep Learning
+
+17
+
+Example: Cross-Entropy Loss
+Cross Entropy
+
+𝑠
+
+𝑒 𝑦𝑖
+𝐿𝑖 = − log(σ 𝑒 𝑠𝑘 )
+𝑘
+
+Score function
+𝒔 = 𝒇(𝒙𝑖 , 𝜣)
+e.g., 𝒇 𝒙𝑖 , 𝜣 = 𝑥𝑖0 , 𝑥𝑖2 , … , 𝑥𝑖𝑑 ∙ [𝜽𝟏 , 𝜽𝟐 , … , 𝜽𝑪 ]
+Suppose: 3 training examples and 3 classes
+
+Given a function with
+weights 𝜣, training pairs
+[𝒙𝑖 ; 𝑦𝑖 ] (input and labels)
+𝑏
+𝜽𝒌 = [ 𝑘 ] parameters for
+𝒘𝑘
+each class with 𝐶 classes
+
+scores
+
+𝑁
+
+cat
+chair
+car
+
+3.2
+5.1
+-1.7
+
+1.3
+4.9
+2.0
+
+2.2
+2.5
+-3.1
+
+Loss
+
+2.04
+
+0.079
+
+6.156
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+𝐿1 + 𝐿2 + 𝐿3
+𝐿 = ෍ 𝐿𝑖 =
+𝑁
+3
+𝑖=1
+
+2.04 + 0.079 + 6.156
+=
+3
+= 𝟐. 𝟕𝟔
+=
+
+18
+
+Hinge Loss (SVM Loss)
+• Score Function 𝒔 = 𝒇(𝒙𝑖 , 𝜣)
+– e.g., 𝒇 𝒙𝑖 , 𝜣 = 𝑥𝑖0 , 𝑥𝑖2 , … , 𝑥𝑖𝑑 ∙ [𝜽𝟏 , 𝜽𝟐 , … , 𝜽𝑪 ]
+
+• Hinge Loss (Multiclass SVM Loss)
+
+𝐿𝑖 = ෍ max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1)
+𝑘≠𝑦𝑖
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+19
+
+Example: Hinge Loss (SVM Loss)
+𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1) Given a function with
+weights 𝜣, training pairs
+Score function
+𝒔 = 𝒇(𝒙𝑖 , 𝜣)
+[𝒙𝑖 ; 𝑦𝑖 ] (input and labels)
+𝑏
+e.g., 𝒇 𝒙𝑖 , 𝜣 = 𝑥𝑖0 , 𝑥𝑖2 , … , 𝑥𝑖𝑑 ∙ [𝜽𝟏 , 𝜽𝟐 , … , 𝜽𝑪 ]
+𝜽𝒌 = [ 𝑘 ] parameters for
+𝒘𝑘
+Suppose: 3 training examples and 3 classes
+each class with 𝐶 classes
+
+scores
+
+Multiclass SVM loss
+
+cat
+chair
+car
+
+3.2
+5.1
+-1.7
+
+1.3
+4.9
+2.0
+
+2.2
+2.5
+-3.1
+
+Loss
+Daniel Cremers
+
+Introduction to Deep Learning
+
+20
+
+Example: Hinge Loss (SVM Loss)
+𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1) Given a function with
+weights 𝜣, training pairs
+Score function
+𝒔 = 𝒇(𝒙𝑖 , 𝜣)
+[𝒙𝑖 ; 𝑦𝑖 ] (input and labels)
+𝑏
+e.g., 𝒇 𝒙𝑖 , 𝜣 = 𝑥𝑖0 , 𝑥𝑖2 , … , 𝑥𝑖𝑑 ∙ [𝜽𝟏 , 𝜽𝟐 , … , 𝜽𝑪 ]
+𝜽𝒌 = [ 𝑘 ] parameters for
+𝒘𝑘
+Suppose: 3 training examples and 3 classes
+each class with 𝐶 classes
+Multiclass SVM loss
+
+scores
+
+= max(0, 5.1 − 3.2 + 1) +
+max(0, −1.7 − 3.2 + 1)
+
+cat
+chair
+car
+
+3.2
+5.1
+-1.7
+
+Loss
+
+2.9
+
+Daniel Cremers
+
+1.3
+4.9
+2.0
+
+2.2
+2.5
+-3.1
+
+Introduction to Deep Learning
+
+= max 0, 2.9 + max(0, −3.9)
+= 2.9 + 0
+= 𝟐. 𝟗
+
+21
+
+Example: Hinge Loss (SVM Loss)
+𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1) Given a function with
+weights 𝜣, training pairs
+Score function
+𝒔 = 𝒇(𝒙𝑖 , 𝜣)
+[𝒙𝑖 ; 𝑦𝑖 ] (input and labels)
+𝑏
+e.g., 𝒇 𝒙𝑖 , 𝜣 = 𝑥𝑖0 , 𝑥𝑖2 , … , 𝑥𝑖𝑑 ∙ [𝜽𝟏 , 𝜽𝟐 , … , 𝜽𝑪 ]
+𝜽𝒌 = [ 𝑘 ] parameters for
+𝒘𝑘
+Suppose: 3 training examples and 3 classes
+each class with 𝐶 classes
+
+scores
+
+Multiclass SVM loss
+
+cat
+chair
+car
+
+3.2
+5.1
+-1.7
+
+1.3
+4.9
+2.0
+
+Loss
+
+2.9
+
+0
+
+Daniel Cremers
+
+2.2
+2.5
+-3.1
+
+𝐿2 = max(0, 1.3 − 4.9 + 1) +
+max(0, 2.0 − 4.9 + 1)
+= max 0, −2.6 + max 0, −1.9
+=0+0=𝟎
+
+Introduction to Deep Learning
+
+22
+
+Example: Hinge Loss (SVM Loss)
+𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1) Given a function with
+weights 𝜣, training pairs
+Score function
+𝒔 = 𝒇(𝒙𝑖 , 𝜣)
+[𝒙𝑖 ; 𝑦𝑖 ] (input and labels)
+𝑏
+e.g., 𝒇 𝒙𝑖 , 𝜣 = 𝑥𝑖0 , 𝑥𝑖2 , … , 𝑥𝑖𝑑 ∙ [𝜽𝟏 , 𝜽𝟐 , … , 𝜽𝑪 ]
+𝜽𝒌 = [ 𝑘 ] parameters for
+𝒘𝑘
+Suppose: 3 training examples and 3 classes
+each class with 𝐶 classes
+
+scores
+
+Multiclass SVM loss
+
+cat
+chair
+car
+
+3.2
+5.1
+-1.7
+
+1.3
+4.9
+2.0
+
+2.2
+2.5
+-3.1
+
+Loss
+
+2.9
+
+0
+
+12.9
+
+Daniel Cremers
+
+𝐿3 = max(0, 2.2 − (−3.1) + 1) +
+max(0, 2.5 − (−3.1) + 1)
+= max 0, 6.3 + max 0, 6.6
+= 6.3 + 6.6
+= 𝟏𝟐. 𝟗
+
+Introduction to Deep Learning
+
+23
+
+Example: Hinge Loss (SVM Loss)
+𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1) Given a function with
+weights 𝜣, training pairs
+Score function
+𝒔 = 𝒇(𝒙𝑖 , 𝜣)
+[𝒙𝑖 ; 𝑦𝑖 ] (input and labels)
+𝑏
+e.g., 𝒇 𝒙𝑖 , 𝜣 = 𝑥𝑖0 , 𝑥𝑖2 , … , 𝑥𝑖𝑑 ∙ [𝜽𝟏 , 𝜽𝟐 , … , 𝜽𝑪 ]
+𝜽𝒌 = [ 𝑘 ] parameters for
+𝒘𝑘
+Suppose: 3 training examples and 3 classes
+each class with 𝐶 classes
+Multiclass SVM loss
+
+𝑁
+
+1
+𝐿1 + 𝐿2 + 𝐿3
+𝐿 = ෍ 𝐿𝑖 =
+𝑁
+3
+
+scores
+
+𝑖=1
+
+cat
+chair
+car
+
+3.2
+5.1
+-1.7
+
+1.3
+4.9
+2.0
+
+2.2
+2.5
+-3.1
+
+Loss
+
+2.9
+
+0
+
+12.9
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+2.9 + 0 + 12.9
+=
+3
+= 𝟓. 𝟑
+
+24
+
+Multiclass Classification:
+Hinge vs Cross-Entropy
+• Hinge Loss: 𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1)
+
+•
+
+Daniel Cremers
+
+𝑠
+
+𝑒 𝑦𝑖
+Cross Entropy Loss: 𝐿𝑖 = − log(σ 𝑠𝑘 )
+𝑘𝑒
+
+Introduction to Deep Learning
+
+25
+
+Example: Hinge vs Cross-Entropy
+Hinge Loss: 𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1)
+𝑠
+
+𝑒 𝑦𝑖
+Cross Entropy : 𝐿𝑖 = − log(σ 𝑠𝑘 )
+𝑘𝑒
+
+For image 𝒙𝑖 (assume 𝑦𝑖 = 0):
+
+Scores
+Model 1
+
+𝑠 = [5, −3, 2]
+
+Model 2
+
+𝑠 = [5, 10, 10]
+
+Model 3
+
+𝑠 = [5, −20, −20]
+
+Daniel Cremers
+
+Hinge loss:
+
+Introduction to Deep Learning
+
+Cross Entropy loss:
+
+26
+
+Example: Hinge vs Cross-Entropy
+Hinge Loss: 𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1)
+𝑠
+
+𝑒 𝑦𝑖
+Cross Entropy : 𝐿𝑖 = − log(σ 𝑠𝑘 )
+𝑘𝑒
+
+For image 𝒙𝑖 (assume 𝑦𝑖 = 0):
+
+Scores
+Model 1
+
+𝑠 = [5, −3, 2]
+
+Model 2
+
+𝑠 = [5, 10, 10]
+
+Model 3
+
+𝑠 = [5, −20, −20]
+
+Daniel Cremers
+
+Hinge loss:
+
+Cross Entropy loss:
+
+max(0, −3 − 5 + 1) +
+max 0, 2 − 5 + 1 = 0
+max(0, 10 − 5 + 1) +
+max 0, 10 − 5 + 1 = 12
+max(0, −20 − 5 + 1) +
+max 0, −20 − 5 + 1 = 0
+Apparently Model 3 is better, but losses
+show no difference between Model 1&3,
+Introduction
+Learning
+since
+theytoallDeep
+have
+same loss=0.
+
+27
+
+Example: Hinge vs Cross-Entropy
+Hinge Loss: 𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1)
+𝑠
+
+𝑒 𝑦𝑖
+Cross Entropy : 𝐿𝑖 = − log(σ 𝑠𝑘 )
+𝑘𝑒
+
+For image 𝒙𝑖 (assume 𝑦𝑖 = 0):
+
+Scores
+Model 1
+
+𝑠 = [5, −3, 2]
+
+Model 2
+
+𝑠 = [5, 10, 10]
+
+Model 3
+
+𝑠 = [5, −20, −20]
+
+Hinge loss:
+max(0, −3 − 5 + 1) +
+max 0, 2 − 5 + 1 = 0
+max(0, 10 − 5 + 1) +
+max 0, 10 − 5 + 1 = 12
+max(0, −20 − 5 + 1) +
+max 0, −20 − 5 + 1 = 0
+
+Cross Entropy loss:
+5
+
+− ln 𝑒 5 +𝑒𝑒 3 +𝑒 2 = 0.05
+
+5
+
+𝑒
+− ln 𝑒 5 +𝑒 −20
++𝑒 −20
+= 2 ∗ 10−11
+
+Model 3 has a clearly smaller loss now.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+28
+
+Example: Hinge vs Cross-Entropy
+Hinge Loss: 𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1)
+𝑠
+
+𝑒 𝑦𝑖
+Cross Entropy : 𝐿𝑖 = − log(σ 𝑠𝑘 )
+𝑘𝑒
+
+For image 𝒙𝑖 (assume 𝑦𝑖 = 0):
+
+Hinge loss:
+
+Scores
+Model 1
+
+𝑠 = [5, −3, 2]
+
+Model 2
+
+𝑠 = [5, 10, 10]
+
+Model 3
+
+𝑠 = [5, −20, −20]
+
+Daniel Cremers
+
+max(0, −3 − 5 + 1) +
+max 0, 2 − 5 + 1 = 0
+max(0, 10 − 5 + 1) +
+max 0, 10 − 5 + 1 = 12
+
+Cross Entropy loss:
+5
+
+− ln 𝑒 5 +𝑒𝑒 3 +𝑒 2 = 0.05
+− ln
+
+𝑒5
+𝑒 5 +𝑒 10 +𝑒 10
+5
+
+= 5.70
+
+𝑒
+− ln 𝑒 5 +𝑒 −20
++𝑒 −20
+= 2 ∗ 10−11
+− Cross Entropy *always* wants to improve! (loss never 0)
+− Hinge
+Loss to
+saturates.
+29
+Introduction
+Deep Learning
+
+max(0, −20 − 5 + 1) +
+max 0, −20 − 5 + 1 = 0
+
+Loss in Compute Graph
+• How do we combine loss functions with weight
+regularization?
+• How to optimize parameters of our networks
+according to multiple losses?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+30
+
+Loss in Compute Graph
+Regularization loss
+𝜆𝑅2 (𝑾)
+
+𝜽
+𝒇(𝒙𝑖 , 𝜽)
+Input
+data
+
+𝑿
+
+Score function
+
+1
+෍ 𝐿𝑖
+𝑁
+
+Data loss
+
+Loss
+function
+
++
+
+𝐿
+Full Loss
+
+Labels 𝒚
+
+Want to find optimal 𝜽. (weights are unknowns of
+optimization problem)
+− Compute gradient w.r.t. 𝜽.
+− Gradient 𝛻𝜽 𝐿 is computed via backpropagation
+Daniel Cremers
+
+Introduction to Deep Learning
+
+31
+
+Loss in Compute Graph
+• Score function 𝒔 = 𝒇 𝒙𝑖 , 𝜽
+• Data Loss
+– Cross Entropy𝐿𝑖 = − log
+
+– SVM
+
+Given a function with weights 𝜽,
+Training pairs [𝒙𝑖 ; 𝑦𝑖 ] (input and labels)
+
+𝑠
+
+𝑒 𝑦𝑖
+σ𝑘 𝑒 𝑠𝑘
+
+𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝑠𝑘 − 𝑠𝑦𝑖 + 1)
+
+• Regularization Loss: e.g., 𝐿2-Reg:𝑅 2 𝑾 = σ 𝒘2𝑖
+• Full Loss
+
+1 𝑁
+𝐿 = σ𝑖=1 𝐿𝑖 + 𝜆𝑅 2 (𝑾)
+𝑁
+
+• Full Loss = Data Loss + Reg Loss
+Daniel Cremers
+
+Introduction to Deep Learning
+
+32
+
+Example: Regularization & SVM Loss
+Multiclass SVM loss 𝐿𝑖 = σ𝑘≠𝑦𝑖 max(0, 𝒇 𝒙𝑖 ; 𝜽 𝑘 − 𝒇 𝒙𝑖 ; 𝜽 𝑦𝑖 + 1)
+Full loss
+
+𝐿=
+
+1 𝑁
+σ
+σ
+max(0, 𝒇 𝒙𝑖 ; 𝜽 𝑘 − 𝒇 𝒙𝑖 ; 𝜽 𝑦𝑖 + 1) + 𝜆𝑅(𝑾)
+𝑁 𝑖=1 𝑘≠𝑦𝑖
+
+𝐿1-Reg:𝑅1 𝑾 = σ𝐷
+𝑖=1 |𝒘𝑖 |
+2
+𝐿2-Reg:𝑅2 𝑾 = σ𝐷
+𝒘
+𝑖=1 𝑖
+Example:
+𝒙 = 1,1,1,1 𝑇
+𝑅2 𝒘1 = 1
+𝒘1 = [1, 0, 0, 0]𝑇
+𝑅2 𝒘2 = 0.252 + 0.252 + 0.252 + 0.252
+𝒘2 = [0.25, 0.25, 0.25, 0.25]𝑇
+= 0.25
+𝒙𝑇 𝒘1 = 𝒙𝑇 𝒘2 = 1
+𝑅2 𝑾 = 1 + 0.25 = 1.25
+Daniel Cremers
+
+Introduction to Deep Learning
+
+33
+
+Activation Functions
+Daniel Cremers
+
+Introduction to Deep Learning
+
+34
+
+Neural Networks
+𝑥1
+
+(2)
+𝑠1
+
+𝑥2
+
+(2)
+𝑠2
+
+…
+
++1
+
+Daniel Cremers
+
+𝑓
+
+(2)
+
+𝑎1
+
+(2)
+
+𝑎2
+
+(3)
+
+𝑧1
+
+…
+
+…
+𝑥𝑛
+
+(2)
+𝑠𝑛
+
+𝑓
+
+𝑓
+
+(2)
+
+𝑎𝑛
+
+(3)
+
+𝑧2
+
++1
+
+Introduction to Deep Learning
+
+35
+
+Activation Functions or Hidden Units
+𝑥0
+𝜃0
+
+𝑥1
+
+𝜃1
+
+Σ
+
+𝑠
+
+Activation
+Function
+
+𝜃𝐷
+𝑥𝐷
+Daniel Cremers
+
+Introduction to Deep Learning
+
+36
+
+Sigmoid Activation
+1
+𝜎 𝑠 =
+1 + 𝑒 −𝑠
+𝑥0
+1
+𝜎 𝑠 =
+1 + 𝑒 −𝑠
+
+𝜃0
+
+𝑥1
+
+𝜃1
+
+Σ
+
+𝑠
+
+𝜎 𝑠 𝑖 ∈ (0,1)
+
+𝜃𝐷
+𝑥𝐷
+Daniel Cremers
+
+Introduction to Deep Learning
+
+37
+
+Sigmoid Activation
+1
+𝜎 𝑠 =
+1 + 𝑒 −𝑠
+
+Forward
+
+𝜕𝐿
+𝜕𝑠 𝜕𝐿
+=
+𝜕𝑤 𝜕𝑤 𝜕𝑠
+𝒙𝑇 ?
+
+𝜕𝐿 𝜕𝜎 𝜕𝐿
+=
+𝜕𝑠 𝜕𝑠 𝜕𝜎
+Daniel Cremers
+
+𝜕𝜎
+𝜕𝑠
+Introduction to Deep Learning
+
+𝜕𝐿
+𝜕𝜎
+38
+
+Sigmoid Activation
+1
+𝜎 𝑠 =
+1 + 𝑒 −𝑠
+
+Forward
+
+𝜕𝐿
+𝜕𝑠 𝜕𝐿
+=
+𝜕𝑤 𝜕𝑤 𝜕𝑠
+
+𝜕𝐿 𝜕𝜎 𝜕𝐿
+=
+𝜕𝑠 𝜕𝑠 𝜕𝜎
+Daniel Cremers
+
+Saturated neurons
+kill the gradient flow
+
+𝜕𝜎
+𝜕𝑠
+Introduction to Deep Learning
+
+𝜕𝐿
+𝜕𝜎
+39
+
+Sigmoid Activation
+1
+𝜎 𝑠 =
+1 + 𝑒 −𝑠
+
+Forward
+
+𝜕𝐿
+𝜕𝑠 𝜕𝐿
+=
+𝜕𝑤 𝜕𝑤 𝜕𝑠
+
+𝜕𝐿 𝜕𝜎 𝜕𝐿
+=
+𝜕𝑠 𝜕𝑠 𝜕𝜎
+Daniel Cremers
+
+Active region for
+gradient descent
+
+𝜕𝜎
+𝜕𝑠
+Introduction to Deep Learning
+
+𝜕𝐿
+𝜕𝜎
+40
+
+Sigmoid Activation
+1
+𝜎 𝑠 =
+1 + 𝑒 −𝑠
+
+Output is always positive!
+• Sigmoid output provides positive
+input for the next layer
+
+What is the disadvantage of this?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+41
+
+Sigmoid Output not Zero-centered
+• We want to compute the gradient w.r.t. the weights
+either positive
+or negative
+
+𝑏
+𝑦
+
+𝑥1 > 0
+
+Assume we have all positive data:
+
+𝜕𝐿
+𝜕𝐿 𝜕𝑦 𝜕𝑠
+=
+∙
+∙
+𝜕𝑤1 𝜕𝑦 𝜕𝑠 𝜕𝑤1
+𝑥2 > 0
+𝜕𝐿
+𝜕𝐿 𝜕𝑦 𝜕𝑠
+=
+∙
+∙
+𝜕𝑤2 𝜕𝑦 𝜕𝑠 𝜕𝑤2
+
+𝑥1
+𝑥2
+
+𝑤1
+
+Σ
+
+𝑠
+
+𝑓(𝑠)
+
+𝑤2
+
+𝒙 = (𝑥1 , 𝑥2 )𝑇 > 0
+
+It is going to be either positive or negative for all weights’ update.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+42
+
+Sigmoid Output not Zero-centered
+𝑤2
+
+𝑤1
+
+𝑤1 , 𝑤2 can only be
+increased or decreased
+at the same time, which
+is not good for update.
+
+That is also why you need
+zero-centered data.
+
+Daniel Cremers
+
+Source :
+http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture6.pdf
+Introduction to Deep Learning
+
+43
+
+TanH Activation
+Still saturates
+Zero-centered
+
+[LeCun et al. 1991] Improving Generalization Performance in Character Recognition
+Daniel Cremers
+
+Introduction to Deep Learning
+
+44
+
+Rectified Linear Units (ReLU)
+𝜎 𝑥 = max(0, 𝑥)
+Large and
+consistent
+gradients
+
+Fast convergence
+
+Does not saturate
+
+[Krizhevsky et al. NeurIPS 2012] ImageNet Classification with Deep Convolutional Neural Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+45
+
+Rectified Linear Units (ReLU)
+Dead ReLU
+Large and
+consistent
+gradients
+
+What happens if a
+ReLU outputs zero?
+
+Fast convergence
+
+Does not saturate
+
+[Krizhevsky et al. NeurIPS 2012] ImageNet Classification with Deep Convolutional Neural Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+46
+
+Rectified Linear Units (ReLU)
+• Initializing ReLU neurons with slightly positive biases
+(0.01) makes it likely that they stay active for most
+inputs
+
+𝑓 ෍ 𝑤𝑖 𝑥𝑖 + 𝑏
+𝑖
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+47
+
+Leaky ReLU
+𝜎 𝑥 = max(0.01𝑥, 𝑥)
+
+Does not die
+[Mass et al., ICML 2013] Rectifier Nonlinearities Improve Neural Network Acoustic Models
+Daniel Cremers
+
+Introduction to Deep Learning
+
+48
+
+Parametric ReLU
+𝜎 𝑥 = max(𝛼𝑥, 𝑥)
+
+One more parameter to
+backprop into
+
+Does not die
+[He et al. ICCV 2015] Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification
+Daniel Cremers
+
+Introduction to Deep Learning
+
+49
+
+Maxout Units
+𝑀𝑎𝑥𝑜𝑢𝑡 = max(𝑤1𝑇 𝑥 + 𝑏1 , 𝑤2𝑇 𝑥 + 𝑏2 )
+1
+
+𝑤01
+𝑤02
+
+σ
+
+𝑤11
+𝑥1
+
+𝑤12
+𝑤21
+
+𝑥2
+
+σ
+𝑤22
+[Goodfellow et al. ICML 2013] Maxout Networks
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+50
+
+Maxout Units
+
+Piecewise linear approximation of
+a convex function with N pieces
+[Goodfellow et al. ICML 2013] Maxout Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+51
+
+Maxout Units
+
+Generalization
+of ReLUs
+Daniel Cremers
+
+Linear
+regimes
+
+Does not
+die
+
+Does not
+saturate
+
+IncreasesIntroduction
+of theto Deep
+number
+of parameters
+Learning
+
+52
+
+In a Nutshell
+
+Source : https://towardsdatascience.com/comparison-of-activation-functions-for-deep-neural-networks706ac4284c8a
+Daniel Cremers
+
+Introduction to Deep Learning
+
+53
+
+Quick Guide
+• Sigmoid/TanH are not really used in feedforward nets.
+
+• ReLU is the standard choice.
+• Second choice are the variants of ReLU or Maxout.
+• Recurrent nets will require Sigmoid/TanH or similar.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+54
+
+Weight Initialization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+55
+
+How do I start?
+Forward
+
+Output layer
+
+Input layer
+Hidden layer
+Daniel Cremers
+
+Introduction to Deep Learning
+
+56
+
+Initialization is Extremely Important!
+𝑥 ∗ = arg min 𝑓(𝑥)
+
+Initialization
+
+Not guaranteed to
+reach the optimum
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Optimum
+
+57
+
+How do I start?
+Forward
+
+𝑓 ෍ 𝑤𝑖 𝑥𝑖 + 𝑏
+𝑖
+
+𝑤=0
+What happens
+to the gradients?
+Output layer
+
+Input layer
+Hidden layer
+Daniel Cremers
+
+Introduction to Deep Learning
+
+58
+
+All Weights Zero
+• What happens to the gradients?
+
+• The hidden units are all going to compute the same
+function, gradients are going to be the same
+– No symmetry breaking
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+59
+
+Small Random Numbers
+• Gaussian with zero mean and standard deviation 0.01
+
+• Let’s see what happens:
+– Network with 10 layers with 500 neurons each
+– Tanh as activation functions
+– Input unit Gaussian data
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+60
+
+Small Random Numbers
+tanh as activation functions
+
+Output goes to zero
+Forward
+Daniel Cremers
+
+Introduction to Deep Learning
+
+61
+
+Small Random Numbers
+
+Small 𝑤𝑖𝑙 cause small
+output for layer 𝑙:
+𝑓𝑙 ෍ 𝑤𝑖𝑙 𝑥𝑖𝑙 + 𝑏𝑙 ≈ 𝟎
+𝑖
+
+Forward
+Daniel Cremers
+
+Introduction to Deep Learning
+
+62
+
+Small Random Numbers
+Even activation function’s
+gradient is ok, we still have
+vanishing gradient problem.
+
+Small outputs of layer 𝑙 (input of
+layer 𝑙 + 1) cause small gradient
+w.r.t to the weights of layer 𝑙 + 1:
+𝑓𝑙+1 ෍ 𝑤𝑖𝑙+1 𝑥𝑖𝑙+1 + 𝑏 𝑙+1
+𝑖
+
+𝜕𝐿
+𝜕𝐿
+𝜕𝑓𝑙+1
+𝜕𝐿
+𝑙+1
+=
+∙
+∙
+𝑥
+=
+≈0
+𝑖
+𝜕𝑓𝑙+1
+𝜕𝑤𝑖𝑙+1 𝜕𝑓𝑙+1 𝜕𝑤𝑖𝑙+1
+
+Vanishing gradient, caused by small output
+Backward
+Daniel Cremers
+
+Introduction to Deep Learning
+
+63
+
+Big Random Numbers
+• Gaussian with zero mean and standard deviation 1
+
+• Let us see what happens:
+– Network with 10 layers with 500 neurons each
+– Tanh as activation functions
+– Input unit Gaussian data
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+64
+
+Big Random Numbers
+tanh as activation functions
+
+Output saturated to
+-1 and 1
+Daniel Cremers
+
+Introduction to Deep Learning
+
+65
+
+Big Random Numbers
+Output saturated to -1 and 1.
+Gradient of the activation
+function becomes close to 0.
+
+𝑓 𝑠 = 𝑓 ෍ 𝑤𝑖 𝑥𝑖 + 𝑏
+𝑖
+
+𝜕𝐿
+𝜕𝐿 𝜕𝑓 𝜕𝑠
+=
+∙
+∙
+≈0
+𝜕𝑤𝑖 𝜕𝑓 𝜕𝑠 𝜕𝑤𝑖
+
+Vanishing gradient, caused by
+saturated activation function.
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+66
+
+How to solve this?
+• Working on the initialization
+
+• Working on the output generated by each layer
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+67
+
+Xavier Initialization
+• Gaussian with zero mean, but what standard deviation?
+𝑛
+
+𝑛
+
+𝑉𝑎𝑟 𝑠 = 𝑉𝑎𝑟 ෍ 𝑤𝑖 𝑥𝑖 = ෍ 𝑉𝑎𝑟 𝑤𝑖 𝑥𝑖
+𝑖
+
+𝑖
+
+Notice: 𝑛 is the number of input
+neurons for the layer of weights you
+want to initialize. This 𝑛 is not the
+number 𝑁 of input data 𝑋 ∈ 𝑅𝑁×𝐷 .
+For the first layer 𝑛 = 𝐷.
+Daniel Cremers
+
+Tips:
+𝐸 𝑋 2 = 𝑉𝑎𝑟 𝑋 + 𝐸[𝑋]2
+If X, Y are independent:
+
+𝑉𝑎𝑟 𝑋𝑌 = 𝐸 𝑋 2 𝑌 2 − 𝐸[𝑋𝑌]2
+𝐸 𝑋𝑌 = 𝐸 𝑋 𝐸[𝑌]
+
+[Glorot and Bengio, AISTATS’10] Xavier Initialization 68
+Introduction to Deep Learning
+
+Xavier Initialization
+• Gaussian with zero mean, but what standard
+deviation?
+𝑛
+
+𝑛
+
+𝑉𝑎𝑟 𝑠 = 𝑉𝑎𝑟 ෍ 𝑤𝑖 𝑥𝑖 = ෍ 𝑉𝑎𝑟 𝑤𝑖 𝑥𝑖
+𝑛
+
+𝑖
+
+= ෍ 𝐸 𝑤𝑖
+
+𝑖
+2
+
+𝑉𝑎𝑟 𝑥𝑖 + 𝐸 𝑥𝑖
+
+2
+
+𝑉𝑎𝑟 𝑤𝑖 + 𝑉𝑎𝑟 𝑥𝑖 𝑉𝑎𝑟(𝑤𝑖 )
+
+𝑖
+
+Zero mean
+
+Daniel Cremers
+
+Zero mean
+
+[Glorot and Bengio, AISTATS’10] Xavier Initialization
+69
+Introduction to Deep Learning
+
+Xavier Initialization
+• Gaussian with zero mean, but what standard
+deviation?
+𝑛
+
+𝑛
+
+𝑉𝑎𝑟 𝑠 = 𝑉𝑎𝑟 ෍ 𝑤𝑖 𝑥𝑖 = ෍ 𝑉𝑎𝑟 𝑤𝑖 𝑥𝑖
+𝑛
+
+𝑖
+
+= ෍ 𝐸 𝑤𝑖
+
+𝑖
+2
+
+𝑉𝑎𝑟 𝑥𝑖 + 𝐸 𝑥𝑖
+
+2
+
+𝑉𝑎𝑟 𝑤𝑖 + 𝑉𝑎𝑟 𝑥𝑖 𝑉𝑎𝑟(𝑤𝑖 )
+
+𝑖
+𝑛
+
+= ෍ 𝑉𝑎𝑟 𝑥𝑖 𝑉𝑎𝑟 𝑤𝑖 = 𝑛 𝑉𝑎𝑟(𝑤 𝑉𝑎𝑟 𝑥 )
+𝑖
+
+Daniel Cremers
+
+Identically distributed
+(each random variable has the same
+distribution)
+
+[Glorot and Bengio, AISTATS’10] Xavier Initialization
+70
+Introduction to Deep Learning
+
+Xavier Initialization
+• How to ensure the variance of the output is the same
+as the input?
+Goal:
+𝑉𝑎𝑟 𝑠 = 𝑉𝑎𝑟(𝑥)
+
+𝑛 ∙ 𝑉𝑎𝑟(𝑤)𝑉𝑎𝑟 𝑥 = 𝑉𝑎𝑟(𝑥)
+=1
+1
+𝑉𝑎𝑟 𝑤 =
+𝑛
+𝑛: number of input neurons
+
+Daniel Cremers
+
+[Glorot and Bengio, AISTATS’10] Xavier Initialization 71
+Introduction to Deep Learning
+
+Xavier Initialization
+1
+𝑉𝑎𝑟 𝑤 =
+𝑛
+
+Daniel Cremers
+
+tanh as activation functions
+
+Introduction to Deep Learning
+
+72
+
+𝑉𝑎𝑟 𝑤 =
+
+Xavier Initialization with ReLU
+(Kaiming Initialization)
+1
+𝑛
+
+ReLU kills Half of the Data
+What’s the solution?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+When using ReLU, output
+close to zero again
+73
+
+Kaiming Initialization with ReLU
+1
+2
+𝑉𝑎𝑟 𝑤 =
+=
+𝑛Τ2 𝑛
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[He et al., ICCV’15] He Initialization 74
+
+Kaiming Initialization with ReLU
+2
+𝑉𝑎𝑟 𝑤 =
+𝑛
+
+It makes a huge difference!
+
+• Use ReLU and Xavier/2 initialization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[He et al., ICCV’15] He Initialization 75
+
+Summary
+
+Output layer
+Input layer
+Hidden layer
+
+Image
+Output Layer
+Classification
+
+Loss function
+
+Binary
+Sigmoid
+Classification
+
+Binary Cross
+entropy
+
+Multiclass
+Softmax
+Classification
+
+Cross entropy
+
+Other Losses:
+SVM Loss (Hinge Loss), L1/L2-Loss
+
+Initialization of optimization
+- How to set weights at beginning
+Daniel Cremers
+
+Introduction to Deep Learning
+
+76
+
+Next Lecture
+• Next lecture
+– More about training neural networks: regularization,
+dropout, data augmentation, batch normalization, etc.
+– Followed by CNNs
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+77
+
+See you next week!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+78
+
+References
+• Goodfellow et al. “Deep Learning” (2016),
+– Chapter 6: Deep Feedforward Networks
+
+• Bishop “Pattern Recognition and Machine Learning” (2006),
+– Chapter 5.5: Regularization in Network Nets
+
+• http://cs231n.github.io/neural-networks-1/
+• http://cs231n.github.io/neural-networks-2/
+• http://cs231n.github.io/neural-networks-3/
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+79
+
+

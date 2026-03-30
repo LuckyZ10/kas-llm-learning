@@ -1,0 +1,2930 @@
+Optimization and
+Backpropagation
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+Lecture 3 Recap
+Daniel Cremers
+
+Introduction to Deep Learning
+
+2
+
+Neural Network
+• Linear score function 𝒇 = 𝑾𝒙
+
+On CIFAR-10
+
+On ImageNet
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Credit:
+Li/Karpathy/Johnson
+3
+
+Neural Network
+• Linear score function 𝒇 = 𝑾𝒙
+
+• Neural network is a nesting of ‘functions’
+– 2-layers: 𝒇 = 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙)
+– 3-layers: 𝒇 = 𝑾𝟑 max(𝟎, 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙))
+– 4-layers: 𝒇 = 𝑾𝟒 tanh (𝑾𝟑 , max(𝟎, 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙)))
+– 5-layers: 𝒇 =
+𝑾𝟓 𝜎(𝑾𝟒 tanh(𝑾𝟑 , max(𝟎, 𝑾𝟐 max(𝟎, 𝑾𝟏 𝒙))))
+– … up to hundreds of layers
+Daniel Cremers
+
+Introduction to Deep Learning
+
+4
+
+Neural Network
+
+Output layer
+
+Input layer
+Hidden layer
+Credit: Li/Karpathy/Johnson
+Daniel Cremers
+
+Introduction to Deep Learning
+
+5
+
+Neural Network
+Input Layer
+
+Hidden Layer 1 Hidden Layer 2 Hidden Layer 3
+
+Width
+
+Output Layer
+
+Daniel Cremers
+
+Depth
+
+Introduction to Deep Learning
+
+6
+
+Activation Functions
+Leaky ReLU: max 0.1𝑥, 𝑥
+
+1
+
+Sigmoid: 𝜎 𝑥 = (1+𝑒 −𝑥 )
+
+tanh: tanh 𝑥
+Parametric ReLU: max 𝛼𝑥, 𝑥
+Maxout max 𝑤1𝑇 𝑥 + 𝑏1 , 𝑤2𝑇 𝑥 + 𝑏2
+ReLU: max 0, 𝑥
+Daniel Cremers
+
+ELU f x = ቊ
+Introduction to Deep Learning
+
+𝑥 if 𝑥 > 0
+if 𝑥 ≤ 0
+
+α e𝑥 − 1
+
+7
+
+Loss Functions
+• Measure the goodness of the predictions (or
+equivalently, the network's performance)
+• Regression loss
+1
+ෝ; 𝜽 = σ𝑛𝑖 𝑦𝑖 − 𝑦ො𝑖 1
+• L1 loss 𝑳 𝒚, 𝒚
+𝑛
+1
+2
+ෝ; 𝜽 = σ𝑛𝑖 𝑦𝑖 − 𝑦ො𝑖 2
+• MSE loss 𝑳 𝒚, 𝒚
+𝑛
+• Classification loss (for multi-class classification)
+– Cross Entropy loss 𝐸 𝑦, 𝑦;
+ො 𝜃 = − σ𝑛𝑖=1 σ𝐾
+ො𝑖𝑘 )
+𝑘=1(𝑦𝑖𝑘 ⋅ log 𝑦
+Daniel Cremers
+
+Introduction to Deep Learning
+
+8
+
+Computational Graphs
+• Neural network is a computational graph
+– It has compute nodes
+– It has edges that connect nodes
+– It is directional
+
+– It is organized in ‘layers’
+Daniel Cremers
+
+Introduction to Deep Learning
+
+9
+
+Backprop
+Daniel Cremers
+
+Introduction to Deep Learning
+
+10
+
+The Importance of Gradients
+• Our optimization schemes are based on computing
+gradients
+𝛻𝜽 𝐿 𝜽
+• One can compute gradients analytically but what if
+our function is too complex?
+• Break down gradient computation
+
+Backpropagation
+
+Done by many people before, but often credited to Rumelhart 1986
+Daniel Cremers
+
+Introduction to Deep Learning
+
+11
+
+Backprop: Forward Pass
+• 𝑓 𝑥, 𝑦, 𝑧 = 𝑥 + 𝑦 ⋅ 𝑧
+Initialization 𝑥 = 1, 𝑦 = −3, 𝑧 = 4
+1
+
+1
+𝑑 = −2
+−3
+
+−3
+
+sum
+
+𝑓 = −8
+mult
+4
+
+4
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+12
+
+Backprop: Backward Pass
+𝑓 𝑥, 𝑦, 𝑧 = 𝑥 + 𝑦 ⋅ 𝑧
+
+1
+
+with 𝑥 = 1, 𝑦 = −3, 𝑧 = 4
+
+1
+𝑑 = −2
+
+−3
+−3
+
+sum
+
+𝑓 = −8
+mult
+
+𝑑 =𝑥+𝑦
+
+𝜕𝑑
+𝜕𝑑
+=
+1,
+=1
+𝜕𝑥
+𝜕𝑦
+
+𝑓 =𝑑⋅𝑧
+
+𝜕𝑓
+𝜕𝑓
+=
+𝑧,
+=𝑑
+𝜕𝑑
+𝜕𝑧
+
+4
+4
+
+𝜕𝑓 𝜕𝑓 𝜕𝑓
+
+What is 𝜕𝑥 , 𝜕𝑦 , 𝜕𝑧 ?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+13
+
+Backprop: Backward Pass
+𝑓 𝑥, 𝑦, 𝑧 = 𝑥 + 𝑦 ⋅ 𝑧
+
+1
+
+with 𝑥 = 1, 𝑦 = −3, 𝑧 = 4
+
+1
+𝑑 = −2
+
+−3
+−3
+
+sum
+
+𝑓 = −8
+
+1
+
+mult
+
+𝑑 =𝑥+𝑦
+
+𝜕𝑑
+𝜕𝑑
+=
+1,
+=1
+𝜕𝑥
+𝜕𝑦
+
+𝑓 =𝑑⋅𝑧
+
+𝜕𝑓
+𝜕𝑓
+=
+𝑧,
+=𝑑
+𝜕𝑑
+𝜕𝑧
+
+4
+4
+
+𝜕𝑓
+𝜕𝑓
+
+𝜕𝑓 𝜕𝑓 𝜕𝑓
+
+What is 𝜕𝑥 , 𝜕𝑦 , 𝜕𝑧 ?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+14
+
+Backprop: Backward Pass
+𝑓 𝑥, 𝑦, 𝑧 = 𝑥 + 𝑦 ⋅ 𝑧
+
+1
+
+with 𝑥 = 1, 𝑦 = −3, 𝑧 = 4
+
+1
+𝑑 = −2
+
+−3
+−3
+
+sum
+
+𝑓 = −8
+
+1
+
+mult
+
+𝑑 =𝑥+𝑦
+
+𝜕𝑑
+𝜕𝑑
+=
+1,
+=1
+𝜕𝑥
+𝜕𝑦
+
+4
+4
+
+−2
+
+−2
+𝑓 =𝑑⋅𝑧
+
+𝜕𝑓
+𝜕𝑓
+=
+𝑧,
+=𝑑
+𝜕𝑑
+𝜕𝑧
+
+𝜕𝑓
+𝜕𝑧
+
+𝜕𝑓 𝜕𝑓 𝜕𝑓
+
+What is 𝜕𝑥 , 𝜕𝑦 , 𝜕𝑧 ?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+15
+
+Backprop: Backward Pass
+𝑓 𝑥, 𝑦, 𝑧 = 𝑥 + 𝑦 ⋅ 𝑧
+
+1
+
+with 𝑥 = 1, 𝑦 = −3, 𝑧 = 4
+
+1
+𝑑 = −2
+
+−3
+−3
+
+4
+
+sum
+
+𝑓 = −8
+
+1
+
+mult
+
+𝑑 =𝑥+𝑦
+
+𝜕𝑑
+𝜕𝑑
+=
+1,
+=1
+𝜕𝑥
+𝜕𝑦
+
+4
+4
+
+−2
+
+−2
+𝑓 =𝑑⋅𝑧
+
+𝜕𝑓
+𝜕𝑓
+=
+𝑧,
+=𝑑
+𝜕𝑑
+𝜕𝑧
+
+𝜕𝑓
+𝜕𝑑
+
+𝜕𝑓 𝜕𝑓 𝜕𝑓
+
+What is 𝜕𝑥 , 𝜕𝑦 , 𝜕𝑧 ?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+16
+
+Backprop: Backward Pass
+𝑓 𝑥, 𝑦, 𝑧 = 𝑥 + 𝑦 ⋅ 𝑧
+
+1
+
+with 𝑥 = 1, 𝑦 = −3, 𝑧 = 4
+
+1
+𝑑 = −2
+
+−3
+−3
+
+4
+
+4
+
+sum
+
+𝑓 = −8
+
+4
+𝑑 =𝑥+𝑦
+
+𝜕𝑑
+𝜕𝑑
+=
+1,
+=1
+𝜕𝑥
+𝜕𝑦
+
+1
+
+mult
+4
+
+−2
+
+4
+
+−2
+𝑓 =𝑑⋅𝑧
+
+𝜕𝑓
+𝜕𝑓
+=
+𝑧,
+=𝑑
+𝜕𝑑
+𝜕𝑧
+
+𝜕𝑓 𝜕𝑓 𝜕𝑓
+
+What is 𝜕𝑥 , 𝜕𝑦 , 𝜕𝑧 ?
+Daniel Cremers
+
+Chain Rule:
+𝜕𝑓 𝜕𝑓 𝜕𝑑
+=
+⋅
+𝜕𝑦 𝜕𝑑 𝜕𝑦
+
+𝜕𝑓
+→
+=4⋅1=4
+Introduction to𝜕𝑦
+Deep Learning
+
+𝜕𝑓
+𝜕𝑦
+
+17
+
+Backprop: Backward Pass
+𝑓 𝑥, 𝑦, 𝑧 = 𝑥 + 𝑦 ⋅ 𝑧
+
+1
+
+4
+
+with 𝑥 = 1, 𝑦 = −3, 𝑧 = 4
+
+4
+
+1
+𝑑 = −2
+
+−3
+−3
+
+4
+
+4
+
+sum
+
+4
+𝑑 =𝑥+𝑦
+
+𝜕𝑑
+𝜕𝑑
+=
+1,
+=1
+𝜕𝑥
+𝜕𝑦
+
+𝑓 = −8
+
+1
+
+mult
+4
+
+−2
+
+4
+
+−2
+𝑓 =𝑑⋅𝑧
+
+𝜕𝑓
+𝜕𝑓
+=
+𝑧,
+=𝑑
+𝜕𝑑
+𝜕𝑧
+
+𝜕𝑓 𝜕𝑓 𝜕𝑓
+
+What is 𝜕𝑥 , 𝜕𝑦 , 𝜕𝑧 ?
+Daniel Cremers
+
+Chain Rule:
+𝜕𝑓 𝜕𝑓 𝜕𝑑
+=
+⋅
+𝜕𝑦 𝜕𝑑 𝜕𝑦
+
+𝜕𝑓
+→
+=4⋅1=4
+Introduction to𝜕𝑥
+Deep Learning
+
+𝜕𝑓
+𝜕𝑥
+
+18
+
+Compute Graphs -> Neural Networks
+• 𝑥𝑘 input variables
+• 𝑤𝑙,𝑚,𝑛 network weights (note 3 indices)
+– 𝑙 which layer
+– 𝑚 which neuron in layer
+– 𝑛 which weight in neuron
+
+• 𝑦ො𝑖 computed output (𝑖 output dim; 𝑛𝑜𝑢𝑡 )
+• 𝑦𝑖 ground truth targets
+• 𝐿 loss function
+Daniel Cremers
+
+Introduction to Deep Learning
+
+19
+
+Compute Graphs -> Neural Networks
+Input layer
+
+Output layer
+𝑥0
+
+𝑥0
+𝑦ො0
+
+∗ 𝑤0
++
+
+𝑦0
+
+𝑥1
+
+𝑥1
+
+Input
+
+−𝑦0
+
+𝑥 ∗𝑥
+
+∗ 𝑤1
+Weights
+(unknowns!)
+
+Loss/
+cost
+
+L2 Loss
+function
+
+e.g., class label/
+regression target
+Daniel Cremers
+
+Introduction to Deep Learning
+
+20
+
+Compute Graphs -> Neural Networks
+Input layer Output layer
+
+∗ 𝑤0
+
+𝑥0
+
++
+
+𝑥0
+𝑦ො0
+
+𝑦0
+
+𝑥1
+
+𝑥1
+
+Daniel Cremers
+
+−𝑦0
+
+Loss/
+cost
+
+𝑥 ∗𝑥
+
+∗ 𝑤1
+
+Input
+
+e.g., class label/
+regression target
+
+max(0, 𝑥)
+
+ReLU Activation
+
+Weights (not arguing this
+(unknowns!) is the right choice here)
+
+L2 Loss
+function
+
+We want to compute gradients w.r.t. all weights 𝑾
+Introduction to Deep Learning
+
+21
+
+Compute Graphs -> Neural Networks
+∗ 𝑤0,0
+
+Input layer
+
+Output layer
+
++
+
+−𝑦0
+
+𝑥 ∗𝑥
+
+Loss/
+cost
+
++
+
+−𝑦0
+
+𝑥 ∗𝑥
+
+Loss/
+cost
+
++
+
+−𝑦0
+
+𝑥 ∗𝑥
+
+Loss/
+cost
+
+∗ 𝑤0,1
+𝑦ො0
+
+𝑦0
+
+𝑥0
+
+𝑦1
+
+𝑥1
+
+𝑥0
+𝑦ො1
+𝑥1
+
+∗ 𝑤1,0
+∗ 𝑤1,1
+∗ 𝑤2,0
+
+𝑦ො2
+
+𝑦2
+∗ 𝑤2,1
+
+We want to compute gradients w.r.t. all weights 𝑾
+Daniel Cremers
+
+Introduction to Deep Learning
+
+22
+
+Compute Graphs -> Neural Networks
+Input layer
+
+Output layer
+
+Goal: We want to compute gradients of
+the loss function 𝐿 w.r.t. all weights 𝑾
+𝐿 = ෍ 𝐿𝑖
+
+𝑥0
+𝑦0
+
+𝑦ො1
+
+𝑦1
+
+𝑖
+
+𝐿: sum over loss per sample, e.g.
+L2 loss ⟶ simply sum up squares:
+𝐿𝑖 = 𝑦ො𝑖 − 𝑦𝑖 2
+
+…
+
+𝑦ො0
+
+𝑥𝑘
+
+⟶ use chain rule to compute partials
+𝑦ො𝑖 = 𝐴(𝑏𝑖 + ෍ 𝑥𝑘 𝑤𝑖,𝑘 )
+𝑘
+
+Activation bias
+function
+Daniel Cremers
+
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො𝑖
+=
+⋅
+𝜕𝑤𝑖,𝑘 𝜕𝑦ො𝑖 𝜕𝑤𝑖,𝑘
+We want to compute gradients w.r.t.
+all weights 𝑾 AND all biases 𝒃
+
+Introduction to Deep Learning
+
+23
+
+NNs as Computational Graphs
+• We can express any kind of functions in a
+1
+computational graph, e.g. 𝑓 𝒘, 𝒙 =
+− 𝑏+𝑤0 𝑥0 +𝑤1 𝑥1
+1+𝑒
+
+𝑤1
+∗
+
+Sigmoid function
+1
+𝜎 𝑥 =
+1 + 𝑒 −𝑥
+
+𝑥1
++
+𝑤0
+∗
+𝑥0
+
++
+
+∙ −1
+
+exp(∙)
+
++1
+
+1
+∙
+
+𝑏
+Daniel Cremers
+
+Introduction to Deep Learning
+
+24
+
+NNs as Computational Graphs
+• 𝑓 𝒘, 𝒙 =
+2
+−1
+
+1
+1+𝑒 − 𝑏+𝑤0 𝑥0 +𝑤1 𝑥1
+
+𝑤1
+∗
+
++
+
+−3 𝑤
+
+6
+
+0
+
+−2 𝑥
+
+0
+
+−3
+Daniel Cremers
+
+−2
+
+𝑥1
+
+4
+
+∗
++
+
+1
+
+∙ −1
+
+−1 exp(∙)0.37 1.37 1 0.73
++1
+∙
+
+𝑏
+Introduction to Deep Learning
+
+25
+
+NNs as Computational Graphs
+• 𝑓 𝒘, 𝒙 =
+2
+−1
+
+1
+1+𝑒 − 𝑏+𝑤0 𝑥0 +𝑤1 𝑥1
+
+𝑤1
+∗
+
++
+6
+
+0
+
+−2 𝑥
+
+0
+
+Daniel Cremers
+
+−2
+
+𝑥1
+
+−3 𝑤
+
+−3
+
+𝜕𝑔
+1
+=− 2
+𝜕𝑥
+𝑥
+𝜕𝑔
+𝑔𝛼 𝑥 = 𝛼 + 𝑥 ⇒ 𝜕𝑥 = 1
+𝜕𝑔
+𝑔 𝑥 = 𝑒𝑥
+⇒ 𝜕𝑥 = 𝑒 𝑥
+𝜕𝑔
+𝑔𝛼 𝑥 = 𝛼𝑥 ⇒ 𝜕𝑥 = 𝛼
+1
+1 ∙ − 1.372 = −0.53
+
+𝑔 𝑥 =
+
+4
+
+∗
++
+
+1
+
+∙ −1
+
+1
+𝑥
+
+⇒
+
+−1 exp(∙)0.37 1.37 1 0.73
++1
+∙
+−0.53
+
+1
+
+𝑏
+Introduction to Deep Learning
+
+26
+
+NNs as Computational Graphs
+• 𝑓 𝒘, 𝒙 =
+2
+−1
+
+1
+1+𝑒 − 𝑏+𝑤0 𝑥0 +𝑤1 𝑥1
+
+𝑤1
+∗
+
++
+6
+
+0
+
+−2 𝑥
+
+0
+
+Daniel Cremers
+
+−2
+
+𝑥1
+
+−3 𝑤
+
+−3
+
+𝜕𝑔
+1
+=− 2
+𝜕𝑥
+𝑥
+𝜕𝑔
+𝑔𝛼 𝑥 = 𝛼 + 𝑥 ⇒ 𝜕𝑥 = 1
+𝜕𝑔
+𝑔 𝑥 = 𝑒𝑥
+⇒ 𝜕𝑥 = 𝑒 𝑥
+𝜕𝑔
+𝑔𝛼 𝑥 = 𝛼𝑥 ⇒ 𝜕𝑥 = 𝛼
+
+𝑔 𝑥 =
+
+1
+𝑥
+
+⇒
+
+−0.53 ∙ 1 = −0.53
+
+4
+
+∗
++
+
+1
+
+∙ −1
+
+−1 exp(∙)0.37 1.37 1 0.73
++1
+∙
+−0.53 −0.53
+
+1
+
+𝑏
+Introduction to Deep Learning
+
+27
+
+NNs as Computational Graphs
+• 𝑓 𝒘, 𝒙 =
+2
+−1
+
+1
+1+𝑒 − 𝑏+𝑤0 𝑥0 +𝑤1 𝑥1
+
+𝑤1
+∗
+
++
+6
+
+0
+
+−2 𝑥
+
+0
+
+Daniel Cremers
+
+−2
+
+𝑥1
+
+−3 𝑤
+
+−3
+
+𝜕𝑔
+1
+=− 2
+𝜕𝑥
+𝑥
+𝜕𝑔
+𝑔𝛼 𝑥 = 𝛼 + 𝑥 ⇒ 𝜕𝑥 = 1
+𝜕𝑔
+𝑔 𝑥 = 𝑒𝑥
+⇒ 𝜕𝑥 = 𝑒 𝑥
+𝜕𝑔
+𝑔𝛼 𝑥 = 𝛼𝑥 ⇒ 𝜕𝑥 = 𝛼
+
+𝑔 𝑥 =
+
+𝑏
+
+1
+𝑥
+
+⇒
+
+−0.53 ∙ e−1 = −0.2
+
+4
+
+∗
++
+
+1
+
+∙ −1
+
+−1 exp(∙)0.37 1.37 1 0.73
++1
+∙
+
+−0.2 −0.53 −0.53
+
+Introduction to Deep Learning
+
+1
+
+28
+
+NNs as Computational Graphs
+• 𝑓 𝒘, 𝒙 =
+2
+−1
+
+1
+1+𝑒 − 𝑏+𝑤0 𝑥0 +𝑤1 𝑥1
+
+𝑤1
+∗
+
++
+6
+
+0
+
+−2 𝑥
+
+0
+
+Daniel Cremers
+
+−2
+
+𝑥1
+
+−3 𝑤
+
+−3
+
+𝜕𝑔
+1
+=− 2
+𝜕𝑥
+𝑥
+𝜕𝑔
+𝑔𝛼 𝑥 = 𝛼 + 𝑥 ⇒ 𝜕𝑥 = 1
+𝜕𝑔
+𝑔 𝑥 = 𝑒𝑥
+⇒ 𝜕𝑥 = 𝑒 𝑥
+𝜕𝑔
+𝑔𝛼 𝑥 = 𝛼𝑥 ⇒ 𝜕𝑥 = 𝛼
+
+𝑔 𝑥 =
+
+𝑏
+
+4
+
+1
+𝑥
+
+⇒
+
+−0.2 ∙ −1 = 0.2
+
+∗
++
+
+1
+
+∙ −1
+
+0.2
+
+−1 exp(∙)0.37 1.37 1 0.73
++1
+∙
+
+−0.2 −0.53 −0.53
+
+Introduction to Deep Learning
+
+1
+
+29
+
+NNs as Computational Graphs
+• 𝑓 𝒘, 𝒙 =
+
+1
+
+𝜕𝑔
+1
+=− 2
+𝜕𝑥
+𝑥
+𝜕𝑔
+𝑔𝛼 𝑥 = 𝛼 + 𝑥 ⇒ 𝜕𝑥 = 1
+𝜕𝑔
+𝑔 𝑥 = 𝑒𝑥
+⇒ 𝜕𝑥 = 𝑒 𝑥
+𝜕𝑔
+𝑔𝛼 𝑥 = 𝛼𝑥 ⇒ 𝜕𝑥 = 𝛼
+
+𝑔 𝑥 =
+
+1+𝑒 − 𝑏+𝑤0 𝑥0 +𝑤1 𝑥1
+
+2
+−0.2 𝑤1
+−1
+
+∗
+𝑥1
+
+−3 𝑤
+−0.4 0
+−2 𝑥
+
+0
+
+−3
+𝑏
+0.2
+Daniel Cremers
+
+0.2
+
+−2
+
++
+6
+∗ 0.2
+
+1
+𝑥
+
+⇒
+
+4
+0.2
++
+
+1
+
+∙ −1
+
+0.2
+
+−1 exp(∙)0.37 1.37 1 0.73
++1
+∙
+
+−0.2 −0.53 −0.53
+
+Introduction to Deep Learning
+
+1
+
+30
+
+Gradient Descent
+Daniel Cremers
+
+Introduction to Deep Learning
+
+31
+
+Gradient Descent
+𝒙∗ = arg min 𝑓(𝒙)
+
+Initialization
+
+Optimum
+Daniel Cremers
+
+Introduction to Deep Learning
+
+32
+
+Gradient Descent
+• Gradient = vector of partial derivatives:
+𝛻𝑥 𝑓 𝑥 =
+
+𝜕𝑔
+𝜕𝑔
+,…,
+𝜕𝑥1
+𝜕𝑥𝑘
+
+Vector in direction of
+greatest increase of
+the function
+
+• Take steps in direction of negative gradient:
+𝛻𝑥 𝑓(𝑥)
+
+𝑥 𝑡+1 = 𝑥 𝑡 − 𝛼𝛻𝑥 𝑓(𝑥 𝑡 ) → 𝑥𝑜𝑝𝑡 for t → ∞
+Learning rate
+Daniel Cremers
+
+𝑥
+
+𝑥𝑜𝑝𝑡
+
+Introduction to Deep Learning
+
+33
+
+Gradient Descent for Neural Networks
+Input Layer
+
+Hidden Layer 1 Hidden Layer 2 Hidden Layer 3
+
+𝑚 Neurons
+
+Output Layer
+
+𝑙 Layers
+Daniel Cremers
+
+Introduction to Deep Learning
+
+34
+
+Gradient Descent for Neural Networks
+For a given training pair {𝒙, 𝒚}, we want to update all
+weights, i.e., we need to compute the derivatives w.r.t. to
+all weights:
+
+Gradient step:
+
+Input Layer
+
+𝑾′ = 𝑾 − 𝛼𝛻𝑾 𝑓 𝒙,𝒚 (𝑾)
+Daniel Cremers
+
+Hidden Layer 1
+
+Hidden Layer 2
+
+𝑚 Neurons
+
+𝜕𝑓
+𝜕𝑤0,0,0
+…
+𝛻𝑾 𝑓 𝒙,𝒚 (𝑾) =
+…
+𝜕𝑓
+𝜕𝑤𝑙,𝑚,𝑛
+
+Hidden Layer 3
+
+Output Layer
+
+𝑙 Layers
+Introduction to Deep Learning
+
+35
+
+NNs can Become Quite Complex…
+• These graphs can be huge!
+
+[Szegedy et al.,CVPR’15] Going Deeper with Convolutions
+Daniel Cremers
+
+Introduction to Deep Learning
+
+36
+
+The Flow of the Gradients
+• Many many many many of these nodes form a neural
+network
+NEURONS
+• Each one has its own work to do
+FORWARD AND BACKWARD PASS
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+37
+
+The Flow of the Gradients
+
+Activations
+
+𝑥
+
+𝜕𝐿
+𝜕𝐿 𝜕𝑧
+=
+𝜕𝑥
+𝜕𝑧 𝜕𝑥
+𝜕𝑧
+𝜕𝑥
+𝜕𝑧
+𝜕𝑦
+
+𝑓
+
+𝑧 = 𝑓(𝑥, 𝑦)
+𝜕𝐿
+𝜕𝑧
+
+𝑦
+Daniel Cremers
+
+Activation function
+
+Introduction to Deep Learning
+
+38
+
+Gradient Descent for Neural Networks
+Loss function
+𝐿𝑖 = 𝑦ො𝑖 − 𝑦𝑖 2
+
+𝑦ො𝑖 = 𝐴(𝑏1,𝑖 + ෍ ℎ𝑗 𝑤1,𝑖,𝑗 )
+𝑗
+
+ℎ𝑗 = 𝐴(𝑏0,𝑗 + ෍ 𝑥𝑘 𝑤0,𝑗,𝑘 )
+Daniel Cremers
+
+𝑘
+
+Introduction to Deep Learning
+
+Just simple:
+𝐴 𝑥 = max(0, 𝑥)
+39
+
+ℎ𝑗 = 𝐴(𝑏0,𝑗 + ෍ 𝑥𝑘 𝑤0,𝑗,𝑘 )
+𝑘
+
+𝑦ො𝑖 = 𝐴(𝑏1,𝑖 + ෍ ℎ𝑗 𝑤1,𝑖,𝑗 )
+𝑗
+
+𝐿𝑖 = 𝑦ො𝑖 − 𝑦𝑖 2
+Daniel Cremers
+
+Just go through layer by layer
+
+Gradient Descent for Neural Networks
+Backpropagation
+𝜕𝐿
+𝜕𝐿
+𝜕𝑦ො𝑖
+=
+⋅
+𝜕𝑤1,𝑖,𝑗 𝜕𝑦ො𝑖 𝜕𝑤1,𝑖,𝑗
+𝜕𝐿𝑖
+= 2(𝑦ොi − yi )
+𝜕𝑦ො𝑖
+𝜕𝑦ො 𝑖
+= ℎ𝑗
+𝜕𝑤1,𝑖,𝑗
+
+if > 0, else 0
+
+𝜕ℎ𝑗
+𝜕𝐿
+𝜕𝐿 𝜕 𝑦ො𝑖
+=
+⋅
+⋅
+𝜕𝑤0,𝑗,𝑘 𝜕𝑦ො𝑖 𝜕ℎ𝑗 𝜕𝑤0,𝑗,𝑘
+…
+
+Introduction to Deep Learning
+
+40
+
+Gradient Descent for Neural Networks
+How many unknown weights?
+• Output layer: 2 ⋅ 4 + 2
+
+• Hidden Layer: 4 ⋅ 3 + 4
+#neurons ∙ #input channels + #biases
+ℎ𝑗 = 𝐴(𝑏0,𝑗 + ෍ 𝑥𝑘 𝑤0,𝑗,𝑘 )
+𝑘
+
+𝑦ො𝑖 = 𝐴(𝑏1,𝑖 + ෍ ℎ𝑗 𝑤1,𝑖,𝑗 )
+𝑗
+
+Note that some activations
+have also weights
+
+𝐿𝑖 = 𝑦ො𝑖 − 𝑦𝑖 2
+Daniel Cremers
+
+Introduction to Deep Learning
+
+41
+
+Derivatives of Cross Entropy Loss
+Gradients of weights of last layer:
+𝜕𝐿
+𝜕𝐿 𝜕 𝑦ො𝑖 𝜕𝑠𝑖
+=
+∙
+∙
+𝜕𝑤𝑗𝑖 𝜕𝑦ො𝑖 𝜕𝑠𝑖 𝜕𝑤𝑗𝑖
+
+Binary Cross Entropy loss
+𝑛𝑜𝑢𝑡
+
+𝐿 = − ෍ (𝑦𝑖 log 𝑦ො𝑖 + 1 − 𝑦𝑖 log(1 − 𝑦ො𝑖 ))
+𝑖=1
+
+𝑦ො𝑖 =
+
+1
+1 + 𝑒 −𝑠𝑖
+
+output
+Daniel Cremers
+
+𝑠𝑖 = ෍ ℎ𝑗 𝑤𝑗𝑖
+j
+
+scores
+
+𝜕𝐿 −𝑦𝑖 1 − 𝑦𝑖
+𝑦ො𝑖 − 𝑦𝑖
+=
++
+=
+,
+𝜕𝑦ො𝑖
+𝑦ො𝑖
+1 − 𝑦ො𝑖 𝑦ො𝑖 (1 − 𝑦ො𝑖 )
+𝜕𝑦ො𝑖
+= 𝑦ො𝑖 1 − 𝑦ො𝑖 ,
+𝜕𝑠𝑖
+𝜕𝑠𝑖
+= ℎ𝑗
+𝜕𝑤𝑗𝑖
+𝜕𝐿
+𝜕𝐿
+= 𝑦ො𝑖 − 𝑦𝑖
+⟹
+= (𝑦ො𝑖 − 𝑦𝑖 )ℎ𝑗 ,
+𝜕𝑠𝑖
+𝜕𝑤𝑗𝑖
+
+Introduction to Deep Learning
+
+42
+
+Derivatives of Cross Entropy Loss
+Gradients of weights of first layer:
+𝑛𝑜𝑢𝑡
+
+𝑛𝑜𝑢𝑡
+
+𝑛𝑜𝑢𝑡
+
+𝑖=1
+
+𝑖=1
+
+𝑖=1
+
+𝑛𝑜𝑢𝑡
+
+𝑛𝑜𝑢𝑡
+
+𝑖=1
+
+𝑖=1
+
+𝑛𝑜𝑢𝑡
+
+𝑛𝑜𝑢𝑡
+
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො𝑖 𝜕𝑠𝑖
+𝜕𝐿
+= ෍
+= ෍
+𝑦ො 1 − 𝑦ො𝑖 𝑤𝑗𝑖 = ෍ 𝑦ො𝑖 − 𝑦𝑖 𝑤𝑗𝑖
+𝜕ℎ𝑗
+𝜕𝑦ො𝑖 𝜕𝑠i 𝜕ℎ𝑗
+𝜕𝑦ො𝑖 𝑖
+
+𝜕𝐿
+𝜕𝐿 𝜕𝑠𝑖 𝜕ℎ𝑗
+= ෍
+= ෍ (𝑦ො𝑖 − 𝑦𝑖 )𝑤𝑗𝑖 (ℎ𝑗 1 − ℎ𝑗 )
+𝜕𝑠𝑖 𝜕ℎ𝑗 𝜕𝑠𝑗1
+𝜕𝑠𝑗1
+𝜕𝐿
+𝜕𝐿 𝜕𝑠𝑗1
+ො𝑖 − 𝑦𝑖 𝑤𝑗𝑖 ℎ𝑗 1 − ℎ𝑗
+1 = ෍
+1 = ෍ 𝑦
+𝜕𝑤𝑘𝑗
+𝜕𝑠𝑗1 𝜕𝑤𝑘𝑗
+𝑖=1
+
+Daniel Cremers
+
+𝑥𝑘
+
+𝑖=1
+
+Introduction to Deep Learning
+
+43
+
+Back to Compute Graphs & NNs
+• Inputs 𝒙 and targets 𝒚
+• Two-layer NN for
+regression with ReLU
+activation
+• Function we want to
+optimize:
+
+𝑥
+𝑧
+∗
+
+𝜎
+max(0,∙)
+
+𝑦ො
+∗
+
+𝑤1
+
+𝐿
+
+𝑤2
+𝑦
+
+𝑛
+
+෍ 𝑤2 max 0, 𝑤1 𝑥𝑖 − 𝑦𝑖 22
+𝑖=1
+Daniel Cremers
+
+Introduction to Deep Learning
+
+44
+
+Gradient Descent for Neural Networks
+1
+
+Initialize 𝑥 = 1, 𝑦 = 0,
+𝑤1 = 13, 𝑤2 = 2
+ෝ; 𝜽
+𝐿 𝒚, 𝒚
+
+1
+3
+
+1
+= 𝑛 σ𝑛𝑖 | 𝑦ො𝑖 − 𝑦𝑖 | 22
+
+𝑥
+
+1
+3
+
+𝑧
+∗
+
+𝐿=
+
+𝑦ො = 𝑤2 ∙ 𝜎
+
+Daniel Cremers
+
+2
+
+2
+3
+
+max(0,∙)
+
+𝑦ො
+∗
+2 𝑤
+2
+
+𝜕𝐿
+⇒ ො = 2(𝑦ො − 𝑦)
+𝜕𝑦
+𝜕𝑦ො
+
+⇒ 𝜕𝑤 = 𝜎
+
+𝜎
+
+𝑤1
+
+In our case 𝑛, 𝑑 = 1:
+
+𝑦ො − 𝑦 2
+
+1
+3
+
+𝐿
+0
+
+𝑦
+
+Backpropagation
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො
+=
+⋅
+𝜕𝑤2 𝜕𝑦ො 𝜕𝑤2
+
+Introduction to Deep Learning
+
+45
+
+4
+9
+
+1
+
+Gradient Descent for Neural Networks
+1
+
+Initialize 𝑥 = 1, 𝑦 = 0,
+𝑤1 = 13, 𝑤2 = 2
+
+1
+3
+
+1
+
+ෝ; 𝜽 = σ𝑛𝑖 | 𝑦ො𝑖 − 𝑦𝑖 | 22
+𝐿 𝒚, 𝒚
+𝑛
+
+𝑥
+
+1
+3
+
+1
+3
+
+𝑧
+∗
+
+𝜎
+
+𝑦ො
+∗
+
+𝑤1
+2 𝑤
+2
+
+In our case 𝑛, 𝑑 = 1:
+
+𝐿=
+
+𝑦ො − 𝑦 2
+
+𝑦ො = 𝑤2 ∙ 𝜎
+
+𝜕𝐿
+⇒ ො = 2(𝑦ො − 𝑦)
+𝜕𝑦
+𝜕𝑦ො
+
+⇒ 𝜕𝑤 = 𝜎
+2
+
+2
+3
+
+max(0,∙)
+
+4
+3
+
+𝐿
+0
+
+𝑦
+
+Backpropagation
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො
+=
+⋅
+𝜕𝑤2 𝜕𝑦ො 𝜕𝑤2
+2 ∙ 23
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+46
+
+4
+9
+
+1
+
+Gradient Descent for Neural Networks
+1
+
+Initialize 𝑥 = 1, 𝑦 = 0,
+𝑤1 = 13, 𝑤2 = 2
+
+1
+3
+
+1
+
+ෝ; 𝜽 = σ𝑛𝑖 | 𝑦ො𝑖 − 𝑦𝑖 | 22
+𝐿 𝒚, 𝒚
+𝑛
+
+𝑥
+
+𝑧
+∗
+
+𝐿=
+
+𝑦ො = 𝑤2 ∙ 𝜎
+
+2
+
+2
+3
+
+max(0,∙)
+
+2 𝑤
+2
+4
+9
+
+𝜕𝐿
+⇒ ො = 2(𝑦ො − 𝑦)
+𝜕𝑦
+𝜕𝑦ො
+
+⇒ 𝜕𝑤 = 𝜎
+
+𝜎
+
+𝑤1
+
+In our case 𝑛, 𝑑 = 1:
+
+𝑦ො − 𝑦 2
+
+1
+3
+
+1
+3
+
+𝑦ො
+∗
+
+4
+9
+
+4
+3
+
+𝐿
+0
+
+𝑦
+
+Backpropagation
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො
+=
+⋅
+𝜕𝑤2 𝜕𝑦ො 𝜕𝑤2
+2 ∙ 23 ∙ 13
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+47
+
+4
+9
+
+1
+
+Gradient Descent for Neural Networks
+1
+
+Initialize 𝑥 = 1, 𝑦 = 0,
+𝑤1 = 13, 𝑤2 = 2
+
+1
+3
+
+In our case 𝑛, 𝑑 = 1:
+𝜕𝐿
+𝐿 = 𝑦ො − 𝑦 2 ⇒ 𝜕𝑦ො = 2(𝑦ො − 𝑦)
+
+𝑦ො = 𝑤2 ∙ 𝜎
+
+Daniel Cremers
+
+𝑧
+∗
+
+𝜕𝑧
+
+1
+
+𝜎
+
+2
+3
+
+max(0,∙)
+
+𝑤1
+2 𝑤
+2
+4
+9
+
+𝜕𝑦ො
+
+⇒ 𝜕𝑤 = 𝑥
+
+1
+3
+
+1
+3
+
+⇒ 𝜕𝜎 = 𝑤2
+
+𝜕𝜎
+1 if 𝑥 > 0
+𝜎 = max 0, 𝑧 ⇒ 𝜕𝑧 = ቊ
+0 else
+
+𝑧 = 𝑥 ∙ 𝑤1
+
+𝑥
+
+𝑦ො
+∗
+
+4
+9
+
+𝐿
+0
+
+𝑦
+
+Backpropagation
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො 𝜕𝜎 𝜕𝑧
+=
+⋅
+⋅
+⋅
+𝜕𝑤1 𝜕𝑦ො 𝜕𝜎 𝜕𝑧 𝜕𝑤1
+
+Introduction to Deep Learning
+
+48
+
+4
+9
+
+1
+
+Gradient Descent for Neural Networks
+1
+
+Initialize 𝑥 = 1, 𝑦 = 0,
+𝑤1 = 13, 𝑤2 = 2
+
+1
+3
+
+In our case 𝑛, 𝑑 = 1:
+𝜕𝐿
+𝐿 = 𝑦ො − 𝑦 2 ⇒ 𝜕𝑦ො = 2(𝑦ො − 𝑦)
+
+𝑦ො = 𝑤2 ∙ 𝜎
+
+1
+3
+
+1
+3
+
+𝑧
+∗
+
+𝜎
+
+𝜕𝑧
+
+⇒ 𝜕𝑤 = 𝑥
+1
+
+2
+3
+
+max(0,∙)
+
+𝑤1
+2 𝑤
+2
+4
+9
+
+𝜕𝑦ො
+⇒ 𝜕𝜎 = 𝑤2
+
+𝜕𝜎
+1 if 𝑥 > 0
+𝜎 = max 0, 𝑧 ⇒ 𝜕𝑧 = ቊ
+0 else
+
+𝑧 = 𝑥 ∙ 𝑤1
+
+𝑥
+
+𝑦ො
+∗
+
+4
+9
+
+4
+3
+
+𝐿
+0
+
+𝑦
+
+Backpropagation
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො 𝜕𝜎 𝜕𝑧
+=
+⋅
+⋅
+⋅
+𝜕𝑤1 𝜕𝑦ො 𝜕𝜎 𝜕𝑧 𝜕𝑤1
+2 ∙ 23
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+49
+
+4
+9
+
+Gradient Descent for Neural Networks
+1
+
+Initialize 𝑥 = 1, 𝑦 = 0,
+𝑤1 = 13, 𝑤2 = 2
+
+1
+3
+
+In our case 𝑛, 𝑑 = 1:
+𝜕𝐿
+𝐿 = 𝑦ො − 𝑦 2 ⇒ 𝜕𝑦ො = 2(𝑦ො − 𝑦)
+
+𝑦ො = 𝑤2 ∙ 𝜎
+
+1
+3
+
+1
+3
+
+𝑧
+∗
+
+𝜎
+
+𝑤1
+2 𝑤
+2
+4
+9
+
+𝜕𝑦ො
+
+𝜕𝑧
+
+⇒ 𝜕𝑤 = 𝑥
+1
+
+8
+3
+
+max(0,∙)
+
+⇒ 𝜕𝜎 = 𝑤2
+
+𝜕𝜎
+1 if 𝑥 > 0
+𝜎 = max 0, 𝑧 ⇒ 𝜕𝑧 = ቊ
+0 else
+
+𝑧 = 𝑥 ∙ 𝑤1
+
+𝑥
+
+4
+9
+
+2
+3
+
+𝑦ො
+∗
+
+4
+3
+
+𝐿
+0
+
+𝑦
+
+Backpropagation
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො 𝜕𝜎 𝜕𝑧
+=
+⋅
+⋅
+⋅
+𝜕𝑤1 𝜕𝑦ො 𝜕𝜎 𝜕𝑧 𝜕𝑤1
+2 ∙ 23 ∙ 2
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+50
+
+4
+9
+
+1
+
+Gradient Descent for Neural Networks
+1
+
+Initialize 𝑥 = 1, 𝑦 = 0,
+𝑤1 = 13, 𝑤2 = 2
+
+1
+3
+
+In our case 𝑛, 𝑑 = 1:
+𝜕𝐿
+𝐿 = 𝑦ො − 𝑦 2 ⇒ 𝜕𝑦ො = 2(𝑦ො − 𝑦)
+
+𝑦ො = 𝑤2 ∙ 𝜎
+
+1
+3
+
+𝑧
+∗
+
+8
+3
+
+1
+3
+
+𝜎
+
+𝑤1
+2 𝑤
+2
+4
+9
+
+𝜕𝑦ො
+
+𝜕𝑧
+
+⇒ 𝜕𝑤 = 𝑥
+1
+
+8
+3
+
+max(0,∙)
+
+⇒ 𝜕𝜎 = 𝑤2
+
+𝜕𝜎
+1 if 𝑥 > 0
+𝜎 = max 0, 𝑧 ⇒ 𝜕𝑧 = ቊ
+0 else
+
+𝑧 = 𝑥 ∙ 𝑤1
+
+𝑥
+
+4
+9
+
+2
+3
+
+𝑦ො
+∗
+
+4
+3
+
+𝐿
+0
+
+𝑦
+
+Backpropagation
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො 𝜕𝜎 𝜕𝑧
+=
+⋅
+⋅
+⋅
+𝜕𝑤1 𝜕𝑦ො 𝜕𝜎 𝜕𝑧 𝜕𝑤1
+2 ∙ 23 ∙ 2 ∙ 1
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+51
+
+4
+9
+
+1
+
+Gradient Descent for Neural Networks
+1
+
+Initialize 𝑥 = 1, 𝑦 = 0,
+𝑤1 = 13, 𝑤2 = 2
+In our case 𝑛, 𝑑 = 1:
+𝜕𝐿
+𝐿 = 𝑦ො − 𝑦 2 ⇒ 𝜕𝑦ො = 2(𝑦ො − 𝑦)
+
+𝑦ො = 𝑤2 ∙ 𝜎
+
+8
+3
+
+𝑧
+∗
+
+8
+3
+
+1
+3
+
+𝜎
+
+𝑤1
+2 𝑤
+2
+4
+9
+
+𝜕𝑦ො
+
+𝜕𝑧
+
+⇒ 𝜕𝑤 = 𝑥
+1
+
+4
+9
+
+2
+3
+
+𝑦ො
+∗
+
+4
+3
+
+𝐿
+0
+
+𝑦
+
+Backpropagation
+𝜕𝐿
+𝜕𝐿 𝜕𝑦ො 𝜕𝜎 𝜕𝑧
+=
+⋅
+⋅
+⋅
+𝜕𝑤1 𝜕𝑦ො 𝜕𝜎 𝜕𝑧 𝜕𝑤1
+2 ∙ 23 ∙ 2 ∙ 1
+
+Daniel Cremers
+
+8
+3
+
+max(0,∙)
+
+⇒ 𝜕𝜎 = 𝑤2
+
+𝜕𝜎
+1 if 𝑥 > 0
+𝜎 = max 0, 𝑧 ⇒ 𝜕𝑧 = ቊ
+0 else
+
+𝑧 = 𝑥 ∙ 𝑤1
+
+1
+3
+8
+3
+
+1
+3
+
+𝑥
+
+Introduction to Deep Learning
+
+∙1
+52
+
+4
+9
+
+1
+
+Gradient Descent for Neural Networks
+• Function we want to
+optimize:
+
+1
+3
+2
+= ෍ 𝑤2 max 0, 𝑤1 𝑥𝑖 − 𝑦𝑖 2 8
+3
+𝑖=1
+
+𝑛
+
+𝑓 𝑥, 𝒘
+
+1
+
+1
+3
+
+𝑥
+8
+3
+
+𝑧
+∗
+
+𝛻𝑤1 𝑓
+𝑤1
+𝒘′ = 𝒘 − 𝛼 ∙ 𝛻𝒘 𝑓 = 𝑤 − 𝛼 ∙
+𝛻𝑤2 𝑓
+2
+=
+Daniel Cremers
+
+2
+
+− 𝛼∙
+
+8
+3
+4
+9
+
+𝜎
+
+2 𝑤
+2
+4
+9
+
+8
+3
+
+max(0,∙)
+
+𝑤1
+
+• Computed gradients wrt
+to weights 𝑤1 and 𝑤2
+• Now: update the weights
+1
+3
+
+8
+3
+
+1
+3
+
+4
+9
+
+2
+3
+
+𝑦ො
+∗
+
+4
+3
+
+𝐿
+0
+
+𝑦
+
+But: how to choose a
+good learning rate 𝛼 ?
+
+Introduction to Deep Learning
+
+53
+
+4
+9
+
+1
+
+Gradient Descent
+• How to pick good learning rate?
+
+• How to compute gradient for single training pair?
+• How to compute gradient for large training set?
+• How to speed things up? More to see in next
+lectures…
+Daniel Cremers
+
+Introduction to Deep Learning
+
+54
+
+Regularization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+55
+
+Recap: Basic Recipe for ML
+• Split your data
+
+60%
+
+20%
+
+20%
+
+train
+
+validation
+
+test
+
+Find your hyperparameters
+
+Other splits are also possible (e.g., 80%/10%/10%)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+56
+
+Over- and Underfitting
+
+Underfitted
+
+Appropriate
+
+Overfitted
+
+Source: Deep Learning by Adam Gibson, Josh Patterson, O‘Reily Media Inc., 2017
+Daniel Cremers
+
+Introduction to Deep Learning
+
+57
+
+Over- and Underfitting
+
+Underfitted
+
+Appropriate
+
+Overfitted
+
+Source: Deep Learning by Adam Gibson, Josh Patterson, O‘Reily Media Inc., 2017
+Daniel Cremers
+
+Introduction to Deep Learning
+
+58
+
+Training a Neural Network
+• Training/ Validation curve
+
+Training error
+too high
+
+How can we
+prevent our model
+from overfitting?
+Regularization
+
+Generalization
+gap is too big
+
+Credits: Deep Learning. Goodfellow et al.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+59
+
+Regularization
+ෝ, 𝜽) = σ𝑛𝑖=1 𝑦ො𝑖 − 𝑦𝑖 2 + 𝜆𝑅(𝜽)
+• Loss function 𝐿(𝒚, 𝒚
+
+• Regularization techniques
+– L2 regularization
+Add regularization
+term to loss function
+– L1 regularization
+– Max norm regularization
+– Dropout
+– Early stopping
+– ...
+Daniel Cremers
+
+Introduction to Deep Learning
+
+60
+
+Regularization
+ෝ, 𝜽) = σ𝑛𝑖=1 𝑦ො𝑖 − 𝑦𝑖 2 + 𝜆𝑅(𝜽)
+• Loss function 𝐿(𝒚, 𝒚
+
+• Regularization techniques
+– L2 regularization
+Add regularization
+term to loss function
+– L1 regularization
+– Max norm regularization
+– Dropout
+More details later
+– Early stopping
+– ...
+Daniel Cremers
+
+Introduction to Deep Learning
+
+61
+
+Regularization: Example
+• Input: 3 features 𝒙 = [1, 2, 1]
+
+• Two linear classifiers that give the same result:
+•
+
+𝜃1 = 0, 0.75, 0
+
+Ignores 2 features
+
+•
+
+𝜃2 = [0.25, 0.5, 0.25]
+
+Takes information
+from all features
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+62
+
+Regularization: Example
+ෝ, 𝜽
+• Loss 𝐿 𝒚, 𝒚
+
+2
+𝑛
+= σ𝑖=1 𝑥𝑖 𝜃𝑗𝑖 − 𝑦𝑖 + 𝜆𝑅 𝜽
+
+• L2 regularization
+
+𝑛
+
+𝑅 𝜽 = ෍ 𝜃𝑖2
+
+𝑖=1
+2
+0 + 0.75 + 0 = 0.5625
+
+𝑅(𝜃1 ) =
+𝑅(𝜃2 ) = 0.252 + 0.52 + 0.252 = 0.375
+
+Minimization
+
+𝑥 = 1, 2, 1 , 𝜃1 = 0, 0.75, 0 , 𝜃2 = [0.25, 0.5, 0.25]
+Daniel Cremers
+
+Introduction to Deep Learning
+
+63
+
+Regularization: Example
+ෝ, 𝜽
+• Loss 𝐿 𝒚, 𝒚
+
+2
+𝑛
+= σ𝑖=1 𝑥𝑖 𝜃𝑗𝑖 − 𝑦𝑖 + 𝜆𝑅 𝜽
+
+• L1 regularization
+
+𝑛
+
+𝑅 𝜽 = ෍ |𝜃𝑖 |
+𝑖=1
+
+𝑅(𝜃1 ) = 0 + 0.75 + 0 = 0.75 Minimization
+𝑅(𝜃2 ) = 0.25 + 0.5 + 0.25 = 1
+
+𝑥 = 1, 2, 1 , 𝜃1 = 0, 0.75, 0 , 𝜃2 = [0.25, 0.5, 0.25]
+Daniel Cremers
+
+Introduction to Deep Learning
+
+64
+
+Regularization: Example
+• Input: 3 features 𝒙 = [1, 2, 1]
+
+• Two linear classifiers that give the same result:
+•
+
+𝜃1 = 0, 0.75, 0
+
+Ignores 2 features
+
+•
+
+𝜃2 = [0.25, 0.5, 0.25]
+
+Takes information
+from all features
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+65
+
+Regularization: Example
+• Input: 3 features 𝒙 = [1, 2, 1]
+
+• Two linear classifiers that give the same result:
+•
+
+𝜃1 = 0, 0.75, 0
+
+L1 regularization
+enforces sparsity
+
+•
+
+𝜃2 = [0.25, 0.5, 0.25]
+
+L2 regularization
+enforces that the weights
+have similar values
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+66
+
+Regularization: Effect
+• Dog classifier takes different inputs
+Furry
+
+L1 regularization
+will focus all the
+attention to a
+few key features
+
+Has two eyes
+Has a tail
+Has paws
+Has two ears
+Daniel Cremers
+
+Introduction to Deep Learning
+
+67
+
+Regularization: Effect
+• Dog classifier takes different inputs
+Furry
+
+L2 regularization
+will take all
+information into
+account to make
+decisions
+
+Has two eyes
+Has a tail
+Has paws
+Has two ears
+Daniel Cremers
+
+Introduction to Deep Learning
+
+68
+
+Regularization for Neural Networks
+𝑥
+∗
+
+max(0,∙)
+
+𝑤1
+
+∗
+𝐿2
+loss
+
+𝑤2
+
++
+
+𝐿
+
+𝑦
+𝑅(𝑤1 , 𝑤2 )
+Combining nodes:
+Network output + L2-loss +
+regularization
+Daniel Cremers
+
+∙𝜆
+
+𝑛
+
+෍ 𝑤2 max 0, 𝑤1 𝑥𝑖 − 𝑦𝑖 22 + 𝜆𝑅 𝑤1 , 𝑤2
+𝑖=1
+Introduction to Deep Learning
+
+69
+
+Regularization for Neural Networks
+𝑥
+∗
+
+max(0,∙)
+
+𝑤1
+
+∗
+𝐿2
+loss
+
+𝑤2
+
++
+
+𝐿
+
+𝑦
+𝑅(𝑤1 , 𝑤2 )
+Combining nodes:
+Network output + L2-loss +
+regularization
+Daniel Cremers
+
+∙𝜆
+
+𝑛
+
+෍
+
+𝑤2 max 0, 𝑤1 𝑥𝑖 − 𝑦𝑖 22 + 𝜆
+
+𝑖=1
+Introduction to Deep Learning
+
+𝑤1
+𝑤2
+
+2
+2
+70
+
+Regularization for Neural Networks
+𝑥
+∗
+
+max(0,∙)
+
+𝑤1
+
+∗
+𝐿2
+loss
+
+𝑤2
+
++
+
+𝐿
+
+𝑦
+𝑅(𝑤1 , 𝑤2 )
+Combining nodes:
+Network output + L2-loss +
+regularization
+Daniel Cremers
+
+∙𝜆
+
+𝑛
+
+෍ 𝑤2 max 0, 𝑤1 𝑥𝑖 − 𝑦𝑖 22 + 𝜆(𝑤12 + 𝑤22 )
+𝑖=1
+Introduction to Deep Learning
+
+71
+
+Regularization
+Regularization
+
+𝜆=0
+
+𝜆 = 0.00001
+
+𝜆 = 0.001
+
+𝜆=1
+
+𝜆 = 10
+
+Decision
+Boundary
+
+Credit: University of Washington
+
+What happens to the training error?
+What is the goal of regularization?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+72
+
+Regularization
+• Any strategy that aims to
+
+Lower
+validation error
+
+Daniel Cremers
+
+Increasing
+training error
+
+Introduction to Deep Learning
+
+73
+
+Next Lecture
+• This week:
+– Check exercises!
+– Check piazza / post questions
+
+• Next lecture
+– Optimization of Neural Networks
+– In particular, introduction to SGD (our main method!)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+74
+
+Further Reading
+• Backpropagation
+– Chapter 6.5 (6.5.1 - 6.5.3) in
+http://www.deeplearningbook.org/contents/mlp.html
+– Chapter 5.3 in Bishop, Pattern Recognition and Machine Learning
+– http://cs231n.github.io/optimization-2/
+
+• Regularization
+– Chapter 7.1 (esp. 7.1.1 & 7.1.2)
+http://www.deeplearningbook.org/contents/regularization.html
+– Chapter 5.5 in Bishop, Pattern Recognition and Machine Learning
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+75
+
+

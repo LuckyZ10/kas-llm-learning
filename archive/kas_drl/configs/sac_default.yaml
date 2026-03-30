@@ -1,0 +1,37 @@
+# SAC默认配置
+
+agent:
+  type: "sac"
+  state_dim: 128
+  action_dim: 21
+  
+  # SAC特定配置
+  lr: 3.0e-4
+  gamma: 0.99
+  tau: 0.005
+  alpha: 0.2
+  automatic_entropy_tuning: true
+  buffer_size: 100000
+  batch_size: 256
+  hidden_dim: 256
+  updates_per_step: 1
+
+environment:
+  max_steps: 500
+  num_tasks: 10
+  task_complexity_range: [0.1, 1.0]
+  user_satisfaction_threshold: 0.7
+  capability_decay: 0.01
+  reward_scale: 1.0
+
+training:
+  num_episodes: 2000
+  max_steps_per_episode: 500
+  eval_interval: 50
+  save_interval: 100
+  log_dir: "./logs/sac_training"
+  experiment_name: "kas_sac_default"
+  use_early_stopping: true
+  patience: 100
+  min_delta: 0.01
+  device: "cuda"

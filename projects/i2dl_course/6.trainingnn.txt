@@ -1,0 +1,933 @@
+Training Neural
+Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+Lecture 5 Recap
+Daniel Cremers
+
+Introduction to Deep Learning
+
+2
+
+Gradient Descent for Neural Networks
+Loss function
+𝐿𝑖 = 𝑦ො𝑖 − 𝑦𝑖 2
+ℎ0
+𝑥0
+𝑥1
+𝑥2
+
+ℎ1
+
+𝑦ො0
+
+𝑦0
+
+ℎ2
+
+𝑦ො1
+
+𝑦1
+
+ℎ3
+
+𝜕𝑓
+𝜕𝑤0,0,0
+…
+…
+𝜕𝑓
+𝛻𝑾,𝒃 𝑓 𝒙,𝒚 (𝑾) =
+𝜕𝑤𝑙,𝑚,𝑛
+…
+…
+𝜕𝑓
+𝜕𝑏𝑙,𝑚
+
+𝑦ො𝑖 = 𝐴(𝑏1,𝑖 + ෍ ℎ𝑗 𝑤1,𝑖,𝑗 )
+𝑗
+
+ℎ𝑗 = 𝐴(𝑏0,𝑗 + ෍ 𝑥𝑘 𝑤0,𝑗,𝑘 )
+Daniel Cremers
+
+𝑘
+
+Introduction to Deep Learning
+
+Just simple:
+𝐴 𝑥 = max(0, 𝑥)
+3
+
+Stochastic Gradient Descent (SGD)
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼𝛻𝜽 𝐿(𝜽𝑘 , 𝒙{1..𝑚} , 𝒚{1..𝑚} )
+
+1 𝑚
+𝛻𝜽 𝐿 = σ𝑖=1 𝛻𝜽 𝐿𝑖
+𝑚
+
+𝑘 now refers to 𝑘-th iteration
+
+𝑚 training samples in the current minibatch
+Gradient for the 𝑘-th minibatch
+
+:
+Daniel Cremers
+
+Introduction to Deep Learning
+
+4
+
+Gradient Descent with Momentum
+𝒗𝑘+1 = 𝛽 ⋅ 𝒗𝑘 + 𝛻𝜽 𝐿(𝜽𝑘 )
+accumulation rate
+(‘friction’, momentum)
+
+velocity
+
+Gradient of current minibatch
+
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼 ⋅ 𝒗𝑘+1
+model
+
+learning rate
+
+velocity
+
+Exponentially-weighted average of gradient
+Important: velocity 𝒗𝑘 is vector-valued!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+5
+
+Y-Direction
+Large gradients
+
+RMSProp
+
+Source: A. Ng
+
+X-direction Small gradients
+
+(Uncentered) variance of gradients
+→ second momentum
+
+We’re dividing by square gradients:
+- Division in Y-Direction will be
+large
+- Division in X-Direction will be
+small
+Daniel Cremers
+
+𝒔𝑘+1 = 𝛽 ⋅ 𝒔𝑘 + (1 − 𝛽)[𝛻𝜽 𝐿 ∘ 𝛻𝜽 𝐿]
+
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼 ⋅
+
+𝛻𝜽 𝐿
+𝒔𝑘+1 + 𝜖
+
+Can increase learning rate!
+
+Introduction to Deep Learning
+
+6
+
+Adam
+• Combines Momentum and RMSProp
+𝒎𝑘+1 = 𝛽1 ⋅ 𝒎𝑘 + 1 − 𝛽1 𝛻𝜽 𝐿 𝜽𝑘
+
+𝒗𝑘+1 = 𝛽2 ⋅ 𝒗𝑘 + (1 − 𝛽2 )[𝛻𝜽 𝐿 𝜽𝑘 ∘ 𝛻𝜽 𝐿 𝜽𝑘
+
+• 𝒎𝑘+1 and 𝒗𝑘+1 are initialized with zero
+→ bias towards zero
+→ Typically, bias-corrected moment updates
+ෝ 𝑘+1 =
+𝒎
+
+Daniel Cremers
+
+𝒎𝑘+1
+1 − 𝛽1 𝑘+1
+
+ෝ𝑘+1 =
+𝒗
+
+𝒗𝑘+1
+1 − 𝛽2 𝑘+1
+
+Introduction to Deep Learning
+
+𝜽𝑘+1 = 𝜽𝑘 − 𝛼 ⋅
+
+ෝ 𝑘+1
+𝒎
+ෝ𝑘+1 +𝜖
+𝒗
+
+7
+
+Training Neural Nets
+Daniel Cremers
+
+Introduction to Deep Learning
+
+8
+
+Learning Rate: Implications
+• What if too high?
+• What if too low?
+
+Source: http://cs231n.github.io/neural-networks-3/
+Daniel Cremers
+
+Introduction to Deep Learning
+
+9
+
+Learning Rate
+Need high learning rate when far away
+
+Need low learning rate when close
+Daniel Cremers
+
+Introduction to Deep Learning
+
+10
+
+Learning Rate Decay
+• 𝛼=
+
+1
+⋅ 𝛼0
+1+𝑑𝑒𝑐𝑎𝑦_𝑟𝑎𝑡𝑒∗𝑒𝑝𝑜𝑐ℎ
+
+– E.g., 𝛼0 = 0.1, 𝑑𝑒𝑐𝑎𝑦_𝑟𝑎𝑡𝑒 = 1.0
+Learning Rate over Epochs
+
+→ Epoch 0:
+→ Epoch 1:
+→ Epoch 2:
+→ Epoch 3:
+...
+Daniel Cremers
+
+0.1
+0.05
+0.033
+0.025
+
+0,12
+0,1
+0,08
+0,06
+0,04
+0,02
+0
+
+0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46
+
+Introduction to Deep Learning
+
+11
+
+Learning Rate Decay
+Many options:
+• Step decay 𝛼 = 𝛼 − 𝑡 ⋅ 𝛼 (only every n steps)
+– T is decay rate (often 0.5)
+
+• Exponential decay 𝛼 = 𝑡 𝑒𝑝𝑜𝑐ℎ ⋅ 𝛼0
+– t is decay rate (t < 1.0)
+
+• 𝛼=
+
+𝑡
+𝑒𝑝𝑜𝑐ℎ
+
+⋅ 𝑎0
+
+– t is decay rate
+
+• Etc.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+12
+
+Training Schedule
+Manually specify learning rate for entire training process
+
+• Manually set learning rate every n-epochs
+• How?
+– Trial and error (the hard way)
+– Some experience (only generalizes to some degree)
+
+Consider: #epochs, training set size, network size, etc.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+13
+
+Basic Recipe for Training
+• Given a dataset with labels
+– {𝑥𝑖 , 𝑦𝑖 }
+• 𝑥𝑖 is the 𝑖 𝑡ℎ training image, with label 𝑦𝑖
+• Often dim 𝑥 ≫ dim(𝑦) (e.g., for classification)
+• 𝑖 is often in the 100-thousands or millions
+
+– Take network 𝑓 and its parameters 𝑤, 𝑏
+– Use SGD (or variation) to find optimal parameters 𝑤, 𝑏
+• Gradients from backpropagation
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+14
+
+Gradient Descent on Train Set
+• Given large train set with (𝑛) training samples {𝒙𝑖 , 𝒚𝑖 }
+– Let’s say 1 million labeled images
+– Let’s say our network has 500k parameters
+
+• Gradient has 500k dimensions
+• 𝑛 = 1 𝑚𝑖𝑙𝑙𝑖𝑜𝑛
+• Extremely expensive to compute
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+15
+
+Learning
+• Learning means generalization to unknown dataset
+– (So far no ‘real’ learning)
+– i.e., train on known dataset → test with optimized
+parameters on unknown dataset
+
+• Basically, we hope that based on the train set, the
+optimized parameters will give similar results on
+different data (i.e., test data)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+16
+
+Learning
+• Training set (‘train’):
+– Use for training your neural network
+
+• Validation set (‘val’):
+– Hyperparameter optimization
+– Check generalization progress
+
+• Test set (‘test’):
+– Only for the very end
+– NEVER TOUCH DURING DEVELOPMENT OR TRAINING
+Daniel Cremers
+
+Introduction to Deep Learning
+
+17
+
+Learning
+• Typical splits
+– Train (60%), Val (20%), Test (20%)
+– Train (80%), Val (10%), Test (10%)
+
+• During training:
+– Train error comes from average minibatch error
+– Typically take subset of validation every n iterations
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+18
+
+Basic Recipe for Machine Learning
+• Split your data
+
+60%
+
+20%
+
+20%
+
+train
+
+validation
+
+test
+
+Find your hyperparameters
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+19
+
+Cross Validation
+Run 1
+
+train
+
+validation
+
+Run 2
+Run 3
+Run 4
+Run 5
+Split the training data into N folds
+Daniel Cremers
+
+Introduction to Deep Learning
+
+20
+
+Cross Validation
+60%
+
+20%
+
+20%
+
+train
+
+validation
+
+test
+
+Find your hyperparameters
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+21
+
+Basic Recipe for Machine Learning
+
+Example scenario
+
+• Split your data
+
+Daniel Cremers
+
+60%
+
+20%
+
+20%
+
+train
+
+validation
+
+test
+
+Ground truth error …... 1%
+
+Training set error ….... 5%
+Val/test set error ….... 8%
+Introduction to Deep Learning
+
+Bias
+(underfitting)
+Variance
+(overfitting)
+22
+
+Basic Recipe for Machine Learning
+
+Done
+Daniel Cremers
+
+Credits: A. Ng
+Introduction to Deep Learning
+
+23
+
+Over- and Underfitting
+
+Underfitted
+
+Appropriate
+
+Overfitted
+
+Source: Deep Learning by Adam Gibson, Josh Patterson, O‘Reily Media Inc., 2017
+Daniel Cremers
+
+Introduction to Deep Learning
+
+24
+
+Over- and Underfitting
+
+Source: https://srdas.github.io/DLBook/ImprovingModelGeneralization.html
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+25
+
+Learning Curves
+• Training graphs
+- Accuracy
+
+Daniel Cremers
+
+- Loss
+
+Introduction to Deep Learning
+
+26
+
+Learning Curves
+val
+
+t
+e
+s
+t
+
+Source: https://machinelearningmastery.com/learning-curves-for-diagnosing-machine-learning-model-performance/
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+27
+
+Overfitting Curves
+t
+e
+s
+t
+
+Val
+
+Source: https://machinelearningmastery.com/learning-curves-for-diagnosing-machine-learning-model-performance/
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+28
+
+Other Curves
+
+Underfitting (loss still decreasing)
+
+Validation Set is easier than Training set
+
+Source: https://machinelearningmastery.com/learning-curves-for-diagnosing-machine-learning-model-performance/
+Daniel Cremers
+
+Introduction to Deep Learning
+
+29
+
+To Summarize
+• Underfitting
+– Training and validation losses decrease even at the end
+of training
+
+• Overfitting
+– Training loss decreases and validation loss increases
+
+• Ideal Training
+– Small gap between training and validation loss, and both
+go down at same rate (stable without fluctuations).
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+30
+
+To Summarize
+• Bad Signs
+– Training error not going down
+– Validation error not going down
+– Performance on validation better than on training set
+– Tests on train set different than during training
+
+• Bad Practice
+– Training set contains test data
+– Debug algorithm on test data
+Daniel Cremers
+
+Introduction to Deep Learning
+
+Never touch during
+development or
+training
+31
+
+Hyperparameters
+•
+•
+•
+•
+•
+•
+•
+
+Network architecture (e.g., num layers, #weights)
+Number of iterations
+Learning rate(s) (i.e., solver parameters, decay, etc.)
+Regularization (more later next lecture)
+Batch size
+…
+Overall:
+learning setup + optimization = hyperparameters
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+32
+
+Hyperparameter Tuning
+Grid search
+
+• Methods:
+• most common ☺
+
+– Grid search (structured, for ‘real’ applications)
+• Define ranges for all parameters spaces and
+select points
+• Usually pseudo-uniformly distributed
+→ Iterate over all possible configurations
+
+– Random search:
+Like grid search but one picks points at random
+in the predefined ranges
+
+0,8
+0,6
+0,4
+0,2
+0
+0
+
+0,2 0,4 0,6 0,8
+
+Random search
+1
+0,8
+0,6
+0,4
+
+0,2
+0
+0
+
+0,2 0,4 0,6 0,8
+
+First Parameter
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+First Parameter
+
+Second Parameter
+
+– Manual search:
+
+Second Parameter
+
+1
+
+33
+
+1
+
+How to Start
+• Start with single training sample
+– Check if output correct
+– Overfit → train accuracy should be 100%
+because input just memorized
+
+ONE
+
+FEW
+
+• Increase to handful of samples (e.g., 4)
+– Check if input is handled correctly
+
+• Move from overfitting to more samples
+– 5, 10, 100, 1000, …
+– At some point, you should see generalization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+MANY
+
+…
+
+34
+
+Find a Good Learning Rate
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+35
+
+Find a Good Learning Rate
+• Use all training data with small weight decay
+• Perform initial loss sanity check e.g., log(𝐶) for
+softmax with 𝐶 classes
+Loss
+• Find a learning rate that makes
+the loss drop significantly
+(exponentially) within
+100 iterations
+• Good learning rates to try:
+1e-1, 1e-2, 1e-3, 1e-4
+
+Training time
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+36
+
+Coarse Grid Search
+• Choose a few values of learning rate and weight
+decay and see which ones work
+• Train a few models for a few epochs
+• Good weight decay to try: 1e-4, 1e-5, 0
+Grid search
+Second Parameter
+
+1
+0,8
+
+0,6
+0,4
+0,2
+0
+0
+
+0,2 0,4 0,6 0,8
+
+1
+
+First Parameter
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+37
+
+Refine Grid
+• Pick best models found with coarse grid
+• Refine grid search around these models
+• Train them for longer (10-20 epochs) without learning
+rate decay
+• Study loss curves <- most important debugging tool!
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+38
+
+Timings
+• How long does each iteration take?
+– Get precise timings!
+– If an iteration exceeds 500ms, things get dicey
+
+• Look for bottlenecks
+– Dataloading: smaller resolution,
+compression, train from SSD
+– Backprop
+
+• Estimate total time
+– How long until you see some pattern?
+– How long till convergence?
+Daniel Cremers
+
+Introduction to Deep Learning
+
+39
+
+Network Architecture
+• Frequent mistake: “Let’s use this super big network,
+train for two weeks and we see where we stand.”
+• Instead: start with simplest
+network possible
+– Rule of thumb divide #layers
+you started with by 5
+
+• Get debug cycles down
+– Ideally, minutes
+Daniel Cremers
+
+Introduction to Deep Learning
+
+40
+
+Debugging
+• Use train/validation/test curves
+– Evaluation needs to be consistent
+– Numbers need to be comparable
+
+• Only make one change at a time
+– “I’ve added 5 more layers and double the training size, and now
+I also trained 5 days longer. Now it’s better, but why?”
+
+• Visualize input, prediction, ground truth
+Daniel Cremers
+
+Introduction to Deep Learning
+
+41
+
+Common Mistakes in Practice
+• Did not overfit to single batch first
+• Forgot to toggle train/eval mode for network
+– Check later when we talk about dropout…
+
+• Forgot to call .zero_grad() (in PyTorch) before calling
+.backward()
+• Passed softmaxed outputs to a loss function that
+expects raw logits
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+42
+
+Tensorboard:
+Visualization in
+Practice
+Daniel Cremers
+
+Introduction to Deep Learning
+
+43
+
+Tensorboard: Compare Train/Val Curves
+t
+e
+s
+t
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+44
+
+Tensorboard: Compare Different Runs
+t
+e
+s
+t
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+45
+
+Tensorboard: Visualize Model
+Predictions
+t
+e
+s
+t
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+46
+
+Tensorboard: Visualize Model
+Predictions
+t
+e
+s
+t
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+47
+
+Tensorboard: Compare
+Hyperparameters
+t
+e
+s
+t
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+48
+
+Next Lecture
+• Next lecture
+– More about training neural networks: output functions, loss
+functions, activation functions
+
+• Check the exercises ☺
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+49
+
+See you next week ☺
+Daniel Cremers
+
+Introduction to Deep Learning
+
+50
+
+References
+• Goodfellow et al. “Deep Learning” (2016),
+– Chapter 6: Deep Feedforward Networks
+
+• Bishop “Pattern Recognition and Machine Learning” (2006),
+– Chapter 5.5: Regularization in Network Nets
+
+• http://cs231n.github.io/neural-networks-1/
+• http://cs231n.github.io/neural-networks-2/
+
+• http://cs231n.github.io/neural-networks-3/
+Daniel Cremers
+
+Introduction to Deep Learning
+
+51
+
+

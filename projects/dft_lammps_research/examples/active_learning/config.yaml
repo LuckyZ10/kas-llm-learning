@@ -1,0 +1,43 @@
+# 主动学习配置示例
+# Active Learning Configuration Example
+
+# 基本设置
+workflow_name: "Li3PS4_active_learning"
+work_dir: "./al_workflow"
+max_iterations: 20
+
+# 不确定性阈值
+uncertainty:
+  f_trust_lo: 0.05      # 力偏差下限 (eV/Å)
+  f_trust_hi: 0.15      # 力偏差上限 (eV/Å)
+  adaptive_threshold: true
+  target_candidate_ratio: 0.1
+
+# 探索策略
+exploration:
+  temperature_range: [300, 2000]
+  pressure_range: [-5, 50]
+  strain_range: [-0.15, 0.15]
+  md_steps: 50000
+  max_structures_per_iter: 200
+  enable_surface_sampling: true
+  enable_defect_sampling: true
+
+# ML训练设置
+deepmd:
+  type_map: ["Li", "P", "S"]
+  descriptor_type: "se_e2_a"
+  rcut: 6.0
+  sel: [50, 50, 50]
+  neuron: [25, 50, 100]
+  fitting_neuron: [240, 240, 240]
+  numb_steps: 1000000
+  start_lr: 0.001
+  num_models: 4  # 集成模型数
+
+# DFT设置
+dft:
+  code: "vasp"
+  functional: "PBE"
+  encut: 520
+  kpoints_density: 0.25

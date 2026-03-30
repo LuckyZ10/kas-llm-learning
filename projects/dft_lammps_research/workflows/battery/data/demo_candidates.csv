@@ -1,0 +1,13 @@
+Material ID,Formula,Space Group,Li Content,Energy per Atom (eV),Band Gap (eV),Formation Energy (eV/atom),Source
+mp-30406,Li3PS4,Pnma,3,-5.23,3.2,-1.85,experiment
+mp-696138,Li7P3S11,P63/mcm,7,-5.15,2.8,-1.72,experiment
+mp-30797,Li4GeS4,Pnma,4,-5.45,3.5,-2.10,experiment
+mp-1095067,Li6PS5Cl,F-43m,6,-5.30,3.0,-1.95,experiment
+mp-1101030,Li10GeP2S12,I41/acd,10,-5.18,2.9,-1.68,experiment
+mp-1197791,Li7Sn3S11,P63/mcm,7,-4.95,2.5,-1.45,experiment
+mp-675468,Li2S,Fm-3m,2,-4.85,3.8,-2.25,experiment
+mp-18227,Li7PS6,Fm-3m,7,-5.10,2.5,-1.65,experiment
+mp-1191393,Li5PS4Cl2,P63mc,5,-5.35,3.2,-1.88,experiment
+mp-1186969,Li11Si2PS12,P63/mcm,11,-5.05,2.7,-1.55,prediction
+mp-1186970,Li9SiPS8,P63/mcm,9,-5.12,2.9,-1.62,prediction
+mp-1186971,Li8SnP2S12,P63/mcm,8,-5.00,2.6,-1.48,prediction

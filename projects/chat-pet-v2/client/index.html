@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatPet V2 - AI 宠物进化</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #eee;
+    }
+    .container {
+      width: 1000px;
+      height: 650px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      display: flex;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar {
+      width: 300px;
+      background: rgba(0,0,0,0.3);
+      padding: 20px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-area {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.2);
+    }
+    .input-area {
+      padding: 15px 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      gap: 10px;
+    }
+    .input-area input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 25px;
+      outline: none;
+      font-size: 14px;
+      background: rgba(0,0,0,0.3);
+      color: #fff;
+    }
+    .input-area input::placeholder { color: #888; }
+    .input-area button {
+      padding: 12px 25px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: transform 0.2s;
+    }
+    .input-area button:hover { transform: scale(1.05); }
+    
+    .message {
+      margin-bottom: 15px;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .message-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    .message-sender {
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .message-sender.pet {
+      color: #a78bfa;
+    }
+    .message-sender.system {
+      color: #fbbf24;
+    }
+    .message-time {
+      font-size: 11px;
+      color: #888;
+    }
+    .message-content {
+      background: rgba(255,255,255,0.1);
+      padding: 10px 15px;
+      border-radius: 15px;
+      display: inline-block;
+      max-width: 70%;
+      word-wrap: break-word;
+      color: #fff;
+    }
+    .message.own .message-content {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+    .message.own {
+      text-align: right;
+    }
+    .message.own .message-header {
+      justify-content: flex-end;
+    }
+    
+    .pet-panel {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .pet-avatar {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 50%;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      animation: bounce 2s infinite;
+      box-shadow: 0 0 30px rgba(240, 147, 251, 0.5);
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .pet-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+    .pet-level {
+      font-size: 14px;
+      color: #a78bfa;
+      margin-bottom: 15px;
+    }
+    .exp-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+    .exp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f093fb, #f5576c);
+      border-radius: 4px;
+      transition: width 0.5s;
+    }
+    .pet-stats {
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .stat-label {
+      color: #888;
+    }
+    .stat-value {
+      color: #a78bfa;
+      font-weight: 600;
+    }
+    .auto-reply-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .toggle-switch {
+      width: 40px;
+      height: 20px;
+      background: #444;
+      border-radius: 10px;
+      position: relative;
+      transition: background 0.3s;
+    }
+    .toggle-switch.active {
+      background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+    .toggle-switch::after {
+      content: '';
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: left 0.3s;
+    }
+    .toggle-switch.active::after {
+      left: 22px;
+    }
+    .view-files-btn {
+      padding: 10px;
+      background: rgba(103, 126, 234, 0.3);
+      border: 1px solid rgba(103, 126, 234, 0.5);
+      border-radius: 10px;
+      font-size: 12px;
+      color: #a78bfa;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .view-files-btn:hover {
+      background: rgba(103, 126, 234, 0.5);
+    }
+    
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .login-box {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      padding: 40px;
+      border-radius: 20px;
+      width: 380px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .login-box h2 {
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .login-box p {
+      color: #888;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      font-size: 14px;
+      background: rgba(0,0,0,0.3);
+      color: #fff;
+    }
+    .login-box input::placeholder { color: #666; }
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .login-box button:hover { transform: scale(1.02); }
+    
+    .files-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+    .files-modal.active { display: flex; }
+    .files-container {
+      width: 700px;
+      height: 500px;
+      background: #1a1a2e;
+      border-radius: 15px;
+      display: flex;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .files-sidebar {
+      width: 150px;
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .file-item {
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #888;
+      transition: all 0.2s;
+    }
+    .file-item:hover, .file-item.active {
+      background: rgba(103, 126, 234, 0.3);
+      color: #fff;
+    }
+    .files-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #ccc;
+      white-space: pre-wrap;
+    }
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+      color: #fff;
+    }
+    
+    .hidden { display: none !important; }
+    
+    .level-up-notify {
+      text-align: center;
+      padding: 15px;
+      background: linear-gradient(90deg, #f093fb, #f5576c);
+      border-radius: 15px;
+      margin: 10px 0;
+      animation: pulse 1s ease;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h2>🐾 ChatPet V2</h2>
+      <p>你的 AI 宠物会观察、学习、进化</p>
+      <input type="text" id="nicknameInput" placeholder="你的昵称" maxlength="20">
+      <input type="text" id="petNameInput" placeholder="给你的宠物起个名字" maxlength="20">
+      <button onclick="register()">创造你的宠物</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="sidebar">
+      <div class="pet-panel">
+        <div class="pet-avatar">🐱</div>
+        <div class="pet-name" id="petName">加载中...</div>
+        <div class="pet-level">等级 <span id="petLevel">1</span></div>
+        
+        <div class="exp-bar">
+          <div class="exp-fill" id="expFill" style="width: 0%"></div>
+        </div>
+        
+        <div class="pet-stats">
+          <div class="stat-row">
+            <span class="stat-label">经验值</span>
+            <span class="stat-value"><span id="petExp">0</span> / <span id="expNeeded">20</span></span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">记忆数量</span>
+            <span class="stat-value" id="memoryCount">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Agent ID</span>
+            <span class="stat-value" id="agentId">-</span>
+          </div>
+        </div>
+        
+        <div class="auto-reply-toggle" onclick="toggleAutoReply()">
+          <span>🤖 自动回复模式</span>
+          <div class="toggle-switch" id="autoReplyToggle"></div>
+        </div>
+        
+        <div class="view-files-btn" onclick="viewPetFiles()">
+          📁 查看宠物文件
+        </div>
+      </div>
+    </div>
+    
+    <div class="main">
+      <div class="chat-area" id="chatArea"></div>
+      <div class="input-area">
+        <input type="text" id="messageInput" placeholder="输入消息..." onkeypress="if(event.key==='Enter')sendMessage()">
+        <button onclick="sendMessage()">发送</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="files-modal" id="filesModal">
+    <div class="close-modal" onclick="closeFilesModal()">×</div>
+    <div class="files-container">
+      <div class="files-sidebar" id="filesSidebar"></div>
+      <div class="files-content" id="filesContent">选择一个文件查看...</div>
+    </div>
+  </div>
+
+  <script>
+    let ws = null;
+    let userId = null;
+    let petData = null;
+    let autoReplyEnabled = false;
+    let petFiles = {};
+
+    function connect() {
+      ws = new WebSocket('ws://localhost:8080');
+      
+      ws.onopen = () => console.log('Connected');
+      
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        handleMessage(msg);
+      };
+      
+      ws.onclose = () => {
+        console.log('Disconnected, reconnecting...');
+        setTimeout(connect, 3000);
+      };
+    }
+
+    function handleMessage(msg) {
+      switch (msg.type) {
+        case 'registered':
+          userId = msg.userId;
+          petData = msg.pet;
+          document.getElementById('loginOverlay').classList.add('hidden');
+          ws.send(JSON.stringify({ type: 'join_room', roomId: 'lobby' }));
+          ws.send(JSON.stringify({ type: 'get_pet_status' }));
+          updatePetDisplay(petData);
+          break;
+          
+        case 'message':
+          addMessage(msg);
+          break;
+          
+        case 'history':
+          loadHistory(msg.messages);
+          break;
+          
+        case 'pet_status':
+          updatePetDisplay(msg.pet);
+          break;
+          
+        case 'pet_level_up':
+          showLevelUp(msg.petName, msg.newLevel);
+          break;
+          
+        case 'auto_reply_updated':
+          autoReplyEnabled = msg.enabled;
+          document.getElementById('autoReplyToggle').classList.toggle('active', autoReplyEnabled);
+          break;
+          
+        case 'pet_files':
+          petFiles = msg.files;
+          showFilesModal();
+          break;
+      }
+    }
+
+    function register() {
+      const nickname = document.getElementById('nicknameInput').value.trim();
+      const petName = document.getElementById('petNameInput').value.trim();
+      
+      if (!nickname || !petName) {
+        alert('请填写昵称和宠物名字');
+        return;
+      }
+      
+      ws.send(JSON.stringify({ type: 'register', nickname, petName }));
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const content = input.value.trim();
+      if (!content || !ws) return;
+      
+      ws.send(JSON.stringify({ type: 'chat', content }));
+      input.value = '';
+    }
+
+    function addMessage(msg, skipScroll = false) {
+      const chatArea = document.getElementById('chatArea');
+      const isOwn = msg.senderId === userId;
+      
+      const div = document.createElement('div');
+      div.className = `message ${isOwn ? 'own' : ''}`;
+      div.innerHTML = `
+        <div class="message-header">
+          <span class="message-sender ${msg.isPet ? 'pet' : ''}">${msg.senderName}</span>
+          <span class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</span>
+        </div>
+        <div class="message-content">${escapeHtml(msg.content)}</div>
+      `;
+      
+      chatArea.appendChild(div);
+      if (!skipScroll) chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    function loadHistory(messages) {
+      const chatArea = document.getElementById('chatArea');
+      chatArea.innerHTML = '';
+      messages.forEach(msg => addMessage(msg, true));
+    }
+
+    function updatePetDisplay(pet) {
+      if (!pet) return;
+      petData = pet;
+      
+      document.getElementById('petName').textContent = pet.name;
+      document.getElementById('petLevel').textContent = pet.level;
+      document.getElementById('petExp').textContent = pet.exp;
+      document.getElementById('expNeeded').textContent = pet.expNeeded || pet.level * 20;
+      document.getElementById('memoryCount').textContent = pet.memories || 0;
+      document.getElementById('agentId').textContent = pet.agentId || '-';
+      
+      const expPercent = (pet.exp / (pet.expNeeded || pet.level * 20)) * 100;
+      document.getElementById('expFill').style.width = expPercent + '%';
+      
+      autoReplyEnabled = pet.isAutoReply;
+      document.getElementById('autoReplyToggle').classList.toggle('active', autoReplyEnabled);
+    }
+
+    function showLevelUp(petName, newLevel) {
+      const chatArea = document.getElementById('chatArea');
+      const div = document.createElement('div');
+      div.className = 'level-up-notify';
+      div.innerHTML = `🎉 <b>${petName}</b> 进化到等级 <b>${newLevel}</b>！`;
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      
+      // 刷新状态
+      ws.send(JSON.stringify({ type: 'get_pet_status' }));
+    }
+
+    function toggleAutoReply() {
+      if (!ws) return;
+      ws.send(JSON.stringify({ type: 'toggle_auto_reply', enabled: !autoReplyEnabled }));
+    }
+
+    function viewPetFiles() {
+      if (!ws) return;
+      ws.send(JSON.stringify({ type: 'get_pet_files' }));
+    }
+
+    function showFilesModal() {
+      const modal = document.getElementById('filesModal');
+      const sidebar = document.getElementById('filesSidebar');
+      
+      sidebar.innerHTML = '';
+      
+      // 核心文件
+      const coreFiles = ['IDENTITY.md', 'SOUL.md', 'USER.md', 'MEMORY.md'];
+      coreFiles.forEach(file => {
+        if (petFiles[file]) {
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.textContent = file;
+          item.onclick = () => selectFile(file, item);
+          sidebar.appendChild(item);
+        }
+      });
+      
+      // 技能
+      if (petFiles.skills?.length) {
+        const skillsHeader = document.createElement('div');
+        skillsHeader.textContent = '--- 技能 ---';
+        skillsHeader.style.cssText = 'color: #666; padding: 10px; font-size: 11px; margin-top: 10px;';
+        sidebar.appendChild(skillsHeader);
+        
+        petFiles.skills.forEach(skill => {
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.textContent = skill;
+          item.onclick = () => selectFile('skill:' + skill, item);
+          sidebar.appendChild(item);
+        });
+      }
+      
+      modal.classList.add('active');
+    }
+
+    function selectFile(filename, element) {
+      document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      
+      const content = document.getElementById('filesContent');
+      if (filename.startsWith('skill:')) {
+        content.textContent = `[技能文件夹: ${filename.slice(6)}]\n\n这里存放着宠物学到的技能定义。`;
+      } else {
+        content.textContent = petFiles[filename] || '无法加载文件内容';
+      }
+    }
+
+    function closeFilesModal() {
+      document.getElementById('filesModal').classList.remove('active');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    setInterval(() => {
+      if (ws && userId) {
+        ws.send(JSON.stringify({ type: 'get_pet_status' }));
+      }
+    }, 5000);
+
+    connect();
+  </script>
+</body>
+</html>

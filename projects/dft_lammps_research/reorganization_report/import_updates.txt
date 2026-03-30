@@ -1,0 +1,13 @@
+Files with updated imports:
+tests/conftest.py
+examples/quick_start/simple_workflow.py
+examples/high_throughput/screening_example.py
+tests/benchmarks/optimized_dft_parser.py
+tests/benchmarks/benchmark_dft_parser.py
+tests/benchmarks/benchmark_md_simulation.py
+docs/architecture/analyze_structure.py
+workflows/catalyst/case_catalyst.py
+workflows/examples/screening.py
+workflows/perovskite/case_perovskite.py
+workflows/battery/case_solid_electrolyte.py
+workflows/battery/examples/Li3PS4.py

@@ -1,0 +1,27 @@
+Element,Symbol,Atomic Number,Ionic Radius (CN=6) Å,Ionic Radius (CN=12) Å,Pauling Electronegativity,Shannon Radii Source
+Caesium,Cs,55,1.67,1.88,0.79,Shannon_1976
+Rubidium,Rb,37,1.52,1.72,0.82,Shannon_1976
+Potassium,K,19,1.38,1.64,0.82,Shannon_1976
+Methylammonium,MA,0,2.70,2.70,0.7,Estimated
+Formamidinium,FA,0,2.79,2.79,0.8,Estimated
+Lead,Pb,82,1.19,1.49,1.87,Shannon_1976
+Tin,Sn,50,1.18,1.50,1.96,Shannon_1976
+Germanium,Ge,32,0.73,0.87,2.01,Shannon_1976
+Strontium,Sr,38,1.18,1.44,0.95,Shannon_1976
+Calcium,Ca,20,1.00,1.34,1.00,Shannon_1976
+Barium,Ba,56,1.35,1.61,0.89,Shannon_1976
+Magnesium,Mg,12,0.72,1.03,1.31,Shannon_1976
+Cadmium,Cd,48,0.95,1.19,1.69,Shannon_1976
+Zinc,Zn,30,0.74,1.04,1.65,Shannon_1976
+Titanium,Ti,22,0.605,0.86,1.54,Shannon_1976
+Zirconium,Zr,40,0.72,0.98,1.33,Shannon_1976
+Hafnium,Hf,72,0.71,0.97,1.30,Shannon_1976
+Niobium,Nb,41,0.64,0.88,1.60,Shannon_1976
+Tantalum,Ta,73,0.64,0.88,1.50,Shannon_1976
+Iodine,I,53,2.20,2.20,2.66,Shannon_1976
+Bromine,Br,35,1.96,1.96,2.96,Shannon_1976
+Chlorine,Cl,17,1.81,1.81,3.16,Shannon_1976
+Fluorine,F,9,1.33,1.33,3.98,Shannon_1976
+Oxygen,O,8,1.40,1.40,3.44,Shannon_1976
+Sulfur,S,16,1.84,1.84,2.58,Shannon_1976
+Selenium,Se,34,1.98,1.98,2.55,Shannon_1976

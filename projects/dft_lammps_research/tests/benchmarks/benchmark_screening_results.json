@@ -1,0 +1,33 @@
+{
+  "benchmarks": [
+    {
+      "name": "candidate_loading",
+      "execution_time": 0.0072782039642333984,
+      "memory_peak_mb": 1.016871452331543,
+      "throughput": 686982.671078062,
+      "details": {
+        "n_candidates": 5000
+      }
+    },
+    {
+      "name": "candidate_filtering",
+      "execution_time": 0.002445220947265625,
+      "memory_peak_mb": 0.6986026763916016,
+      "throughput": 2044804.992199688,
+      "details": {
+        "input_candidates": 5000,
+        "filtered_candidates": 487
+      }
+    },
+    {
+      "name": "feature_calculation",
+      "execution_time": 0.14610624313354492,
+      "memory_peak_mb": 0.623866081237793,
+      "throughput": 6844.334496274563,
+      "details": {
+        "n_structures": 1000,
+        "n_features": 9
+      }
+    }
+  ]
+}

@@ -1,0 +1,794 @@
+Data Augmentation
+and Advanced
+Regularization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+1
+
+Lecture 7 Recap
+Daniel Cremers
+
+Introduction to Deep Learning
+
+2
+
+Binary Classification: Sigmoid
+
+1
+Can be
+interpreted as
+a probability
+0
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+3
+
+Multiclass Classification: Softmax
+Exp
+
+• Softmax
+
+𝑒 𝑠𝑦𝑖
+𝑒 𝒙𝑖𝜽𝑦𝑖
+𝑝 𝑦𝑖 𝒙𝒊 , Θ = 𝐶
+= 𝐶
+𝑠
+σ𝑘=1 𝑒 𝑘 σ𝑘=1 𝑒 𝒙𝑖𝜽𝑘
+Probability of
+the true class
+
+normalize
+
+training pairs 𝒙𝑖 ; 𝑦𝑖 ,
+𝒙𝑖 ∈ ℝ𝐷 , 𝑦𝑖 ∈ 1,2 … 𝐶
+𝑦𝑖 : label (true class)
+Parameters:
+𝚯 = [𝜽1 , 𝜽2 , … , 𝜽𝐶 ]
+
+C : number of classes
+s : score of the class
+
+1. Exponential operation: make sure probability>0
+2. Normalization: make sure probabilities sum up to 1.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+4
+
+Sigmoid Activation
+Forward
+
+Saturated neurons kill
+the gradient flow
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+5
+
+Rectified Linear Units (ReLU)
+Dead ReLU
+Large and
+consistent
+gradients
+
+What happens if a
+ReLU outputs zero?
+
+Fast convergence
+
+Does not saturate
+
+[Krizhevsky et al. NeurIPS 2012] ImageNet Classification with Deep Convolutional Neural Networks
+Daniel Cremers
+
+Introduction to Deep Learning
+
+6
+
+Xavier/Kaiming Initialization
+• How to ensure the variance of the output is the same
+as the input?
+ReLU Kills half of the activations
+-> adjust var by a factor of 2
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+7
+
+Lecture 8
+Daniel Cremers
+
+Introduction to Deep Learning
+
+8
+
+Data Augmentation
+Daniel Cremers
+
+Introduction to Deep Learning
+
+9
+
+Data Pre-Processing
+
+For images subtract the mean image (AlexNet) or per-channel mean (VGG-Net)
+Daniel Cremers
+
+Introduction to Deep Learning
+
+10
+
+Data Augmentation
+• A classifier has to be invariant to a wide variety of
+transformations
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+11
+
+Daniel Cremers
+
+Pose
+
+Appearance
+
+Introduction to Deep Learning
+
+Illumination
+
+12
+
+Data Augmentation
+• A classifier has to be invariant to a wide variety of
+transformations
+• Helping the classifier: synthesize data simulating
+plausible transformations
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+13
+
+Data Augmentation
+
+Daniel Cremers
+
+Introduction to Deep Learning [Krizhevsky et al., NIPS’12] ImageNet
+
+14
+
+Data Augmentation: Brightness
+• Random brightness and contrast changes
+
+Daniel Cremers
+
+Introduction to Deep Learning [Krizhevsky et al., NIPS’12] ImageNet
+
+15
+
+Data Augmentation: Random Crops
+• Training: random crops
+– Pick a random L in [256,480]
+– Resize training image, short side L
+– Randomly sample crops of 224x224
+
+• Testing: fixed set of crops
+– Resize image at N scales
+– 10 fixed crops of 224x224: (4 corners + 1 center ) × 2 flips
+
+Daniel Cremers
+
+Introduction to Deep Learning [Krizhevsky et al., NIPS’12] ImageNet
+
+16
+
+Data Augmentation: Advanced
+
+Cubuk et al., RandAugment, CVPRW 2020
+Daniel Cremers
+
+Muller et al., Trivial Augment, ICCV 2021
+
+Introduction to Deep Learning
+
+17
+
+Data Augmentation
+• When comparing two networks make sure to use the
+same data augmentation!
+• Consider data augmentation a part of your network
+design
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+18
+
+Advanced
+Regularization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+19
+
+L2 regularization, also (wrongly) called weight
+decay
+• L2 regularization
+
+Learning rate
+
+Gradient
+
+Gradient of L2-regularization
+
+• Penalizes large weights
+• Improves generalization
+Daniel Cremers
+
+Introduction to Deep Learning
+
+20
+
+L2 regularization, also (wrongly) called weight
+decay
+• Weight decay regularization
+
+Learning rate of weight
+decay
+
+Learning rate of the
+optimizer
+
+• Equivalent to L2 regularization in GD, but not in Adam.
+Loshchilov and Hutter, Decoupled Weight Decay
+Regularization, ICLR 2019
+Daniel Cremers
+
+Introduction to Deep Learning
+
+21
+
+Early Stopping
+
+Overfitting
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+22
+
+Bagging and Ensemble Methods
+• Train multiple models and average their results
+
+• E.g., use a different algorithm for optimization or
+change the objective function / loss function.
+• If errors are uncorrelated, the expected combined
+error will decrease linearly with the ensemble size
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+23
+
+Bagging and Ensemble Methods
+• Bagging: uses k different datasets (or SGD/init noise)
+
+Training Set 1
+Daniel Cremers
+
+Training Set 2
+
+Training Set 3
+
+Image Source: [Srivastava et al., JMLR’14] Dropout
+Introduction to Deep Learning
+
+24
+
+Dropout
+Daniel Cremers
+
+Introduction to Deep Learning
+
+25
+
+Dropout
+• Disable a random set of neurons (typically 50%)
+
+Forward
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[Srivastava et al., JMLR’14] Dropout
+
+26
+
+Dropout: Intuition
+• Using half the network = half capacity
+
+Redundant
+representations
+
+Furry
+Has two
+eyes
+Has a tail
+Has paws
+Has two ears
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[Srivastava et al., JMLR’14] Dropout
+
+27
+
+Dropout: Intuition
+• Using half the network = half capacity
+– Redundant representations
+– Base your scores on more features
+
+• Consider it as a model ensemble
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[Srivastava et al., JMLR’14] Dropout
+
+28
+
+Dropout: Intuition
+• Two models in one
+Model 1
+
+Model 2
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[Srivastava et al., JMLR’14] Dropout
+
+29
+
+Dropout: Intuition
+• Using half the network = half capacity
+– Redundant representations
+– Base your scores on more features
+
+• Consider it as two models in one
+– Training a large ensemble of models, each on different
+set of data (mini-batch) and with SHARED parameters
+Reducing co-adaptation between neurons
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[Srivastava et al., JMLR’14] Dropout
+
+30
+
+Dropout: Test Time
+• All neurons are “turned on” – no dropout
+
+Conditions at train and test
+time are not the same
+
+PyTorch: model.train() and model.eval()
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[Srivastava et al., JMLR’14] Dropout
+
+31
+
+Dropout: Test Time
+• Test:
+
+• Train:
+
+Weight scaling
+inference rule
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[Srivastava et al., JMLR’14] Dropout
+
+32
+
+Dropout: Before
+• Efficient bagging method with parameter sharing
+
+• Try it!
+• Dropout reduces the effective capacity of a model,
+but needs more training time
+
+• Efficient regularization method, can be used with L2
+Daniel Cremers
+
+Introduction to Deep Learning
+
+[Srivastava et al., JMLR’14] Dropout
+
+33
+
+Dropout: Nowadays
+• Usually does not work well when combined with
+batch-norm.
+• Training takes a bit longer, usually 1.5x
+• But, can be used for uncertainty estimation.
+• Monte Carlo dropout (Yarin Gal and Zoubin
+Ghahramani series of papers).
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+34
+
+Monte Carlo Dropout
+• Neural networks are massively overconfident.
+• We can use dropout to make the softmax
+probabilities more calibrated.
+• Training: use dropout with a low p (0.1 or 0.2).
+• Inference, run the same image multiple times (25100), and average the results.
+Gal et al., Bayesian Convolutional Neural Networks with Bernoulli
+Approximate Variational Inference, ICLRW 2015
+Gal and Ghahramani, Dropout as a Bayesian approximation, ICML 2016
+Gal et al., Deep Bayesian Active Learning with Image Data, ICML 2017
+Gal, Uncertainty in Deep Learning, PhD thesis 2017
+Daniel Cremers
+
+Introduction to Deep Learning
+
+35
+
+Batch Normalization:
+Reducing Internal Covariate
+Shift
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+36
+
+Batch Normalization:
+Reducing Internal Covariate
+Shift
+What is internal covariate shift, by the way?
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+37
+
+Our Goal
+• All we want is that our activations do not die out
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+38
+
+Batch Normalization
+• Wish: Unit Gaussian activations (in our example)
+• Solution: let’s do it
+N = mini-batch size
+
+D = num of features
+
+feature 1 …
+Daniel Cremers
+
+feature k …
+
+Mean of your mini-batch
+examples over feature k
+
+[Ioffe and Szegedy, PMLR’15] Batch Normalization
+39
+Introduction to Deep Learning
+
+Batch Normalization
+• In each dimension of the features, you have a unit
+gaussian (in our example)
+N = mini-batch size
+
+D = num of features
+
+Unit Gaussian
+feature 1 …
+
+Daniel Cremers
+
+Mean of your mini-batch
+examples over feature k
+
+feature k …
+
+[Ioffe and Szegedy, PMLR’15] Batch Normalization
+40
+Introduction to Deep Learning
+
+Batch Normalization
+• In each dimension of the features, you have a unit
+gaussian (in our example)
+• For NN in general, BN normalizes the mean and
+variance of the inputs to your activation functions
+
+Daniel Cremers
+
+[Ioffe and Szegedy, PMLR’15] Batch Normalization
+41
+Introduction to Deep Learning
+
+BN Layer
+• A layer to be applied after Fully
+Connected (or Convolutional) layers and
+before non-linear activation functions
+
+Daniel Cremers
+
+[Ioffe and Szegedy, PMLR’15] Batch Normalization
+42
+Introduction to Deep Learning
+
+Batch Normalization
+• 1. Normalize
+Differentiable function so we
+can backprop through it….
+
+• 2. Allow the network to change the range
+These parameters will be
+optimized during backprop
+
+Daniel Cremers
+
+[Ioffe and Szegedy, PMLR’15] Batch Normalization
+43
+Introduction to Deep Learning
+
+Batch Normalization
+• 1. Normalize
+The network can
+learn to undo the
+normalization
+
+• 2. Allow the network to change the
+range
+
+backprop
+Daniel Cremers
+
+[Ioffe and Szegedy, PMLR’15] Batch Normalization
+44
+Introduction to Deep Learning
+
+Batch Normalization
+• Ok to treat dimensions separately?
+Shown empirically that even if features are not
+correlated, convergence is still faster with this
+method
+
+Daniel Cremers
+
+[Ioffe and Szegedy, PMLR’15] Batch Normalization
+45
+Introduction to Deep Learning
+
+BN: Train vs Test
+• Train time: mean and variance is taken over the minibatch
+
+• Test-time: what happens if we can just process one
+image at a time?
+– No chance to compute a meaningful mean and variance
+Daniel Cremers
+
+[Ioffe and Szegedy, PMLR’15] Batch Normalization
+46
+Introduction to Deep Learning
+
+BN: Train vs Test
+Training: Compute mean and variance from mini-batch
+1,2,3 …
+Testing: Compute mean and variance by running an
+exponentially weighted averaged across training minibatches. Use them as
+and
+.
+
+Daniel Cremers
+
+[Ioffe and Szegedy, PMLR’15] Batch Normalization
+47
+Introduction to Deep Learning
+
+BN: What do you get?
+• Very deep nets are much easier to train, more stable
+gradients
+• A much larger range of hyperparameters works
+similarly when using BN
+
+Daniel Cremers
+
+[Ioffe and Szegedy, PMLR’15] Batch Normalization
+48
+Introduction to Deep Learning
+
+BN: A Milestone
+
+Daniel Cremers
+
+[Wu and He, ECCV’18] Group Normalization
+Introduction to Deep Learning
+
+49
+
+BN: Drawbacks
+
+Daniel Cremers
+
+[Wu and He, ECCV’18] Group Normalization
+Introduction to Deep Learning
+
+50
+
+Other Normalizations
+
+Daniel Cremers
+
+[Wu and He, ECCV’18] Group Normalization
+Introduction to Deep Learning
+
+51
+
+Image size
+
+Other Normalizations
+
+Number of elements in the batch
+Number of channels
+Daniel Cremers
+
+[Wu and He, ECCV’18] Group Normalization
+Introduction to Deep Learning
+
+52
+
+What We Know
+Daniel Cremers
+
+Introduction to Deep Learning
+
+53
+
+Width
+
+What do we know so far?
+
+Depth
+Daniel Cremers
+
+Introduction to Deep Learning
+
+54
+
+What do we know so far?
+Concept of a ‘Neuron’
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+55
+
+What do we know so far?
+Activation Functions (non-linearities)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+56
+
+What do we know so far?
+Backpropagation
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+57
+
+What do we know so far?
+SGD Variations (Momentum, etc.)
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+58
+
+What do we know so far?
+Data Augmentation
+
+Batch-Norm
+
+Dropout
+Weight Initialization
+(e.g., Kaiming)
+Weight Regularization
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+59
+
+Why not simply more layers?
+• Neural nets with at least one hidden layer are universal function
+approximators.
+• But generalization is another issue.
+• Why not just go deeper and get better?
+– No structure!!
+– It is just brute force!
+– Optimization becomes hard
+– Performance plateaus / drops!
+
+• We need more! More means CNNs, RNNs and eventually Transformers.
+Daniel Cremers
+
+Introduction to Deep Learning
+
+60
+
+See you next week!
+Daniel Cremers
+
+Introduction to Deep Learning
+
+61
+
+References
+• Goodfellow et al. “Deep Learning” (2016),
+– Chapter 6: Deep Feedforward Networks
+
+• Bishop “Pattern Recognition and Machine Learning” (2006),
+– Chapter 5.5: Regularization in Network Nets
+
+• http://cs231n.github.io/neural-networks-1/
+• http://cs231n.github.io/neural-networks-2/
+• http://cs231n.github.io/neural-networks-3/
+
+Daniel Cremers
+
+Introduction to Deep Learning
+
+62
+
+

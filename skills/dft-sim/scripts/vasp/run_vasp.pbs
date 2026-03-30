@@ -1,0 +1,35 @@
+#!/bin/bash
+# VASP作业提交脚本模板 (PBS)
+# 用法: qsub run_vasp.pbs
+
+#PBS -N vasp_job
+#PBS -l nodes=2:ppn=24
+#PBS -l walltime=24:00:00
+#PBS -q normal
+#PBS -o vasp.out
+#PBS -e vasp.err
+
+# 加载模块
+module purge
+module load intel/2023.1
+module load intel-mpi/2021.9
+
+# 设置VASP路径
+VASP_EXEC="/opt/vasp/6.5.0/bin/vasp_std"
+
+# 进入工作目录
+cd $PBS_O_WORKDIR
+
+# 设置并行环境
+export OMP_NUM_THREADS=1
+export I_MPI_FABRICS=shm:ofi
+
+# 运行VASP
+mpirun -np 48 $VASP_EXEC
+
+# 检查收敛
+if grep -q "reached required accuracy" OUTCAR; then
+    echo "Calculation converged successfully!"
+else
+    echo "Warning: Calculation may not have converged!"
+fi

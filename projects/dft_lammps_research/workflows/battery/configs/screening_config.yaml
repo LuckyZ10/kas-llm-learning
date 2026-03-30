@@ -1,0 +1,66 @@
+# 固态电解质筛选配置文件
+# Solid Electrolyte Screening Configuration
+
+target_ion: "Li"
+target_conductivity: 1.0e-4
+
+# Materials Project搜索条件
+search_chemsys:
+  - "Li-S-P"
+  - "Li-Ge-S"
+  - "Li-Sn-S"
+  - "Li-Si-S"
+  - "Li-P-S-Cl"
+  - "Li-P-S-Br"
+  - "Li-P-S-I"
+  - "Li-Ge-P-S"
+  - "Li-Sn-P-S"
+  - "Li-Al-S"
+  - "Li-Ga-S"
+  - "Li-In-S"
+
+max_entries: 100
+max_nsites: 150
+
+# DFT参数
+dft_functional: "PBE"
+dft_encut: 520  # eV
+dft_kpoints: 0.2  # Å⁻¹
+dft_ediff: 1.0e-6
+dft_ncores: 32
+
+# ML势参数
+ml_framework: "deepmd"
+ml_preset: "accurate"
+num_ensemble_models: 4
+uncertainty_threshold: 0.15
+
+# MD参数
+md_temperatures:
+  - 300
+  - 350
+  - 400
+  - 450
+  - 500
+  - 600
+  - 700
+  - 800
+  - 900
+
+md_timestep: 1.0  # fs
+md_nsteps_equil: 100000
+md_nsteps_prod: 500000
+ensemble: "nvt"
+
+# 筛选阈值
+min_conductivity_threshold: 1.0e-5  # S/cm
+max_activation_energy: 0.5  # eV
+min_bulk_modulus: 10.0  # GPa
+
+# 工作目录
+work_dir: "./solid_electrolyte_results"
+
+# 并行设置
+max_parallel: 4
+save_intermediate: true
+generate_report: true

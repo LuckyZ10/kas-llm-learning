@@ -1,0 +1,41 @@
+#!/bin/bash
+# Quantum ESPRESSO作业提交脚本 (PBS)
+# 用法: qsub run_qe.pbs
+
+#PBS -N qe_job
+#PBS -l nodes=2:ppn=24
+#PBS -l walltime=24:00:00
+#PBS -q normal
+#PBS -o qe.out
+#PBS -e qe.err
+
+# 加载模块
+module purge
+module load gcc/11.2
+module load openmpi/4.1.5
+
+# 设置QE路径
+PW_EXEC="/opt/qe/7.4/bin/pw.x"
+PH_EXEC="/opt/qe/7.4/bin/ph.x"
+
+# 进入工作目录
+cd $PBS_O_WORKDIR
+
+# 设置并行环境
+export OMP_NUM_THREADS=1
+
+# 运行SCF计算
+echo "Starting SCF calculation..."
+mpirun -np 48 $PW_EXEC -in scf.in > scf.out 2>&1
+
+# 检查收敛
+if grep -q "convergence has been achieved" scf.out; then
+    echo "SCF converged successfully!"
+    
+    # 运行后续计算 (如需要)
+    # echo "Starting phonon calculation..."
+    # mpirun -np 48 $PH_EXEC -in ph.in > ph.out 2>&1
+else
+    echo "Error: SCF did not converge!"
+    exit 1
+fi

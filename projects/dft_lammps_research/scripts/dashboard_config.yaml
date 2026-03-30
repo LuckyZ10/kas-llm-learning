@@ -1,0 +1,174 @@
+# DFT+LAMMPS Workflow Dashboard Configuration
+# =============================================
+
+# Data Paths - 数据路径配置
+# --------------------------
+# 主工作目录
+work_dir: "./battery_screening"
+
+# DFT计算结果路径
+dft_results_path: "./battery_screening/dft_results"
+
+# MD模拟结果路径 (包含LAMMPS log和dump文件)
+md_results_path: "./battery_screening/md_results"
+
+# ML势模型路径 (包含DeePMD训练结果)
+models_path: "./battery_screening/models"
+
+# 主动学习工作流路径
+al_workflow_path: "./active_learning_workflow"
+
+# 高通量筛选数据库路径
+screening_db_path: "./screening_db"
+
+
+# Auto-refresh Settings - 自动刷新设置
+# -------------------------------------
+# 启用自动刷新
+auto_refresh: true
+
+# 刷新间隔（秒）
+refresh_interval: 5
+
+# 最大显示数据点数（用于性能优化）
+max_points: 10000
+
+# 时间窗口（秒），用于显示最近的数据
+time_window: 3600
+
+
+# Threshold Settings - 阈值设置
+# ------------------------------
+# 力误差阈值 (eV/Å)
+force_error_threshold: 0.05
+
+# 能量误差阈值 (eV/atom)
+energy_error_threshold: 0.001
+
+# 维里误差阈值
+cirial_error_threshold: 0.01
+
+
+# Visualization Settings - 可视化设置
+# ------------------------------------
+# 默认图表主题
+default_theme: "plotly_white"
+
+# 3D结构可视化设置
+structure_visualization:
+  atom_size: 8
+  bond_width: 2
+  background_color: "white"
+  show_unit_cell: true
+
+# 颜色方案
+colors:
+  primary: "#3498db"
+  secondary: "#2ecc71"
+  warning: "#f39c12"
+  danger: "#e74c3c"
+  info: "#9b59b6"
+
+
+# Export Settings - 导出设置
+# ---------------------------
+# 导出目录
+export_dir: "./dashboard_exports"
+
+# PDF导出设置
+pdf_export:
+  page_size: "A4"
+  include_timestamp: true
+  include_logo: false
+
+# CSV导出设置
+csv_export:
+  delimiter: ","
+  include_headers: true
+
+
+# Server Settings - 服务器设置
+# -----------------------------
+# 绑定地址 (0.0.0.0 允许外部访问)
+host: "0.0.0.0"
+
+# 端口号
+port: 8050
+
+# 调试模式
+debug: false
+
+
+# Advanced Settings - 高级设置
+# -----------------------------
+# 缓存生存时间（秒）
+cache_ttl: 5
+
+# 文件监控（需要安装watchdog）
+enable_file_watching: true
+
+# 并行加载数据
+parallel_loading: false
+max_workers: 4
+
+
+# Data Source Mapping - 数据源映射
+# ----------------------------------
+# 定义各类数据文件的查找模式
+file_patterns:
+  # DeePMD训练日志
+  training_log: "**/lcurve.out"
+  
+  # LAMMPS日志
+  md_log: "**/log.lammps"
+  
+  # LAMMPS轨迹文件
+  md_trajectory: "**/*.lammpstrj"
+  
+  # 模型测试结果
+  model_test: "**/test_results/*.json"
+  
+  # 筛选结果
+  screening_results: "**/screening_results.csv"
+  
+  # 主动学习迭代数据
+  al_iterations: "**/iter_*"
+  
+  # 结构文件
+  structures: "**/*.cif"
+
+
+# Custom Columns - 自定义列映射
+# ------------------------------
+# 定义DataFrame列名到显示名称的映射
+column_mappings:
+  # 训练数据
+  batch: "Training Step"
+  lr: "Learning Rate"
+  loss: "Total Loss"
+  energy_rmse: "Energy RMSE"
+  force_rmse: "Force RMSE"
+  virial_rmse: "Virial RMSE"
+  
+  # MD数据
+  Step: "Simulation Step"
+  Temp: "Temperature (K)"
+  Press: "Pressure (atm)"
+  TotEng: "Total Energy"
+  PotEng: "Potential Energy"
+  KinEng: "Kinetic Energy"
+  Volume: "Volume (Å³)"
+  
+  # 筛选数据
+  ionic_conductivity: "Ionic Conductivity (S/cm)"
+  formation_energy: "Formation Energy (eV/atom)"
+  band_gap: "Band Gap (eV)"
+  bulk_modulus: "Bulk Modulus (GPa)"
+  energy_above_hull: "Energy Above Hull (eV/atom)"
+  
+  # 主动学习数据
+  iteration: "Iteration"
+  n_candidates: "Number of Candidates"
+  accurate: "Accurate Structures"
+  candidate: "Candidate Structures"
+  failed: "Failed Structures"
