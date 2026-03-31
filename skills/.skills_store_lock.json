@@ -18,6 +18,528 @@
       "zip_url": "https://lightmake.site/api/v1/download?slug=evolver",
       "source": "skillhub",
       "version": "1.31.0"
+    },
+    "ai-news-collectors": {
+      "name": "ai-news-collectors",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=ai-news-collectors",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "ai-persona-os": {
+      "name": "AI Persona OS",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=ai-persona-os",
+      "source": "skillhub",
+      "version": "1.6.2"
+    },
+    "image-generation": {
+      "name": "AI Image Generation",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=image-generation",
+      "source": "skillhub",
+      "version": "1.0.3"
+    },
+    "markdown": {
+      "name": "Markdown",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=markdown",
+      "source": "skillhub",
+      "version": "1.0.1"
+    },
+    "pdf": {
+      "name": "Pdf",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=pdf",
+      "source": "skillhub",
+      "version": "0.1.0"
+    },
+    "productivity": {
+      "name": "Productivity",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=productivity",
+      "source": "skillhub",
+      "version": "1.0.4"
+    },
+    "calendar": {
+      "name": "Calendar",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=calendar",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "weather": {
+      "name": "Weather",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=weather",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "git": {
+      "name": "Git",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=git",
+      "source": "skillhub",
+      "version": "1.0.8"
+    },
+    "markdown-converter": {
+      "name": "Markdown Converter",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=markdown-converter",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "pdf-extract": {
+      "name": "Pdf Extract",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=pdf-extract",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "data-analysis": {
+      "name": "Data Analysis",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=data-analysis",
+      "source": "skillhub",
+      "version": "1.0.2"
+    },
+    "developer": {
+      "name": "Developer",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=developer",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "github": {
+      "name": "Github",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=github",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "github-api": {
+      "name": "GitHub",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=github-api",
+      "source": "skillhub",
+      "version": "1.0.3"
+    },
+    "developer-agent": {
+      "name": "Developer Agent",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=developer-agent",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "anygen-data-analysis": {
+      "name": "Data Analysis",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=anygen-data-analysis",
+      "source": "skillhub",
+      "version": "1.3.5"
+    },
+    "system-resource-monitor": {
+      "name": "System Resource Monitor",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=system-resource-monitor",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "stock": {
+      "name": "股票查询",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=stock",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "finance": {
+      "name": "finance",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=finance",
+      "source": "skillhub",
+      "version": "1.1.2"
+    },
+    "finance-news": {
+      "name": "Finance News Briefings",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=finance-news",
+      "source": "skillhub",
+      "version": "1.0.1"
+    },
+    "finance-tracker": {
+      "name": "Finance Tracker",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=finance-tracker",
+      "source": "skillhub",
+      "version": "2.0.0"
+    },
+    "finance-radar": {
+      "name": "Finance Radar",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=finance-radar",
+      "source": "skillhub",
+      "version": "1.1.0"
+    },
+    "stock-analysis": {
+      "name": "Stock Analysis",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=stock-analysis",
+      "source": "skillhub",
+      "version": "6.2.0"
+    },
+    "stock-market-pro": {
+      "name": "Stock Market Pro",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=stock-market-pro",
+      "source": "skillhub",
+      "version": "1.2.12"
+    },
+    "stock-watcher": {
+      "name": "Stock Watcher",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=stock-watcher",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "stock-monitor-skill": {
+      "name": "Stock Monitor",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=stock-monitor-skill",
+      "source": "skillhub",
+      "version": "0.1.0"
+    },
+    "ai-video-gen": {
+      "name": "Ai Video Gen",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=ai-video-gen",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "ai-ppt-generate": {
+      "name": "AI PPT generate",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=ai-ppt-generate",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "ai-compound-1-0-1": {
+      "name": "Ai Compound 1.0.1",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=ai-compound-1-0-1",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "markdown-formatter": {
+      "name": "Markdown Formatter",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=markdown-formatter",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "pdf-form-filler": {
+      "name": "Pdf Form Filler",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=pdf-form-filler",
+      "source": "skillhub",
+      "version": "0.2.0"
+    },
+    "productivity-automation-kit": {
+      "name": "Productivity Automation Kit",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=productivity-automation-kit",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "calendar-reminders": {
+      "name": "Calendar Reminders (gcalcli + CalDAV)",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=calendar-reminders",
+      "source": "skillhub",
+      "version": "0.1.1"
+    },
+    "maomao-weather": {
+      "name": "weather",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=maomao-weather",
+      "source": "skillhub",
+      "version": "1.0.2"
+    },
+    "git-essentials": {
+      "name": "Git Essentials",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=git-essentials",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "rupert-data-analysis": {
+      "name": "Data Analysis",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=rupert-data-analysis",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "data-analysis-litiao": {
+      "name": "Data Analysis Litiao",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=data-analysis-litiao",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "system-repair-expert": {
+      "name": "system-repair-expert",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=system-repair-expert",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "clawdbot-filesystem": {
+      "name": "Filesystem Management",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=clawdbot-filesystem",
+      "source": "skillhub",
+      "version": "1.0.2"
+    },
+    "ws-excel": {
+      "name": "Excel",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=ws-excel",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "excel-xlsx": {
+      "name": "Excel / XLSX",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=excel-xlsx",
+      "source": "skillhub",
+      "version": "1.0.2"
+    },
+    "web-search": {
+      "name": "Web Search",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=web-search",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "web-search-ex-skill": {
+      "name": "Web Search",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=web-search-ex-skill",
+      "source": "skillhub",
+      "version": "1.3.0"
+    },
+    "self-improving-agent": {
+      "name": "self-improving-agent",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=self-improving-agent",
+      "source": "skillhub",
+      "version": "1.0.11"
+    },
+    "translation": {
+      "name": "translation",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=translation",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "docker": {
+      "name": "Docker",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=docker",
+      "source": "skillhub",
+      "version": "1.0.4"
+    },
+    "sql-toolkit": {
+      "name": "SQL Toolkit",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=sql-toolkit",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "postgres-db": {
+      "name": "PostgreSQL Database",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=postgres-db",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "docker-container-manager": {
+      "name": "Docker Container Manager",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=docker-container-manager",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "summarize": {
+      "name": "Summarize",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=summarize",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "news": {
+      "name": "News",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=news",
+      "source": "skillhub",
+      "version": "1.0.1"
+    },
+    "news-summary": {
+      "name": "News Summary",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=news-summary",
+      "source": "skillhub",
+      "version": "1.0.1"
+    },
+    "python": {
+      "name": "Python Coding Guidelines",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=python",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "py": {
+      "name": "Python",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=py",
+      "source": "skillhub",
+      "version": "1.0.1"
+    },
+    "code-review": {
+      "name": "Code Review",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=code-review",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "quack-code-review": {
+      "name": "Code Review",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=quack-code-review",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "blog-writer": {
+      "name": "Blog Writer",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=blog-writer",
+      "source": "skillhub",
+      "version": "0.1.0"
+    },
+    "fliggy-flight-monitor": {
+      "name": "travel flight monitor",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=fliggy-flight-monitor",
+      "source": "skillhub",
+      "version": "1.0.3"
+    },
+    "aerobase-travel-flights": {
+      "name": "Aerobase Travel Flights",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=aerobase-travel-flights",
+      "source": "skillhub",
+      "version": "3.2.0"
+    },
+    "youtube-video": {
+      "name": "YouTube Video",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=youtube-video",
+      "source": "skillhub",
+      "version": "0.10.7-dev"
+    },
+    "worthclip-youtube-video-scorer": {
+      "name": "Youtube video scorer",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=worthclip-youtube-video-scorer",
+      "source": "skillhub",
+      "version": "1.0.6"
+    },
+    "security-scan": {
+      "name": "Security Scan",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=security-scan",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "security-scanner": {
+      "name": "Security Scanner",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=security-scanner",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "codehooks-backend": {
+      "name": "Codehooks Backend",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=codehooks-backend",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "prompt-engineering-expert": {
+      "name": "Prompt Engineering Expert",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=prompt-engineering-expert",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "promptify": {
+      "name": "Promptify Skill",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=promptify",
+      "source": "skillhub",
+      "version": "3.1.0"
+    },
+    "earnings-calendar": {
+      "name": "Earnings Calendar",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=earnings-calendar",
+      "source": "skillhub",
+      "version": "0.1.0"
+    },
+    "bria-ai": {
+      "name": "Image generation and editing",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=bria-ai",
+      "source": "skillhub",
+      "version": "1.2.7"
+    },
+    "best-image-generation": {
+      "name": "Best Image Generation",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=best-image-generation",
+      "source": "skillhub",
+      "version": "1.0.2"
+    },
+    "japanese-translation-and-tutor": {
+      "name": "Japanese Translation And Tutor",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=japanese-translation-and-tutor",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "docker-container-cleaner": {
+      "name": "Docker Container Cleaner",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=docker-container-cleaner",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "financial-literacy": {
+      "name": "Finance",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=financial-literacy",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "finance-lite": {
+      "name": "Finance Lite (Beta): Daily Macro + Market Move Brief",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=finance-lite",
+      "source": "skillhub",
+      "version": "1.0.1"
+    },
+    "finance-report-analyzer": {
+      "name": "Finance Report Analyzer",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=finance-report-analyzer",
+      "source": "skillhub",
+      "version": "1.2.0"
+    },
+    "finance-skill": {
+      "name": "Finance Skill",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=finance-skill",
+      "source": "skillhub",
+      "version": "0.1.2"
+    },
+    "stock-evaluator": {
+      "name": "Stock Evaluator",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=stock-evaluator",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "stock-info-explorer": {
+      "name": "Stock Info Explorer",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=stock-info-explorer",
+      "source": "skillhub",
+      "version": "1.2.10"
+    },
+    "stock-price-checker": {
+      "name": "stock-price-checker",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=stock-price-checker",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "ws-calendar": {
+      "name": "Calendar",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=ws-calendar",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "productivity-skill": {
+      "name": "productivity skill(yewubin)",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=productivity-skill",
+      "source": "skillhub",
+      "version": "2.7.0"
+    },
+    "productivity-design": {
+      "name": "productivity-design",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=productivity-design",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "developer-docs-framework": {
+      "name": "Developer Docs Framework",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=developer-docs-framework",
+      "source": "skillhub",
+      "version": "1.0.1"
+    },
+    "developer-interview-simulator": {
+      "name": "Developer Interview Simulator",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=developer-interview-simulator",
+      "source": "skillhub",
+      "version": "1.0.2"
+    },
+    "context-driven-development": {
+      "name": "Context Driven Development",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=context-driven-development",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "product-marketing-context": {
+      "name": "Product Marketing Context",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=product-marketing-context",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "markdown-convert": {
+      "name": "Markdown.new Skill",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=markdown-convert",
+      "source": "skillhub",
+      "version": "1.0.0"
     }
   }
 }

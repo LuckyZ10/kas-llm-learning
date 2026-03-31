@@ -1,0 +1,27 @@
+# Ignore installed skills (keep only core skills)
+skills/*/
+!skills/find-skills/
+!skills/skillhub-preference/
+!skills/memory-pipeline/
+!skills/memory-maintenance/
+!skills/evolver/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Backup files
+*.backup.*
+*.bak
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
