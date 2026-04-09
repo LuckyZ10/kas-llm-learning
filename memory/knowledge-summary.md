@@ -1,15 +1,54 @@
 # Knowledge Graph Summary
-Generated: 2026-03-30 01:43:39
-Total Facts: 17
-Total Links: 0
+Generated: 2026-04-09 08:02:20
+Total Facts: 28
+Total Links: 5
 
 ## Facts by Subject
+
+### book writing progress (4 facts)
+
+- **[fact]** Total chapters completed: 53 out of 135 (39% completion)...
+  - Date: 2026-04-03 | Confidence: 1.00
+  - Tags: fact, book writing progress
+  - Related to: 1 other facts
+
+- **[fact]** Total word count: 602KB (~300,000 words)...
+  - Date: 2026-04-03 | Confidence: 1.00
+  - Tags: fact, book writing progress
+  - Related to: 1 other facts
+
+- **[fact]** Next chapter in preparation is Chapter 54: 热管理与可靠性...
+  - Date: 2026-04-03 | Confidence: 1.00
+  - Tags: fact, book writing progress
+  - Related to: 1 other facts
+
+- **[commitment]** Next target is to write Chapter 54 on thermal management and reliability...
+  - Date: 2026-04-03 | Confidence: 1.00
+  - Tags: commitment, book writing progress
+  - Related to: 1 other facts
+
+### book chapters (3 facts)
+
+- **[fact]** On 2026-04-03, added Chapter 51: 局部互连与铜大马士革工艺 with 12,007B words...
+  - Date: 2026-04-03 | Confidence: 1.00
+  - Tags: fact, book chapters
+  - Related to: 2 other facts
+
+- **[fact]** On 2026-04-03, added Chapter 52: 层间介质与低k技术 with 9,377B words...
+  - Date: 2026-04-03 | Confidence: 1.00
+  - Tags: fact, book chapters
+  - Related to: 2 other facts
+
+- **[fact]** On 2026-04-03, added Chapter 53: 先进封装与3D集成 with 14,128B words...
+  - Date: 2026-04-03 | Confidence: 1.00
+  - Tags: fact, book chapters
+  - Related to: 2 other facts
 
 ### 教材写作项目 (1 facts)
 
 - **[decision]** 教材写作的目标是写出世界上最伟大的机器学习教材之一，标准是让小学生都能看懂最深刻的AI原理。...
   - Date: 2026-03-30 | Confidence: 1.00
-  - Tags: 教材写作项目, ai, decision
+  - Tags: 教材写作项目, decision, ai
 
 ### 教材写作流程 (1 facts)
 
@@ -27,19 +66,19 @@ Total Links: 0
 
 - **[decision]** 设定写作红线，违反任何一条即为不合格：编造参考文献、跳步数学推导、缺少代码实现、没有费曼比喻、字数不达标、代码不能运行、小学生看不懂。...
   - Date: 2026-03-30 | Confidence: 1.00
-  - Tags: 写作质量红线, decision
+  - Tags: decision, 写作质量红线
 
 ### 教材章节 (1 facts)
 
 - **[fact]** 总章节数为60章。...
   - Date: 2026-03-30 | Confidence: 1.00
-  - Tags: 教材章节, fact
+  - Tags: fact, 教材章节
 
 ### 章节规范化状态 (1 facts)
 
 - **[fact]** 目前只有chapter-11-naive-bayes是完全规范的（具备4件套）。约40章有README和代码，59章缺少练习和文献。...
   - Date: 2026-03-30 | Confidence: 1.00
-  - Tags: ai, 章节规范化状态, fact
+  - Tags: fact, 章节规范化状态, ai
 
 ### 章节规范化计划 (1 facts)
 
@@ -51,13 +90,13 @@ Total Links: 0
 
 - **[fact]** 预估完成全部规范化需要20-30天。...
   - Date: 2026-03-30 | Confidence: 0.90
-  - Tags: 规范化计划时间, fact
+  - Tags: fact, 规范化计划时间
 
 ### 内容整合 (1 facts)
 
 - **[fact]** 从chapters-old/和book/目录整合了有价值的内容，例如chapter-14-hierarchical有1104行高质量内容。...
   - Date: 2026-03-30 | Confidence: 1.00
-  - Tags: 内容整合, fact
+  - Tags: fact, 内容整合
 
 ### 内容复用策略 (1 facts)
 
@@ -69,13 +108,13 @@ Total Links: 0
 
 - **[fact]** chapter-11-naive-bayes是第一个完全规范的章节，满足所有质量标准：19,316字符、1,512行代码、11篇参考文献、4个费曼比喻、9道练习题。...
   - Date: 2026-03-30 | Confidence: 1.00
-  - Tags: ai, fact, chapter-11-naive-bayes
+  - Tags: fact, chapter-11-naive-bayes, ai
 
 ### 自动化任务 (1 facts)
 
 - **[fact]** 设置了自动任务：章节写作（24小时频率）和进度汇报（每30分钟频率）。...
   - Date: 2026-03-30 | Confidence: 1.00
-  - Tags: 自动化任务, fact
+  - Tags: fact, 自动化任务
 
 ### 下一章选择 (1 facts)
 
@@ -105,7 +144,13 @@ Total Links: 0
 
 - **[fact]** 相关文档（WRITING_PHILOSOPHY.md, CHAPTER_STANDARDIZATION_PLAN.md, CONTENT_REUSE_GUIDE.md）和规范章节已更新至GitHub仓...
   - Date: 2026-03-30 | Confidence: 1.00
-  - Tags: development, github更新, fact, web
+  - Tags: fact, web, development, github更新
+
+### CMOS book project (1 facts)
+
+- **[fact]** The book project is titled '从沙子到芯片：CMOS半导体工艺全解'...
+  - Date: 2026-04-03 | Confidence: 1.00
+  - Tags: fact, cmos book project
 
 ## Recent Decisions
 
